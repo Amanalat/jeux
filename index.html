@@ -123,8 +123,37 @@
   </div>
 
   <footer>
+    💡 Astuce : cliquez sur l'URL sous une carte pour la copier.<br>
     Code source : <a href="https://github.com/Amanalat/jeux">github.com/Amanalat/jeux</a>
     · Fakemètre : <a href="https://github.com/Amanalat/fakemetre">github.com/Amanalat/fakemetre</a>
   </footer>
+
+  <style>
+    a.card .url{ cursor:copy; }
+    a.card .url:hover{ text-decoration:underline; }
+    a.card .url.copied{ color:#34d399; }
+  </style>
+  <script>
+  (function(){
+    var BASE='https://amanalat.github.io/jeux/';
+    function flash(el){ var o=el.textContent; el.classList.add('copied'); el.textContent='✓ Lien copié !';
+      setTimeout(function(){ el.classList.remove('copied'); el.textContent=o; }, 1200); }
+    function fallback(url,el){ var t=document.createElement('textarea'); t.value=url;
+      t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select();
+      try{ document.execCommand('copy'); }catch(e){} document.body.removeChild(t); flash(el); }
+    document.querySelectorAll('a.card').forEach(function(card){
+      var u=card.querySelector('.url'); if(!u) return;
+      u.title='Cliquer pour copier le lien';
+      u.addEventListener('click', function(e){
+        e.preventDefault(); e.stopPropagation();
+        var raw=card.getAttribute('href');
+        var url=/^https?:/i.test(raw) ? raw : BASE+raw;
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(url).then(function(){ flash(u); }).catch(function(){ fallback(url,u); });
+        } else { fallback(url,u); }
+      });
+    });
+  })();
+  </script>
 </body>
 </html>
