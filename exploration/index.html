@@ -75,7 +75,7 @@
 </style>
 </head>
 <body>
-  <a class="back" href="../">← Retour aux jeux</a>
+  <a class="back" href="../index.html">← Retour aux jeux</a>
   <header>
     <h1>🧭 Crée ton explorateur</h1>
     <p>Avant de partir à la découverte des jeux, façonne l'avatar qui te représentera.</p>
@@ -218,7 +218,7 @@
     const ground = `<ellipse cx="${cx}" cy="${groundY}" rx="62" ry="8.5" fill="#000" opacity="0.22"/>`;
 
     /* ---------- CORPS (mis à l'échelle par la corpulence) ---------- */
-    const legW=hh-8, gap=8, lX=cx-gap/2-legW, rX=cx+gap/2, legTop=hipY-18, legH=footY-legTop-4;
+    const legW=30, gap=8, lX=cx-gap/2-legW, rX=cx+gap/2, legTop=hipY-18, legH=footY-legTop-4;
     const legs =
       `<g stroke="${pantLine}" stroke-width="2.5" stroke-linejoin="round">`+
       `<rect x="${lX}" y="${legTop}" width="${legW}" height="${legH}" rx="11" fill="url(#gPant)"/>`+
@@ -286,14 +286,12 @@
     }
     if(st==='court' || st==='long'){
       hairFront =
-        `<path d="M ${cx-headRx+1} ${headCy-4} `+
-        `Q ${cx-headRx+2} ${headTop+5} ${cx-6} ${headTop+2} `+
-        `Q ${cx+headRx-8} ${headTop+1} ${cx+headRx-1} ${headCy-4} `+
-        `Q ${cx+10} ${headCy-1} ${cx-2} ${headCy-13} `+
-        `Q ${cx-headRx+9} ${headCy-6} ${cx-headRx+1} ${headCy-4} Z" `+
+        `<path d="M ${cx-headRx+1} ${headCy-3} `+
+        `C ${cx-headRx+1} ${headTop+2} ${cx+headRx-1} ${headTop+2} ${cx+headRx-1} ${headCy-3} `+
+        `C ${cx+8} ${headCy-4} ${cx-18} ${headCy-9} ${cx-headRx+1} ${headCy-3} Z" `+
         `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`+
-        `<path d="M ${cx-15} ${headTop+11} Q ${cx-1} ${headTop+4} ${cx+11} ${headTop+13}" `+
-        `fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="0.22"/>`;
+        `<path d="M ${cx-13} ${headTop+13} Q ${cx} ${headTop+7} ${cx+12} ${headTop+15}" `+
+        `fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="0.20"/>`;
     } else if(st==='boucle'){
       let fr=''; [[-20,-7],[-6,-13],[8,-12],[20,-5]]
         .forEach(p=> fr += `<circle cx="${cx+p[0]}" cy="${headCy+p[1]}" r="10"/>`);
