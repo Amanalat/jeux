@@ -117,7 +117,9 @@
       </div>
 
       <div class="field">
-        <label class="title">Couleur de l'habit</label>
+        <label class="title">Habit <span class="hint">— forme &amp; costumes</span></label>
+        <div class="choices" id="habitForme" style="margin-bottom:12px;"></div>
+        <label class="title" style="margin-bottom:8px;">Couleur de l'habit</label>
         <div class="swatches" id="habit"></div>
       </div>
 
@@ -163,14 +165,17 @@
                    '#b0453a','#d94f2b','#e8e8e8','#7a4fd1','#2e8b57','#2f7bd6'];
   const HABITS  = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#16a085','#3498db','#2c3e50',
                    '#9b59b6','#e84393','#ecf0f1','#111827'];
-  const STYLES  = [['chauve','Chauve'],['court','Court'],['long','Long'],['boucle','Bouclé']];
+  const STYLES  = [['chauve','Chauve'],['court','Court'],['carre','Carré'],['long','Long'],
+                   ['couettes','Couettes'],['chignon','Chignon'],['crete','Crête'],['boucle','Bouclé']];
+  const FORMES  = [['tshirt','T-shirt'],['pull','Pull'],['chemise','Chemise'],['robe','Robe'],
+                   ['debardeur','Débardeur'],['cavernes','🦴 Cavernes'],['cosmonaute','🚀 Cosmonaute']];
   const GENRES  = [['homme','♂ Homme'],['femme','♀ Femme'],['indifferent','⚧ Indifférent']];
 
   /* --- État --- */
   const state = {
     nom:'', genre:'indifferent',
     peau:'#f6cfa2', cheveuxCouleur:'#6b4423', cheveuxStyle:'court',
-    habit:'#3498db', taille:1, corpulence:1, lunettes:false, barbe:false
+    habit:'#3498db', habitForme:'tshirt', taille:1, corpulence:1, lunettes:false, barbe:false
   };
 
   /* --- Utilitaires couleur (dégradés & contours) --- */
@@ -216,41 +221,107 @@
       `<linearGradient id="gPant" x1="0" y1="0" x2="0" y2="1">`+
         `<stop offset="0%" stop-color="${pant}"/>`+
         `<stop offset="100%" stop-color="${shade(pant,-0.22)}"/></linearGradient>`+
+      `<linearGradient id="gSuit" x1="0" y1="0" x2="0.3" y2="1">`+
+        `<stop offset="0%" stop-color="#f7fafc"/><stop offset="60%" stop-color="#e2e8f0"/>`+
+        `<stop offset="100%" stop-color="#c2ccd8"/></linearGradient>`+
+      `<linearGradient id="gFur" x1="0" y1="0" x2="0.2" y2="1">`+
+        `<stop offset="0%" stop-color="#a8865c"/><stop offset="55%" stop-color="#8a6a45"/>`+
+        `<stop offset="100%" stop-color="#6b5236"/></linearGradient>`+
     `</defs>`;
 
     const ground = `<ellipse cx="${cx}" cy="${groundY}" rx="62" ry="8.5" fill="#000" opacity="0.22"/>`;
 
     /* ---------- CORPS (mis à l'échelle par la corpulence) ---------- */
+    const form=state.habitForme||'tshirt';
+    const habitL=shade(habit,0.18), midY=(shoulderY+hipY)/2;
     const legW=30, gap=8, lX=cx-gap/2-legW, rX=cx+gap/2, legTop=hipY-18, legH=footY-legTop-4;
-    const legs =
-      `<g stroke="${pantLine}" stroke-width="2.5" stroke-linejoin="round">`+
-      `<rect x="${lX}" y="${legTop}" width="${legW}" height="${legH}" rx="11" fill="url(#gPant)"/>`+
-      `<rect x="${rX}" y="${legTop}" width="${legW}" height="${legH}" rx="11" fill="url(#gPant)"/></g>`+
-      `<g fill="${shoe}" stroke="${shade(shoe,-0.4)}" stroke-width="2" stroke-linejoin="round">`+
-      `<rect x="${lX-4}" y="${footY-9}" width="${legW+11}" height="15" rx="7"/>`+
-      `<rect x="${rX-7}" y="${footY-9}" width="${legW+11}" height="15" rx="7"/></g>`;
+    const armW=17, sleeveW=21, aTop=shoulderY+4, aBot=hipY+8, lc=cx-sh+3, rc=cx+sh-3;
+    const longEnd=aBot-2, shortEnd=aTop+30;
 
-    const midY=(shoulderY+hipY)/2;
-    const torso =
-      `<path d="M ${cx-sh} ${shoulderY} `+
-      `C ${cx-sh-3} ${midY} ${cx-hh-2} ${hipY-8} ${cx-hh} ${hipY} `+
-      `Q ${cx} ${hipY+18} ${cx+hh} ${hipY} `+
-      `C ${cx+sh+3} ${midY} ${cx+sh+3} ${midY} ${cx+sh} ${shoulderY} `+
-      `Q ${cx} ${shoulderY+18} ${cx-sh} ${shoulderY} Z" `+
-      `fill="url(#gCloth)" stroke="${habitLine}" stroke-width="2.5" stroke-linejoin="round"/>`+
-      `<path d="M ${cx-14} ${shoulderY+3} Q ${cx} ${shoulderY+19} ${cx+14} ${shoulderY+3}" `+
+    // briques réutilisables
+    function legsFn(fill, line, shoeF, shoeL){
+      return `<g stroke="${line}" stroke-width="2.5" stroke-linejoin="round">`+
+        `<rect x="${lX}" y="${legTop}" width="${legW}" height="${legH}" rx="11" fill="${fill}"/>`+
+        `<rect x="${rX}" y="${legTop}" width="${legW}" height="${legH}" rx="11" fill="${fill}"/></g>`+
+        `<g fill="${shoeF}" stroke="${shoeL}" stroke-width="2" stroke-linejoin="round">`+
+        `<rect x="${lX-4}" y="${footY-9}" width="${legW+11}" height="15" rx="7"/>`+
+        `<rect x="${rX-7}" y="${footY-9}" width="${legW+11}" height="15" rx="7"/></g>`;
+    }
+    function armsFn(fill, line, handFill, handLine){
+      return `<g fill="${fill}" stroke="${line}" stroke-width="2" stroke-linejoin="round">`+
+        `<rect x="${lc-armW/2}" y="${aTop}" width="${armW}" height="${aBot-aTop}" rx="8.5"/>`+
+        `<rect x="${rc-armW/2}" y="${aTop}" width="${armW}" height="${aBot-aTop}" rx="8.5"/></g>`+
+        `<g fill="${handFill}" stroke="${handLine}" stroke-width="2">`+
+        `<circle cx="${lc}" cy="${aBot+2}" r="9.5"/><circle cx="${rc}" cy="${aBot+2}" r="9.5"/></g>`;
+    }
+    function sleeveFn(endY, fill, line){
+      return `<g fill="${fill}" stroke="${line}" stroke-width="2.5" stroke-linejoin="round">`+
+        `<rect x="${lc-sleeveW/2}" y="${aTop-3}" width="${sleeveW}" height="${endY-(aTop-3)}" rx="9"/>`+
+        `<rect x="${rc-sleeveW/2}" y="${aTop-3}" width="${sleeveW}" height="${endY-(aTop-3)}" rx="9"/></g>`;
+    }
+    function torsoFn(hipW, hemY, hemCurve, fill, line){
+      return `<path d="M ${cx-sh} ${shoulderY} `+
+        `C ${cx-sh-3} ${midY} ${cx-hipW-2} ${hemY-10} ${cx-hipW} ${hemY} `+
+        `Q ${cx} ${hemY+hemCurve} ${cx+hipW} ${hemY} `+
+        `C ${cx+sh+3} ${midY} ${cx+sh+3} ${midY} ${cx+sh} ${shoulderY} `+
+        `Q ${cx} ${shoulderY+18} ${cx-sh} ${shoulderY} Z" `+
+        `fill="${fill}" stroke="${line}" stroke-width="2.5" stroke-linejoin="round"/>`;
+    }
+    const roundCollar = `<path d="M ${cx-14} ${shoulderY+3} Q ${cx} ${shoulderY+19} ${cx+14} ${shoulderY+3}" `+
       `fill="none" stroke="${habitLine}" stroke-width="2.5" stroke-linecap="round"/>`;
 
-    const armW=19, aTop=shoulderY+4, aBot=hipY+4, lc=cx-sh+3, rc=cx+sh-3;
-    const arms =
-      `<g stroke="${habitLine}" stroke-width="2.5" stroke-linejoin="round">`+
-      `<rect x="${lc-armW/2}" y="${aTop}" width="${armW}" height="${aBot-aTop}" rx="9.5" fill="url(#gCloth)"/>`+
-      `<rect x="${rc-armW/2}" y="${aTop}" width="${armW}" height="${aBot-aTop}" rx="9.5" fill="url(#gCloth)"/></g>`+
-      `<path d="M ${lc-armW/2} ${aTop+26} h ${armW}" stroke="${habitLine}" stroke-width="2" fill="none" opacity="0.5"/>`+
-      `<path d="M ${rc-armW/2} ${aTop+26} h ${armW}" stroke="${habitLine}" stroke-width="2" fill="none" opacity="0.5"/>`+
-      `<g fill="url(#gSkin)" stroke="${skinLine}" stroke-width="2">`+
-      `<circle cx="${lc}" cy="${aBot+6}" r="10.5"/>`+
-      `<circle cx="${rc}" cy="${aBot+6}" r="10.5"/></g>`;
+    let bodyInner='', helmet='', hideHair=false;
+
+    if(form==='cosmonaute'){
+      const suitG='url(#gSuit)', suitL='#9aa7b5', boot='#c2ccd8', gl='#f4f7fb';
+      const panel=`<rect x="${cx-16}" y="${midY-6}" width="32" height="26" rx="5" fill="${shade(habit,-0.04)}" stroke="${suitL}" stroke-width="2"/>`+
+        `<circle cx="${cx-8}" cy="${midY+2}" r="3" fill="#ff5d5d"/><circle cx="${cx}" cy="${midY+2}" r="3" fill="#5dff8f"/>`+
+        `<circle cx="${cx+8}" cy="${midY+2}" r="3" fill="#5db8ff"/>`+
+        `<rect x="${cx-11}" y="${midY+10}" width="22" height="5" rx="2.5" fill="${habit}"/>`;
+      const stripes=`<path d="M ${cx-sh} ${shoulderY+2} q 6 10 0 20" stroke="${habit}" stroke-width="4" fill="none"/>`+
+        `<path d="M ${cx+sh} ${shoulderY+2} q -6 10 0 20" stroke="${habit}" stroke-width="4" fill="none"/>`;
+      bodyInner = legsFn(suitG,suitL,boot,suitL) + torsoFn(hh+3,hipY+4,20,suitG,suitL) +
+        stripes + panel + sleeveFn(aBot+2,suitG,suitL) + armsFn(suitG,suitL,gl,suitL);
+      helmet =
+        `<circle cx="${cx}" cy="${headCy}" r="${headRx+11}" fill="none" stroke="#f2f5f9" stroke-width="9"/>`+
+        `<circle cx="${cx}" cy="${headCy}" r="${headRx+11}" fill="none" stroke="${suitL}" stroke-width="2"/>`+
+        `<ellipse cx="${cx-13}" cy="${headCy-15}" rx="8" ry="15" fill="#fff" opacity="0.22"/>`;
+      hideHair = true;
+    }
+    else if(form==='cavernes'){
+      const furG='url(#gFur)', furL=shade('#8a6a45',-0.42);
+      const loin=`<path d="M ${cx-hh+2} ${hipY-14} L ${cx+hh-2} ${hipY-14} L ${cx+hh-6} ${hipY+8} `+
+        `L ${cx+hh-16} ${hipY-2} L ${cx+4} ${hipY+12} L ${cx-8} ${hipY-2} L ${cx-hh+8} ${hipY+10} Z" `+
+        `fill="${furG}" stroke="${furL}" stroke-width="2" stroke-linejoin="round"/>`;
+      const toga=`<path d="M ${cx-sh+2} ${shoulderY-2} L ${cx-sh+18} ${shoulderY-6} L ${cx+hh-4} ${hipY-6} `+
+        `L ${cx+hh-16} ${hipY+4} L ${cx-6} ${hipY-10} L ${cx-sh+2} ${shoulderY+16} Z" `+
+        `fill="${furG}" stroke="${furL}" stroke-width="2" stroke-linejoin="round"/>`;
+      const spots=`<g fill="${furL}" opacity="0.5"><circle cx="${cx-14}" cy="${hipY-16}" r="2.5"/>`+
+        `<circle cx="${cx+10}" cy="${hipY-8}" r="2.5"/><circle cx="${cx-2}" cy="${shoulderY+22}" r="2.5"/></g>`;
+      bodyInner = legsFn('url(#gSkin)',skinLine,skin,skinLine) + torsoFn(hh,hipY,18,'url(#gSkin)',skinLine) +
+        armsFn('url(#gSkin)',skinLine,'url(#gSkin)',skinLine) + loin + toga + spots;
+    }
+    else {
+      let hipW=hh, hemY=hipY, hemCurve=18, sleeveEnd=longEnd, details='', drawSleeve=true;
+      if(form==='tshirt'){ sleeveEnd=shortEnd; details=roundCollar; }
+      else if(form==='pull'){ details=roundCollar; }
+      else if(form==='chemise'){
+        details=`<path d="M ${cx-11} ${shoulderY+1} L ${cx-1} ${shoulderY+3} L ${cx-8} ${shoulderY+15} Z" fill="${habitL}" stroke="${habitLine}" stroke-width="1.5" stroke-linejoin="round"/>`+
+          `<path d="M ${cx+11} ${shoulderY+1} L ${cx+1} ${shoulderY+3} L ${cx+8} ${shoulderY+15} Z" fill="${habitL}" stroke="${habitLine}" stroke-width="1.5" stroke-linejoin="round"/>`+
+          `<line x1="${cx}" y1="${shoulderY+8}" x2="${cx}" y2="${hipY-2}" stroke="${habitLine}" stroke-width="1.5" opacity="0.7"/>`+
+          [0,1,2,3].map(i=>`<circle cx="${cx}" cy="${shoulderY+28+i*20}" r="1.8" fill="${habitLine}"/>`).join('');
+      }
+      else if(form==='robe'){ hipW=hh+24; hemY=hipY+44; hemCurve=26; sleeveEnd=shortEnd;
+        details=roundCollar+`<path d="M ${cx-sh+4} ${midY+6} Q ${cx} ${midY+12} ${cx+sh-4} ${midY+6}" fill="none" stroke="${habitLine}" stroke-width="3" opacity="0.5"/>`;
+      }
+      else if(form==='debardeur'){ drawSleeve=false;
+        details=`<path d="M ${cx-15} ${shoulderY+1} Q ${cx} ${shoulderY+24} ${cx+15} ${shoulderY+1} L ${cx+9} ${shoulderY-1} Q ${cx} ${shoulderY+17} ${cx-9} ${shoulderY-1} Z" fill="url(#gSkin)" stroke="${skinLine}" stroke-width="1.5" stroke-linejoin="round"/>`;
+      }
+      bodyInner = legsFn('url(#gPant)',pantLine,shoe,shade(shoe,-0.4)) +
+        torsoFn(hipW,hemY,hemCurve,'url(#gCloth)',habitLine) + details +
+        armsFn('url(#gSkin)',skinLine,'url(#gSkin)',skinLine) +
+        (drawSleeve ? sleeveFn(sleeveEnd,'url(#gCloth)',habitLine) : '');
+    }
 
     /* ---------- TÊTE / CHEVEUX / VISAGE ---------- */
     const neck = `<rect x="${cx-13}" y="${headBot-16}" width="26" height="30" rx="10" `+
@@ -267,36 +338,55 @@
     /* Cheveux */
     let hairBehind='', hairTop='';
     const st=state.cheveuxStyle;
-    if(st==='court' || st==='long'){
-      // calotte : le contour du dessus épouse EXACTEMENT l'ellipse de la tête
-      // (rayons +2 px) pour recouvrir tout le crâne ; le bas dégage front & oreilles.
+    if(!hideHair && st!=='chauve'){
       const HR=headRx+2, VR=headRy+2, kx=+(HR*0.552).toFixed(1), ky=+(VR*0.552).toFixed(1);
-      hairTop =
+      // calotte qui épouse le crâne (base commune à plusieurs coiffures)
+      const calotte =
         `<path d="M ${cx-HR} ${headCy} `+
         `C ${cx-HR} ${headCy-ky} ${cx-kx} ${headCy-VR} ${cx} ${headCy-VR} `+
         `C ${cx+kx} ${headCy-VR} ${cx+HR} ${headCy-ky} ${cx+HR} ${headCy} `+
         `C ${cx+HR-8} ${headCy-15} ${cx+13} ${headCy-16} ${cx} ${headCy-16} `+
         `C ${cx-13} ${headCy-16} ${cx-HR+8} ${headCy-15} ${cx-HR} ${headCy} Z" `+
         `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`;
-      if(st==='long'){
+
+      if(st==='court'){ hairTop=calotte; }
+      else if(st==='carre'){
+        const yB=headBot+4;
+        hairBehind=`<g fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round">`+
+          `<path d="M ${cx-HR} ${headCy-4} L ${cx-HR} ${yB} Q ${cx-HR+7} ${yB+5} ${cx-HR+13} ${yB} L ${cx-HR+13} ${headCy-4} Z"/>`+
+          `<path d="M ${cx+HR} ${headCy-4} L ${cx+HR} ${yB} Q ${cx+HR-7} ${yB+5} ${cx+HR-13} ${yB} L ${cx+HR-13} ${headCy-4} Z"/></g>`;
+        hairTop=calotte;
+      }
+      else if(st==='long'){
         const yE=shoulderY+50;
-        hairBehind =
-          `<path d="M ${cx-headRx+2} ${headCy-4} `+
-          `C ${cx-headRx-10} ${headCy+30} ${cx-headRx-7} ${yE-16} ${cx-headRx+6} ${yE} `+
-          `C ${cx-headRx+16} ${yE-22} ${cx-headRx+12} ${headCy+20} ${cx-headRx+9} ${headCy-2} Z" `+
-          `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`+
-          `<path d="M ${cx+headRx-2} ${headCy-4} `+
-          `C ${cx+headRx+10} ${headCy+30} ${cx+headRx+7} ${yE-16} ${cx+headRx-6} ${yE} `+
-          `C ${cx+headRx-16} ${yE-22} ${cx+headRx-12} ${headCy+20} ${cx+headRx-9} ${headCy-2} Z" `+
+        hairBehind=
+          `<path d="M ${cx-headRx+2} ${headCy-4} C ${cx-headRx-10} ${headCy+30} ${cx-headRx-7} ${yE-16} ${cx-headRx+6} ${yE} C ${cx-headRx+16} ${yE-22} ${cx-headRx+12} ${headCy+20} ${cx-headRx+9} ${headCy-2} Z" fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`+
+          `<path d="M ${cx+headRx-2} ${headCy-4} C ${cx+headRx+10} ${headCy+30} ${cx+headRx+7} ${yE-16} ${cx+headRx-6} ${yE} C ${cx+headRx-16} ${yE-22} ${cx+headRx-12} ${headCy+20} ${cx+headRx-9} ${headCy-2} Z" fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`;
+        hairTop=calotte;
+      }
+      else if(st==='couettes'){
+        hairBehind=`<g fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round">`+
+          `<ellipse cx="${cx-HR-6}" cy="${headCy+18}" rx="11" ry="18"/>`+
+          `<ellipse cx="${cx+HR+6}" cy="${headCy+18}" rx="11" ry="18"/></g>`+
+          `<g fill="url(#gHair)"><circle cx="${cx-HR+3}" cy="${headCy+4}" r="6"/><circle cx="${cx+HR-3}" cy="${headCy+4}" r="6"/></g>`;
+        hairTop=calotte;
+      }
+      else if(st==='chignon'){
+        hairTop=calotte+`<circle cx="${cx}" cy="${headCy-VR-7}" r="12" fill="url(#gHair)" stroke="${hairLine}" stroke-width="2"/>`;
+      }
+      else if(st==='crete'){
+        hairTop=`<path d="M ${cx} ${headCy-VR-16} C ${cx+12} ${headCy-VR-4} ${cx+10} ${headCy-8} ${cx+9} ${headCy-2} `+
+          `L ${cx-9} ${headCy-2} C ${cx-10} ${headCy-8} ${cx-12} ${headCy-VR-4} ${cx} ${headCy-VR-16} Z" `+
           `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`;
       }
-    } else if(st==='boucle'){
-      let back=''; [[-30,-8],[-31,-26],[-16,-39],[4,-44],[23,-38],[33,-20],[33,2]]
-        .forEach(p=> back += `<circle cx="${cx+p[0]}" cy="${headCy+p[1]}" r="15"/>`);
-      hairBehind = `<g fill="url(#gHair)">${back}</g>`;
-      let front=''; [[-21,-6],[-7,-12],[7,-11],[20,-4]]
-        .forEach(p=> front += `<circle cx="${cx+p[0]}" cy="${headCy+p[1]}" r="10"/>`);
-      hairTop = `<g fill="url(#gHair)">${front}</g>`;
+      else if(st==='boucle'){
+        let back=''; [[-30,-8],[-31,-26],[-16,-39],[4,-44],[23,-38],[33,-20],[33,2]]
+          .forEach(p=> back += `<circle cx="${cx+p[0]}" cy="${headCy+p[1]}" r="15"/>`);
+        hairBehind=`<g fill="url(#gHair)">${back}</g>`;
+        let front=''; [[-21,-6],[-7,-12],[7,-11],[20,-4]]
+          .forEach(p=> front += `<circle cx="${cx+p[0]}" cy="${headCy+p[1]}" r="10"/>`);
+        hairTop=`<g fill="url(#gHair)">${front}</g>`;
+      }
     }
 
     /* Visage */
@@ -313,7 +403,7 @@
     const mouth = `<path d="M ${cx-9} ${eyeY+18} Q ${cx} ${eyeY+26} ${cx+9} ${eyeY+18}" `+
       `fill="none" stroke="#b34b43" stroke-width="3" stroke-linecap="round"/>`;
 
-    const beard = state.barbe
+    const beard = (state.barbe && !hideHair)
       ? `<path d="M ${cx-headRx+3} ${headCy+1} `+
         `Q ${cx-headRx+1} ${headBot+3} ${cx} ${headBot+6} `+
         `Q ${cx+headRx-1} ${headBot+3} ${cx+headRx-3} ${headCy+1} `+
@@ -332,9 +422,9 @@
     document.getElementById('avatar').innerHTML =
       defs + ground +
       `<g transform="${wholeT}">`+
-        `<g transform="${bodyT}">${legs}${torso}${arms}</g>`+
+        `<g transform="${bodyT}">${bodyInner}</g>`+
         neck + hairBehind + head + ears + hairTop + cheeks + beard +
-        eyes + nose + mouth + glasses +
+        eyes + nose + mouth + glasses + helmet +
       `</g>`;
 
     document.getElementById('nomAff').textContent = state.nom || 'Explorateur·rice';
@@ -381,6 +471,7 @@
     swatches('habit',HABITS,'habit');
     chips('genre',GENRES,'genre');
     chips('cheveuxStyle',STYLES,'cheveuxStyle');
+    chips('habitForme',FORMES,'habitForme');
     buildOptions();
     document.getElementById('nom').value=state.nom;
     document.getElementById('taille').value=state.taille;
@@ -400,6 +491,7 @@
     state.cheveuxCouleur=pick(CHEVEUX);
     state.cheveuxStyle=pick(STYLES)[0];
     state.habit=pick(HABITS);
+    state.habitForme=pick(FORMES)[0];
     state.taille=Math.round((0.86+Math.random()*0.28)*50)/50;
     state.corpulence=Math.round((0.82+Math.random()*0.46)*50)/50;
     state.lunettes=Math.random()<0.35;
