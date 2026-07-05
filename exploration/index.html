@@ -170,108 +170,177 @@
     habit:'#3498db', taille:1, corpulence:1, lunettes:false, barbe:false
   };
 
-  /* --- Géométrie de l'avatar --- */
-  const cx=120, footY=362, headCy=104, headRx=36, headRy=42, shoulderY=162, hipY=258;
+  /* --- Utilitaires couleur (dégradés & contours) --- */
+  function h2r(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');
+    return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];}
+  function r2h(r,g,b){return '#'+[r,g,b].map(x=>{x=Math.max(0,Math.min(255,Math.round(x)));
+    return x.toString(16).padStart(2,'0');}).join('');}
+  function shade(hex,a){const [r,g,b]=h2r(hex);
+    if(a<0){const f=1+a;return r2h(r*f,g*f,b*f);}
+    return r2h(r+(255-r)*a,g+(255-g)*a,b+(255-b)*a);}
 
   function silhouette(g){
-    if(g==='homme')  return {sh:56, hh:40};
-    if(g==='femme')  return {sh:42, hh:52};
-    return {sh:49, hh:46};
-  }
-
-  function hairBack(style, col){
-    if(style==='chauve') return '';
-    let s = `<ellipse cx="${cx}" cy="${headCy-5}" rx="${headRx+4}" ry="${headRy+4}" fill="${col}"/>`;
-    if(style==='long'){
-      const h = (shoulderY+74)-(headCy-6);
-      s += `<rect x="${cx-headRx-6}" y="${headCy-6}" width="16" height="${h}" rx="8" fill="${col}"/>`;
-      s += `<rect x="${cx+headRx-10}" y="${headCy-6}" width="16" height="${h}" rx="8" fill="${col}"/>`;
-    }
-    if(style==='boucle'){
-      const pts=[[-32,-16],[-24,-34],[-6,-44],[14,-44],[30,-30],[34,-10],[0,-40]];
-      pts.forEach(p=> s += `<circle cx="${cx+p[0]}" cy="${headCy+p[1]}" r="16" fill="${col}"/>`);
-    }
-    return s;
+    if(g==='homme')  return {sh:58, hh:42};
+    if(g==='femme')  return {sh:44, hh:54};
+    return {sh:51, hh:48};
   }
 
   function render(){
     const {sh,hh}=silhouette(state.genre);
     const skin=state.peau, hair=state.cheveuxCouleur, habit=state.habit;
+    const skinD=shade(skin,-0.16), skinLine=shade(skin,-0.42);
+    const hairD=shade(hair,-0.30), hairL=shade(hair,0.40), hairLine=shade(hair,-0.55);
+    const habitLine=shade(habit,-0.40);
+    const pant='#3d4c66', pantLine='#28324a', shoe='#252f3e';
 
-    // Jambes + chaussures
-    const legW = hh-8;
+    const cx=120, headCy=106, headRx=37, headRy=43, headTop=headCy-headRy, headBot=headCy+headRy;
+    const shoulderY=168, hipY=262, footY=352, groundY=360;
+
+    /* Dégradés */
+    const defs = `<defs>`+
+      `<radialGradient id="gSkin" cx="42%" cy="34%" r="78%">`+
+        `<stop offset="0%" stop-color="${shade(skin,0.24)}"/>`+
+        `<stop offset="62%" stop-color="${skin}"/>`+
+        `<stop offset="100%" stop-color="${skinD}"/></radialGradient>`+
+      `<linearGradient id="gHair" x1="0" y1="0" x2="0.25" y2="1">`+
+        `<stop offset="0%" stop-color="${hairL}"/>`+
+        `<stop offset="48%" stop-color="${hair}"/>`+
+        `<stop offset="100%" stop-color="${hairD}"/></linearGradient>`+
+      `<linearGradient id="gCloth" x1="0.15" y1="0" x2="0.5" y2="1">`+
+        `<stop offset="0%" stop-color="${shade(habit,0.20)}"/>`+
+        `<stop offset="55%" stop-color="${habit}"/>`+
+        `<stop offset="100%" stop-color="${shade(habit,-0.22)}"/></linearGradient>`+
+      `<linearGradient id="gPant" x1="0" y1="0" x2="0" y2="1">`+
+        `<stop offset="0%" stop-color="${pant}"/>`+
+        `<stop offset="100%" stop-color="${shade(pant,-0.22)}"/></linearGradient>`+
+    `</defs>`;
+
+    const ground = `<ellipse cx="${cx}" cy="${groundY}" rx="62" ry="8.5" fill="#000" opacity="0.22"/>`;
+
+    /* ---------- CORPS (mis à l'échelle par la corpulence) ---------- */
+    const legW=hh-8, gap=8, lX=cx-gap/2-legW, rX=cx+gap/2, legTop=hipY-18, legH=footY-legTop-4;
     const legs =
-      `<g fill="#33415a">`+
-      `<rect x="${cx-hh+4}" y="${hipY-8}" width="${legW}" height="96" rx="9"/>`+
-      `<rect x="${cx+4}"   y="${hipY-8}" width="${legW}" height="96" rx="9"/>`+
-      `</g>`+
-      `<g fill="#1f2937">`+
-      `<ellipse cx="${cx-hh+4+legW/2}" cy="${hipY+90}" rx="${legW/2+3}" ry="8"/>`+
-      `<ellipse cx="${cx+4+legW/2}"    cy="${hipY+90}" rx="${legW/2+3}" ry="8"/>`+
-      `</g>`;
+      `<g stroke="${pantLine}" stroke-width="2.5" stroke-linejoin="round">`+
+      `<rect x="${lX}" y="${legTop}" width="${legW}" height="${legH}" rx="11" fill="url(#gPant)"/>`+
+      `<rect x="${rX}" y="${legTop}" width="${legW}" height="${legH}" rx="11" fill="url(#gPant)"/></g>`+
+      `<g fill="${shoe}" stroke="${shade(shoe,-0.4)}" stroke-width="2" stroke-linejoin="round">`+
+      `<rect x="${lX-4}" y="${footY-9}" width="${legW+11}" height="15" rx="7"/>`+
+      `<rect x="${rX-7}" y="${footY-9}" width="${legW+11}" height="15" rx="7"/></g>`;
 
-    // Torse (habit)
     const midY=(shoulderY+hipY)/2;
     const torso =
       `<path d="M ${cx-sh} ${shoulderY} `+
-      `Q ${cx-sh-4} ${midY} ${cx-hh} ${hipY} `+
+      `C ${cx-sh-3} ${midY} ${cx-hh-2} ${hipY-8} ${cx-hh} ${hipY} `+
       `Q ${cx} ${hipY+18} ${cx+hh} ${hipY} `+
-      `Q ${cx+sh+4} ${midY} ${cx+sh} ${shoulderY} `+
-      `Q ${cx} ${shoulderY+16} ${cx-sh} ${shoulderY} Z" fill="${habit}"/>`;
+      `C ${cx+sh+3} ${midY} ${cx+sh+3} ${midY} ${cx+sh} ${shoulderY} `+
+      `Q ${cx} ${shoulderY+18} ${cx-sh} ${shoulderY} Z" `+
+      `fill="url(#gCloth)" stroke="${habitLine}" stroke-width="2.5" stroke-linejoin="round"/>`+
+      `<path d="M ${cx-14} ${shoulderY+3} Q ${cx} ${shoulderY+19} ${cx+14} ${shoulderY+3}" `+
+      `fill="none" stroke="${habitLine}" stroke-width="2.5" stroke-linecap="round"/>`;
 
-    // Bras (manches habit) + mains (peau)
-    const armW=20, aTop=shoulderY+2, aBot=hipY+2;
-    const lc=cx-sh+4, rc=cx+sh-4;
+    const armW=19, aTop=shoulderY+4, aBot=hipY+4, lc=cx-sh+3, rc=cx+sh-3;
     const arms =
-      `<g fill="${habit}">`+
-      `<rect x="${lc-armW/2}" y="${aTop}" width="${armW}" height="${aBot-aTop}" rx="10"/>`+
-      `<rect x="${rc-armW/2}" y="${aTop}" width="${armW}" height="${aBot-aTop}" rx="10"/>`+
-      `</g>`+
-      `<g fill="${skin}">`+
-      `<circle cx="${lc}" cy="${aBot+4}" r="11"/>`+
-      `<circle cx="${rc}" cy="${aBot+4}" r="11"/>`+
-      `</g>`;
+      `<g stroke="${habitLine}" stroke-width="2.5" stroke-linejoin="round">`+
+      `<rect x="${lc-armW/2}" y="${aTop}" width="${armW}" height="${aBot-aTop}" rx="9.5" fill="url(#gCloth)"/>`+
+      `<rect x="${rc-armW/2}" y="${aTop}" width="${armW}" height="${aBot-aTop}" rx="9.5" fill="url(#gCloth)"/></g>`+
+      `<path d="M ${lc-armW/2} ${aTop+26} h ${armW}" stroke="${habitLine}" stroke-width="2" fill="none" opacity="0.5"/>`+
+      `<path d="M ${rc-armW/2} ${aTop+26} h ${armW}" stroke="${habitLine}" stroke-width="2" fill="none" opacity="0.5"/>`+
+      `<g fill="url(#gSkin)" stroke="${skinLine}" stroke-width="2">`+
+      `<circle cx="${lc}" cy="${aBot+6}" r="10.5"/>`+
+      `<circle cx="${rc}" cy="${aBot+6}" r="10.5"/></g>`;
 
-    // Cou
-    const neck = `<rect x="${cx-12}" y="140" width="24" height="26" rx="8" fill="${skin}"/>`;
+    /* ---------- TÊTE / CHEVEUX / VISAGE ---------- */
+    const neck = `<rect x="${cx-13}" y="${headBot-16}" width="26" height="30" rx="10" `+
+      `fill="url(#gSkin)" stroke="${skinLine}" stroke-width="2"/>`;
+    const head = `<ellipse cx="${cx}" cy="${headCy}" rx="${headRx}" ry="${headRy}" `+
+      `fill="url(#gSkin)" stroke="${skinLine}" stroke-width="2.5"/>`;
+    const ears = `<g fill="url(#gSkin)" stroke="${skinLine}" stroke-width="2">`+
+      `<ellipse cx="${cx-headRx+2}" cy="${headCy+6}" rx="6.5" ry="10"/>`+
+      `<ellipse cx="${cx+headRx-2}" cy="${headCy+6}" rx="6.5" ry="10"/></g>`;
+    const cheeks = `<g fill="#ff7d7d" opacity="0.15">`+
+      `<ellipse cx="${cx-19}" cy="${headCy+15}" rx="8" ry="5.5"/>`+
+      `<ellipse cx="${cx+19}" cy="${headCy+15}" rx="8" ry="5.5"/></g>`;
 
-    // Tête + oreilles
-    const head =
-      `<ellipse cx="${cx}" cy="${headCy}" rx="${headRx}" ry="${headRy}" fill="${skin}"/>`+
-      `<ellipse cx="${cx-headRx}" cy="${headCy+4}" rx="6" ry="9" fill="${skin}"/>`+
-      `<ellipse cx="${cx+headRx}" cy="${headCy+4}" rx="6" ry="9" fill="${skin}"/>`;
+    /* Cheveux */
+    let hairBack='', hairFront='';
+    const st=state.cheveuxStyle;
+    if(st!=='chauve'){
+      hairBack += `<ellipse cx="${cx}" cy="${headCy-6}" rx="${headRx+4}" ry="${headRy+4}" `+
+        `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2"/>`;
+      if(st==='long'){
+        const yE=shoulderY+48;
+        hairBack += `<path d="M ${cx-headRx-2} ${headCy-6} `+
+          `C ${cx-headRx-12} ${headCy+34} ${cx-headRx-9} ${yE-18} ${cx-headRx+5} ${yE} `+
+          `C ${cx-headRx+17} ${yE-26} ${cx-headRx+13} ${headCy+26} ${cx-headRx+11} ${headCy} Z" `+
+          `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`+
+          `<path d="M ${cx+headRx+2} ${headCy-6} `+
+          `C ${cx+headRx+12} ${headCy+34} ${cx+headRx+9} ${yE-18} ${cx+headRx-5} ${yE} `+
+          `C ${cx+headRx-17} ${yE-26} ${cx+headRx-13} ${headCy+26} ${cx+headRx-11} ${headCy} Z" `+
+          `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`;
+      }
+      if(st==='boucle'){
+        let cl=''; [[-30,-10],[-31,-28],[-16,-40],[4,-45],[23,-39],[33,-22],[33,-2],[-3,-46]]
+          .forEach(p=> cl += `<circle cx="${cx+p[0]}" cy="${headCy+p[1]}" r="15"/>`);
+        hairBack += `<g fill="url(#gHair)">${cl}</g>`;
+      }
+    }
+    if(st==='court' || st==='long'){
+      hairFront =
+        `<path d="M ${cx-headRx+1} ${headCy-4} `+
+        `Q ${cx-headRx+2} ${headTop+5} ${cx-6} ${headTop+2} `+
+        `Q ${cx+headRx-8} ${headTop+1} ${cx+headRx-1} ${headCy-4} `+
+        `Q ${cx+10} ${headCy-1} ${cx-2} ${headCy-13} `+
+        `Q ${cx-headRx+9} ${headCy-6} ${cx-headRx+1} ${headCy-4} Z" `+
+        `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`+
+        `<path d="M ${cx-15} ${headTop+11} Q ${cx-1} ${headTop+4} ${cx+11} ${headTop+13}" `+
+        `fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="0.22"/>`;
+    } else if(st==='boucle'){
+      let fr=''; [[-20,-7],[-6,-13],[8,-12],[20,-5]]
+        .forEach(p=> fr += `<circle cx="${cx+p[0]}" cy="${headCy+p[1]}" r="10"/>`);
+      hairFront = `<g fill="url(#gHair)">${fr}</g>`;
+    }
 
-    // Barbe
+    /* Visage */
+    const eyeY=headCy+3, dx=13;
+    const brows = `<g fill="none" stroke="${hairD}" stroke-width="3" stroke-linecap="round">`+
+      `<path d="M ${cx-dx-6} ${eyeY-11} Q ${cx-dx} ${eyeY-15} ${cx-dx+6} ${eyeY-11}"/>`+
+      `<path d="M ${cx+dx-6} ${eyeY-11} Q ${cx+dx} ${eyeY-15} ${cx+dx+6} ${eyeY-11}"/></g>`;
+    const eyes =
+      `<ellipse cx="${cx-dx}" cy="${eyeY}" rx="5.5" ry="6.5" fill="#fff" stroke="${shade(skin,-0.28)}" stroke-width="1"/>`+
+      `<ellipse cx="${cx+dx}" cy="${eyeY}" rx="5.5" ry="6.5" fill="#fff" stroke="${shade(skin,-0.28)}" stroke-width="1"/>`+
+      `<circle cx="${cx-dx}" cy="${eyeY+1}" r="3" fill="#3a2a20"/>`+
+      `<circle cx="${cx+dx}" cy="${eyeY+1}" r="3" fill="#3a2a20"/>`+
+      `<circle cx="${cx-dx+1.2}" cy="${eyeY-0.6}" r="1.1" fill="#fff"/>`+
+      `<circle cx="${cx+dx+1.2}" cy="${eyeY-0.6}" r="1.1" fill="#fff"/>`;
+    const nose = `<path d="M ${cx-1} ${eyeY+6} Q ${cx-3} ${eyeY+12} ${cx+2} ${eyeY+12}" `+
+      `fill="none" stroke="${skinD}" stroke-width="2" stroke-linecap="round"/>`;
+    const mouth = `<path d="M ${cx-9} ${eyeY+18} Q ${cx} ${eyeY+26} ${cx+9} ${eyeY+18}" `+
+      `fill="none" stroke="#b34b43" stroke-width="3" stroke-linecap="round"/>`;
+
     const beard = state.barbe
-      ? `<path d="M ${cx-headRx+3} ${headCy+4} Q ${cx} ${headCy+headRy+10} ${cx+headRx-3} ${headCy+4} `+
-        `Q ${cx} ${headCy+headRy-4} ${cx-headRx+3} ${headCy+4} Z" fill="${hair}"/>` : '';
+      ? `<path d="M ${cx-headRx+3} ${headCy+1} `+
+        `Q ${cx-headRx+1} ${headBot+3} ${cx} ${headBot+6} `+
+        `Q ${cx+headRx-1} ${headBot+3} ${cx+headRx-3} ${headCy+1} `+
+        `Q ${cx} ${headCy+18} ${cx-headRx+3} ${headCy+1} Z" `+
+        `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round" opacity="0.96"/>` : '';
 
-    // Visage
-    const ey=headCy;
-    const face =
-      `<g fill="${hair}"><rect x="${cx-24}" y="${ey-16}" width="16" height="4" rx="2"/>`+
-      `<rect x="${cx+8}" y="${ey-16}" width="16" height="4" rx="2"/></g>`+
-      `<g><circle cx="${cx-15}" cy="${ey}" r="5" fill="#fff"/><circle cx="${cx+15}" cy="${ey}" r="5" fill="#fff"/>`+
-      `<circle cx="${cx-15}" cy="${ey}" r="2.4" fill="#20303f"/><circle cx="${cx+15}" cy="${ey}" r="2.4" fill="#20303f"/></g>`+
-      `<path d="M ${cx-3} ${ey+8} Q ${cx} ${ey+14} ${cx+4} ${ey+9}" fill="none" stroke="#a06a45" stroke-width="2.5" stroke-linecap="round"/>`+
-      `<path d="M ${cx-13} ${ey+22} Q ${cx} ${ey+32} ${cx+13} ${ey+22}" fill="none" stroke="#7a3b34" stroke-width="3" stroke-linecap="round"/>`;
-
-    // Lunettes
     const glasses = state.lunettes
-      ? `<g fill="none" stroke="#141b26" stroke-width="3">`+
-        `<circle cx="${cx-15}" cy="${ey}" r="11"/><circle cx="${cx+15}" cy="${ey}" r="11"/>`+
-        `<line x1="${cx-4}" y1="${ey}" x2="${cx+4}" y2="${ey}"/></g>` : '';
+      ? `<g fill="#0b1220" fill-opacity="0.07" stroke="#161d29" stroke-width="2.5" stroke-linejoin="round">`+
+        `<rect x="${cx-dx-8}" y="${eyeY-7}" width="16" height="14" rx="6"/>`+
+        `<rect x="${cx+dx-8}" y="${eyeY-7}" width="16" height="14" rx="6"/></g>`+
+        `<path d="M ${cx-5} ${eyeY-2} h 10" stroke="#161d29" stroke-width="2.5" fill="none"/>` : '';
 
-    const bodyT = `translate(${cx} ${hipY+2}) scale(${state.corpulence} 1) translate(${-cx} ${-(hipY+2)})`;
-    const wholeT= `translate(${cx} ${footY}) scale(1 ${state.taille}) translate(${-cx} ${-footY})`;
+    const bodyT  = `translate(${cx} ${hipY}) scale(${state.corpulence} 1) translate(${-cx} ${-hipY})`;
+    const wholeT = `translate(${cx} ${footY}) scale(1 ${state.taille}) translate(${-cx} ${-footY})`;
 
     document.getElementById('avatar').innerHTML =
+      defs + ground +
       `<g transform="${wholeT}">`+
         `<g transform="${bodyT}">${legs}${torso}${arms}</g>`+
-        neck + hairBack(state.cheveuxStyle, hair) + head + beard + face + glasses +
+        neck + hairBack + head + ears + cheeks + beard + hairFront +
+        brows + eyes + nose + mouth + glasses +
       `</g>`;
 
-    // Textes
     document.getElementById('nomAff').textContent = state.nom || 'Explorateur·rice';
     const gl = {homme:'Homme', femme:'Femme', indifferent:'Indifférent'}[state.genre];
     document.getElementById('genreAff').textContent = gl;
