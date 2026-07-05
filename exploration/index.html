@@ -290,16 +290,21 @@
     }
     else if(form==='cavernes'){
       const furG='url(#gFur)', furL=shade('#8a6a45',-0.42);
-      const loin=`<path d="M ${cx-hh+2} ${hipY-14} L ${cx+hh-2} ${hipY-14} L ${cx+hh-6} ${hipY+8} `+
-        `L ${cx+hh-16} ${hipY-2} L ${cx+4} ${hipY+12} L ${cx-8} ${hipY-2} L ${cx-hh+8} ${hipY+10} Z" `+
-        `fill="${furG}" stroke="${furL}" stroke-width="2" stroke-linejoin="round"/>`;
-      const toga=`<path d="M ${cx-sh+2} ${shoulderY-2} L ${cx-sh+18} ${shoulderY-6} L ${cx+hh-4} ${hipY-6} `+
-        `L ${cx+hh-16} ${hipY+4} L ${cx-6} ${hipY-10} L ${cx-sh+2} ${shoulderY+16} Z" `+
-        `fill="${furG}" stroke="${furL}" stroke-width="2" stroke-linejoin="round"/>`;
-      const spots=`<g fill="${furL}" opacity="0.5"><circle cx="${cx-14}" cy="${hipY-16}" r="2.5"/>`+
-        `<circle cx="${cx+10}" cy="${hipY-8}" r="2.5"/><circle cx="${cx-2}" cy="${shoulderY+22}" r="2.5"/></g>`;
-      bodyInner = legsFn('url(#gSkin)',skinLine,skin,skinLine) + torsoFn(hh,hipY,18,'url(#gSkin)',skinLine) +
-        armsFn('url(#gSkin)',skinLine,'url(#gSkin)',skinLine) + loin + toga + spots;
+      // tunique en peau de bête COUVRANTE : encolure haute, les deux épaules, bas déchiqueté
+      const tunic=`<path d="M ${cx-sh} ${shoulderY} `+
+        `Q ${cx} ${shoulderY+17} ${cx+sh} ${shoulderY} `+
+        `C ${cx+sh+3} ${midY} ${cx+hh+2} ${hipY-8} ${cx+hh} ${hipY} `+
+        `L ${cx+hh-10} ${hipY+12} L ${cx+hh-20} ${hipY+2} L ${cx} ${hipY+14} `+
+        `L ${cx-hh+20} ${hipY+2} L ${cx-hh+10} ${hipY+12} L ${cx-hh} ${hipY} `+
+        `C ${cx-hh-2} ${hipY-8} ${cx-sh-3} ${midY} ${cx-sh} ${shoulderY} Z" `+
+        `fill="${furG}" stroke="${furL}" stroke-width="2.5" stroke-linejoin="round"/>`;
+      const strap=`<path d="M ${cx-sh+7} ${shoulderY+2} L ${cx+10} ${midY-4}" `+
+        `stroke="${furL}" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.5"/>`;
+      const spots=`<g fill="${furL}" opacity="0.45"><circle cx="${cx-14}" cy="${hipY-18}" r="2.6"/>`+
+        `<circle cx="${cx+13}" cy="${hipY-6}" r="2.6"/><circle cx="${cx-2}" cy="${shoulderY+28}" r="2.6"/>`+
+        `<circle cx="${cx+18}" cy="${midY}" r="2.6"/></g>`;
+      bodyInner = legsFn('url(#gSkin)',skinLine,skin,skinLine) + tunic + strap + spots +
+        armsFn('url(#gSkin)',skinLine,'url(#gSkin)',skinLine);
     }
     else {
       let hipW=hh, hemY=hipY, hemCurve=18, sleeveEnd=longEnd, details='', drawSleeve=true;
@@ -324,7 +329,7 @@
     }
 
     /* ---------- TÊTE / CHEVEUX / VISAGE ---------- */
-    const neck = `<rect x="${cx-13}" y="${headBot-16}" width="26" height="30" rx="10" `+
+    const neck = `<rect x="${cx-12}" y="${headBot-14}" width="24" height="42" rx="10" `+
       `fill="url(#gSkin)" stroke="${skinLine}" stroke-width="2"/>`;
     const head = `<ellipse cx="${cx}" cy="${headCy}" rx="${headRx}" ry="${headRy}" `+
       `fill="url(#gSkin)" stroke="${skinLine}" stroke-width="2.5"/>`;
@@ -422,8 +427,9 @@
     document.getElementById('avatar').innerHTML =
       defs + ground +
       `<g transform="${wholeT}">`+
+        neck +
         `<g transform="${bodyT}">${bodyInner}</g>`+
-        neck + hairBehind + head + ears + hairTop + cheeks + beard +
+        hairBehind + head + ears + hairTop + cheeks + beard +
         eyes + nose + mouth + glasses + helmet +
       `</g>`;
 
