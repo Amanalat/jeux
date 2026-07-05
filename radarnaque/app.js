@@ -66,6 +66,7 @@
      ===================================================================== */
   function ecranAccueil(){
     hud.style.display = 'none';
+    var mb = el('menu-btn'); if (mb) mb.style.display = 'none';
     app.innerHTML =
       '<div class="panel hero">' +
         '<div class="big-em">🛡️</div>' +
@@ -104,6 +105,7 @@
     deck = shuffle(arnaques.slice(0, nbArnaques).concat(fiables.slice(0, nbFiables)));
     idx = 0; score = 0;
     hud.style.display = 'flex';
+    var mb = el('menu-btn'); if (mb) mb.style.display = '';
     montrerCarte();
   }
 
@@ -699,6 +701,14 @@
       var match = document.querySelector('.textsize button[data-t="'+saved+'"]');
       setTaille(saved, match);
     }
+
+    // bouton « retour au menu » (visible seulement pendant le jeu)
+    var mb = el('menu-btn');
+    if (mb) mb.onclick = function(){
+      if (hud && hud.style.display !== 'none' &&
+          !confirm('Revenir au menu ? La partie en cours sera perdue.')) return;
+      ecranAccueil();
+    };
 
     // bouton glossaire de la barre du haut (accessible pendant le jeu)
     var gb = el('gloss-btn');
