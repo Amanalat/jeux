@@ -76,7 +76,7 @@
         '<div class="how">' +
           '<div class="step"><div class="n">1</div><div>Lisez le message affiché (SMS, e-mail, appel…).</div></div>' +
           '<div class="step"><div class="n">2</div><div>Choisissez&nbsp;: <b>« C’est une arnaque »</b> ou <b>« C’est fiable »</b>.</div></div>' +
-          '<div class="step"><div class="n">3</div><div>On vous explique les indices à repérer et le bon réflexe.</div></div>' +
+          '<div class="step"><div class="n">3</div><div>Trouvez les indices qui permettent de prouver que l’on peut faire confiance ou qu’il faut se méfier de ce message.</div></div>' +
         '</div>' +
         '<div class="accueil-boutons">' +
           '<button class="btn-start" id="go">Commencer&nbsp;▶</button>' +
