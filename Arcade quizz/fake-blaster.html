@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAKE BLASTER — Esprit Critique</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="questions.js"></script>
+<script src="questions-6e5e.js"></script>
+<script src="questions-niveau1.js"></script>
+<script src="questions-niveau2.js"></script>
+<script src="questions-niveau3.js"></script>
+<script src="qcm-store.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#07020f;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;
+  font-family:'Press Start 2P',monospace;
+}
+#wrap{position:relative;width:800px;max-width:100vw;}
+#game{
+  display:block;width:800px;height:460px;max-width:100%;
+  border:3px solid #c8440a;
+  box-shadow:0 0 60px rgba(255,100,0,0.5);
+  cursor:crosshair;
+}
+#qbar{
+  background:#09040f;border:2px solid #c8440a;border-top:none;
+  padding:10px 18px;display:flex;align-items:center;gap:12px;
+  line-height:1.5;
+}
+#qlabel{font-size:10px;color:#ff7700;white-space:nowrap;flex-shrink:0;}
+#qtext{font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;color:#e0d0ff;flex:1;}
+#menubar{
+  background:#09040f;border:2px solid #c8440a;border-top:none;
+  padding:10px 18px;display:flex;align-items:center;justify-content:space-between;
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;
+}
+#menu-link{
+  color:#ffb380;text-decoration:none;letter-spacing:.06em;
+  border:1.5px solid #c8440a;border-radius:6px;padding:4px 14px;transition:all .15s;
+}
+#menu-link:hover{background:#c8440a;color:#fff;}
+#set-label{color:#8a6ab0;letter-spacing:.04em;font-size:13px;}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="800" height="460"></canvas>
+  <div id="qbar">
+    <span id="qlabel">❓ QUESTION :</span>
+    <span id="qtext">Appuie sur ESPACE ou clique pour commencer !</span>
+  </div>
+  <div id="menubar">
+    <a id="menu-link" href="index.html">← MENU</a>
+    <span id="set-label"></span>
+  </div>
+</div>
+<script>
+// ══════════════════════════════════════════════
+// DATA — questions de secours (si rien au hub)
+// ══════════════════════════════════════════════
+var QUESTIONS = [
+  {q:"Qu'est-ce qu'une Fake News ?",
+   good:["Une information fausse"],
+   bad:["Une vraie information","Un fait prouvé","Un avis personnel"]},
+  {q:"Comment vérifier une information ?",
+   good:["Vérifier la source"],
+   bad:["La partager immédiatement","Faire confiance aux réseaux","Croire si ça semble sympa"]},
+  {q:"Qu'est-ce qu'un FAIT ?",
+   good:["Une info prouvée, la même pour tous"],
+   bad:["Un avis personnel","Les gâteaux choco sont meilleurs","La glace vanille est délicieuse"]},
+  {q:"Qu'est-ce qu'une OPINION ?",
+   good:["Un avis personnel"],
+   bad:["Une info prouvée","Le soleil est une étoile","Paris est en France"]},
+  {q:"Les paréidolies, c'est quoi ?",
+   good:["Des illusions créées par le cerveau"],
+   bad:["Des faits scientifiques","De vrais visages cachés","Un type de Fake News"]},
+  {q:"C'est quoi le système INTUITIF ?",
+   good:["Rapide mais peut se tromper"],
+   bad:["Lent et très rationnel","Toujours fiable","Consomme beaucoup d'énergie"]},
+  {q:"C'est quoi le système ANALYTIQUE ?",
+   good:["Lent mais plus rationnel"],
+   bad:["Fonctionne très vite","Fait souvent des erreurs","Consomme peu d'énergie"]},
+  {q:"C'est quoi un BIAIS COGNITIF ?",
+   good:["Une distorsion du traitement d'une info"],
+   bad:["Une information vraie","Un fait scientifique","Une méthode de vérif."]},
+  {q:"Que faire face à une info en ligne ?",
+   good:["Vérifier le contexte"],
+   bad:["La partager sans vérifier","Faire confiance aux likes","Croire si c'est spectaculaire"]},
+  {q:"Le biais de CONFIRMATION, c'est ?",
+   good:["Croire les infos qui confirment nos idées"],
+   bad:["Vérifier toutes les informations","Accepter d'avoir tort","Chercher des preuves contraires"]},
+  {q:"Si une info semble trop belle pour être vraie…",
+   good:["Il faut la vérifier"],
+   bad:["C'est forcément vrai","Il faut la partager vite","C'est toujours fiable"]},
+  {q:"Que boit une vache ?",
+   good:["De l'eau"],
+   bad:["Du lait","Du jus de fruit","Du café"]},
+  {q:"L'étoile du Berger, c'est…",
+   good:["Une planète (Vénus)"],
+   bad:["Une étoile","Le Soleil","Mars"]},
+  {q:"Quelle attitude face aux Fake News ?",
+   good:["Être modeste, accepter de se tromper"],
+   bad:["Faire confiance à son instinct","Partager sans réfléchir","Ne jamais douter de soi"]},
+];
+
+// ── Construction de la session (série du hub + longueur 5/10/30) ──
+function buildSession(){
+  var src = (typeof QCMStore!=='undefined') ? QCMStore.getSessionQuestions() : null;
+  if(src && src.length && src[0].options){
+    return src.map(function(item){
+      return {q:item.q, opts:item.options.map(function(o,i){return {text:o, bad:i!==item.answer};})};
+    });
+  }
+  // Secours : format good/bad local, mélangé puis coupé
+  var list = QUESTIONS.map(function(item){
+    var opts=[{text:item.good[0],bad:false}];
+    item.bad.slice(0,3).forEach(function(b){opts.push({text:b,bad:true});});
+    return {q:item.q, opts:opts};
+  });
+  for(var i=list.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=list[i];list[i]=list[j];list[j]=t;}
+  var n=(typeof QCMStore!=='undefined')?QCMStore.loadSessionCount():10;
+  return list.slice(0,Math.min(n,list.length));
+}
+
+(function(){
+  if(typeof QCMStore==='undefined') return;
+  var info=QCMStore.getActiveInfo();
+  var lbl=document.getElementById('set-label');
+  if(lbl&&info.label) lbl.textContent=info.label+' — partie de '+Math.min(QCMStore.loadSessionCount(),info.count)+' questions';
+})();
+
+// ══════════════════════════════════════════════
+// CANVAS SETUP
+// ══════════════════════════════════════════════
+var cv = document.getElementById('game');
+var cx = cv.getContext('2d');
+var W = 800, H = 460, GY = 370; // GY = ground y
+
+// ══════════════════════════════════════════════
+// THÈMES DE DÉCOR — le ciel change à chaque question
+// ══════════════════════════════════════════════
+var THEMES = [
+  {s0:'#07020f',s1:'#11043a',s2:'#1e063c',g0:'#280d4a',g1:'#05010e',neon:'#9933ff'},
+  {s0:'#020a12',s1:'#04304a',s2:'#06425a',g0:'#0a3a4a',g1:'#01070e',neon:'#00ccff'},
+  {s0:'#0a0206',s1:'#3a0420',s2:'#52082a',g0:'#4a0d28',g1:'#0e0105',neon:'#ff3388'},
+  {s0:'#04080a',s1:'#0e2a3a',s2:'#143a52',g0:'#0d2a4a',g1:'#02080e',neon:'#33aaff'},
+  {s0:'#0a0602',s1:'#3a2404',s2:'#523506',g0:'#4a330d',g1:'#0e0902',neon:'#ffaa33'},
+  {s0:'#040802',s1:'#0e3a04',s2:'#145206',g0:'#0d4a18',g1:'#020e03',neon:'#33ff66'},
+];
+function curTheme(){ return THEMES[Math.max(0,qIdx)%THEMES.length]; }
+
+// ══════════════════════════════════════════════
+// PRECOMPUTE BACKGROUND
+// ══════════════════════════════════════════════
+var STARS = [];
+for(var si=0; si<55; si++) {
+  STARS.push({x:Math.random()*W, y:Math.random()*(GY-50), b:Math.random()*Math.PI*2});
+}
+
+var BLDG_FAR = makeBldgs(18, 190, 300, 35, 75, '#130325');
+var BLDG_MID = makeBldgs(14, 250, 340, 55, 110, '#080116');
+
+function makeBldgs(n, minTop, maxTop, minW, maxW, col) {
+  var arr=[], x=0;
+  for(var i=0; i<n; i++) {
+    var bw=minW+Math.random()*(maxW-minW);
+    var top=minTop+Math.random()*(maxTop-minTop);
+    var wins=[];
+    for(var wy=top+14; wy<GY-12; wy+=16)
+      for(var wx=x+8; wx<x+bw-8; wx+=14)
+        wins.push({x:wx,y:wy,on:Math.random()>0.4});
+    arr.push({x:x,top:top,w:bw,col:col,wins:wins});
+    x+=bw+Math.random()*12+2;
+  }
+  var full=[];
+  var baseW=x;
+  for(var t=0; t*baseW<W+200; t++)
+    for(var j=0; j<arr.length; j++)
+      full.push({x:arr[j].x+t*baseW, top:arr[j].top, w:arr[j].w, col:col, wins:arr[j].wins});
+  return full.filter(function(b){return b.x<W+130;});
+}
+
+// ══════════════════════════════════════════════
+// GAME STATE
+// ══════════════════════════════════════════════
+var gstate = 'title'; // title | playing | gameover | win
+var frame=0, bgX=0, shakeT=0, flashT=0, flashCol='#ff8800';
+var score=0, lives=3;
+var SESSION=[], qIdx=0, curQ=null, cleared=false;
+
+var hero = {x:130,y:GY,vy:0,onGround:true,shootCD:0,walkF:0,shootFX:0};
+var bullets=[], bubbles=[], particles=[], floats=[];
+var aim = {x:W*0.7, y:140};
+
+// ══════════════════════════════════════════════
+// INPUT — clavier + souris (viser et tirer partout)
+// ══════════════════════════════════════════════
+var keys={}, justP={};
+document.addEventListener('keydown',function(e){
+  if(e.code==='Escape'&&gstate!=='playing'){location.href='index.html';e.preventDefault();return;}
+  if(!keys[e.code]) justP[e.code]=true;
+  keys[e.code]=true;
+  if(['Space','ArrowUp','ArrowLeft','ArrowRight'].indexOf(e.code)>=0) e.preventDefault();
+});
+document.addEventListener('keyup',function(e){ keys[e.code]=false; });
+cv.addEventListener('mousemove',function(e){
+  var r=cv.getBoundingClientRect();
+  aim.x=(e.clientX-r.left)*(W/r.width);
+  aim.y=(e.clientY-r.top)*(H/r.height);
+});
+cv.addEventListener('click',function(){
+  if(gstate==='playing') doShoot(); else startGame();
+});
+
+// ══════════════════════════════════════════════
+// CORE
+// ══════════════════════════════════════════════
+function startGame(){
+  score=0;lives=3;shakeT=0;flashT=0;
+  hero={x:130,y:GY,vy:0,onGround:true,shootCD:0,walkF:0,shootFX:0};
+  bullets=[];particles=[];floats=[];
+  SESSION=buildSession();
+  qIdx=0;
+  loadQ();
+  gstate='playing';
+}
+
+function loadQ(){
+  curQ=SESSION[qIdx];
+  cleared=false;
+  bullets=[];
+  document.getElementById('qtext').textContent='('+(qIdx+1)+'/'+SESSION.length+') '+curQ.q;
+  spawnBubbles();
+}
+
+// ── Bulles flottantes : une par option, réparties dans le ciel ──
+function spawnBubbles(){
+  bubbles=[];
+  var opts=curQ.opts.slice();
+  for(var i=opts.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=opts[i];opts[i]=opts[j];opts[j]=t;}
+  var n=opts.length;
+  cx.font='700 14px Nunito,sans-serif';
+  for(var k=0;k<n;k++){
+    var maxW=200;
+    var lines=wrapLines(opts[k].text,maxW-16);
+    var widths=lines.map(function(l){return cx.measureText(l).width;});
+    var bw=Math.min(maxW,Math.max.apply(null,widths)+24);
+    var bh=lines.length*17+16;
+    // colonnes réparties sur la largeur, hauteur aléatoire dans le ciel
+    var colW=(W-160)/n;
+    var x=110+colW*k+colW/2+(Math.random()-0.5)*30;
+    var y=80+Math.random()*(GY-220);
+    bubbles.push({
+      x:x, y:y, w:bw, h:bh, lines:lines,
+      bad:opts[k].bad, alive:true, revealed:false,
+      bob:Math.random()*Math.PI*2, flash:0
+    });
+  }
+}
+
+function wrapLines(text,maxW){
+  var words=text.split(' '), lines=[], cur='';
+  for(var i=0;i<words.length;i++){
+    var t=cur?cur+' '+words[i]:words[i];
+    if(cx.measureText(t).width>maxW&&cur){lines.push(cur);cur=words[i];}else cur=t;
+  }
+  if(cur) lines.push(cur);
+  return lines;
+}
+
+// ── Tir vers la souris, depuis le canon du héros ──
+function doShoot(){
+  if(hero.shootCD>0) return;
+  var sx=hero.x+24, sy=hero.y-30;
+  var dx=aim.x-sx, dy=aim.y-sy;
+  var d=Math.sqrt(dx*dx+dy*dy)||1;
+  bullets.push({x:sx,y:sy,vx:dx/d*14,vy:dy/d*14});
+  hero.shootFX=12; hero.shootCD=12;
+}
+
+function loseLife(msg,fx,fy){
+  lives--;shakeT=11;
+  addFloat(fx||hero.x,(fy||hero.y-70),msg||'−1 VIE !','#ff3355');
+  if(lives<=0) gstate='gameover';
+}
+
+function boom(x,y,col,n){
+  if(!n) n=14;
+  for(var i=0;i<n;i++){
+    var a=(Math.PI*2*i/n)+Math.random()*0.4;
+    var s=2+Math.random()*5;
+    particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,life:1,col:col,sz:3+Math.random()*5});
+  }
+}
+
+function addFloat(x,y,txt,col){
+  floats.push({x:x,y:y,text:txt,col:col,life:1.4,vy:-1.1});
+}
+
+// ══════════════════════════════════════════════
+// UPDATE
+// ══════════════════════════════════════════════
+function update(){
+  frame++;
+  bgX=(bgX-0.4+W)%W;
+  if(shakeT>0) shakeT--;
+  if(flashT>0) flashT--;
+
+  if(gstate!=='playing'){
+    if(justP['Space']||justP['KeyZ']||justP['KeyX']||justP['Enter']) startGame();
+    justP={};
+    return;
+  }
+
+  // Déplacement du héros — toute la largeur (il faut avancer pour continuer)
+  if(keys['ArrowLeft']||keys['KeyA']){
+    hero.x=Math.max(50,hero.x-3.4);
+    if(hero.onGround&&frame%7===0) hero.walkF=(hero.walkF+1)%4;
+  } else if(keys['ArrowRight']||keys['KeyD']){
+    hero.x=Math.min(W-30,hero.x+3.4);
+    if(hero.onGround&&frame%7===0) hero.walkF=(hero.walkF+1)%4;
+  }
+  if((justP['ArrowUp']||justP['KeyW'])&&hero.onGround){
+    hero.vy=-18; hero.onGround=false;
+  }
+  if(justP['Space']||justP['KeyZ']||justP['KeyX']) doShoot();
+
+  // Physique
+  hero.vy+=0.55; hero.y+=hero.vy;
+  if(hero.y>=GY){hero.y=GY;hero.vy=0;hero.onGround=true;}
+  if(hero.shootCD>0) hero.shootCD--;
+  if(hero.shootFX>0) hero.shootFX--;
+
+  // Balles
+  for(var i=0;i<bullets.length;i++){bullets[i].x+=bullets[i].vx;bullets[i].y+=bullets[i].vy;}
+  bullets=bullets.filter(function(b){return b.x>-20&&b.x<W+20&&b.y>-20&&b.y<H+20;});
+
+  // Collisions balles / bulles
+  for(var bi=bullets.length-1;bi>=0;bi--){
+    var b=bullets[bi];
+    for(var ki=0;ki<bubbles.length;ki++){
+      var bb=bubbles[ki];
+      if(!bb.alive) continue;
+      var by=bb.y+Math.sin(frame*0.02+bb.bob)*6;
+      if(Math.abs(b.x-bb.x)<bb.w/2+4&&Math.abs(b.y-by)<bb.h/2+4){
+        bullets.splice(bi,1);
+        if(bb.bad){
+          bb.alive=false;
+          score+=50;
+          boom(bb.x,by,'#ff7700');boom(bb.x,by,'#ffcc00',8);
+          flashCol='rgba(255,140,0,1)';flashT=14;
+          addFloat(bb.x,by-30,'+50 pts !','#ffee55');
+          checkCleared();
+        } else if(!bb.revealed){
+          bb.revealed=true;bb.flash=20;
+          boom(bb.x,by,'#44ff88',10);
+          flashCol='rgba(220,0,50,1)';flashT=24;
+          loseLife('C\'EST LA VRAIE ! −1 VIE',bb.x,by-35);
+        }
+        break;
+      }
+    }
+  }
+
+  // Avancer vers la droite quand tout est détruit → question suivante
+  if(cleared&&hero.x>=W-40){
+    qIdx++;
+    if(qIdx>=SESSION.length){ gstate='win'; }
+    else { hero.x=60; loadQ(); }
+  }
+
+  for(var pi=0;pi<particles.length;pi++){
+    var p=particles[pi];
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.2;p.life-=0.026;p.sz*=0.97;
+  }
+  particles=particles.filter(function(p){return p.life>0;});
+
+  for(var fi=0;fi<floats.length;fi++) {floats[fi].y+=floats[fi].vy;floats[fi].life-=0.018;}
+  floats=floats.filter(function(f){return f.life>0;});
+
+  justP={};
+}
+
+function checkCleared(){
+  for(var i=0;i<bubbles.length;i++){
+    if(bubbles[i].bad&&bubbles[i].alive) return;
+  }
+  cleared=true;
+  score+=100;
+  // Pédagogie : révéler la bonne réponse en vert
+  for(var j=0;j<bubbles.length;j++){
+    if(!bubbles[j].bad) bubbles[j].revealed=true;
+  }
+  addFloat(hero.x,hero.y-90,'+100 ! AVANCE ➡','#44ffcc');
+}
+
+// ══════════════════════════════════════════════
+// DRAW HELPERS
+// ══════════════════════════════════════════════
+function pr(x,y,w,h,c){cx.fillStyle=c;cx.fillRect(Math.round(x),Math.round(y),w,h);}
+
+function rrect(x,y,w,h,r,fill,stroke){
+  cx.beginPath();
+  cx.moveTo(x+r,y);cx.lineTo(x+w-r,y);
+  cx.quadraticCurveTo(x+w,y,x+w,y+r);
+  cx.lineTo(x+w,y+h-r);
+  cx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  cx.lineTo(x+r,y+h);cx.quadraticCurveTo(x,y+h,x,y+h-r);
+  cx.lineTo(x,y+r);cx.quadraticCurveTo(x,y,x+r,y);
+  cx.closePath();
+  if(fill){cx.fillStyle=fill;cx.fill();}
+  if(stroke){cx.strokeStyle=stroke;cx.stroke();}
+}
+
+// ══════════════════════════════════════════════
+// DRAW BACKGROUND (thème selon la question)
+// ══════════════════════════════════════════════
+function drawBG(){
+  var th=curTheme();
+  var sky=cx.createLinearGradient(0,0,0,GY);
+  sky.addColorStop(0,th.s0);sky.addColorStop(0.65,th.s1);sky.addColorStop(1,th.s2);
+  cx.fillStyle=sky;cx.fillRect(0,0,W,GY);
+
+  cx.save();cx.shadowColor='#ffe8a0';cx.shadowBlur=25;
+  cx.fillStyle='#fff5cc';cx.beginPath();cx.arc(710,52,26,0,Math.PI*2);cx.fill();cx.restore();
+
+  cx.save();
+  for(var i=0;i<STARS.length;i++){
+    var s=STARS[i];
+    var a=0.5+0.5*Math.sin(frame*0.04+s.b);
+    cx.globalAlpha=a;cx.fillStyle='#fff';cx.fillRect(s.x,s.y,1.5,1.5);
+  }
+  cx.globalAlpha=1;cx.restore();
+
+  for(var i=0;i<BLDG_FAR.length;i++){
+    var b=BLDG_FAR[i];
+    pr(b.x,b.top,b.w,GY-b.top,'#130325');
+    for(var j=0;j<b.wins.length;j++){
+      var w=b.wins[j];
+      cx.globalAlpha=w.on?0.35+0.1*Math.sin(frame*0.025+b.x):0.04;
+      cx.fillStyle=w.on?'#ffe09a':'#2a1050';
+      cx.fillRect(w.x,w.y,5,7);
+    }
+    cx.globalAlpha=1;
+  }
+
+  for(var i=0;i<BLDG_MID.length;i++){
+    var b=BLDG_MID[i];
+    pr(b.x,b.top,b.w,GY-b.top,'#080116');
+    for(var j=0;j<b.wins.length;j++){
+      var w=b.wins[j];
+      cx.globalAlpha=w.on?0.5+0.12*Math.sin(frame*0.03+b.x*0.1):0.04;
+      cx.fillStyle=w.on?'#ff8833':'#1a0838';
+      cx.fillRect(w.x,w.y,6,8);
+    }
+    cx.globalAlpha=1;
+  }
+
+  var grd=cx.createLinearGradient(0,GY,0,H);
+  grd.addColorStop(0,th.g0);grd.addColorStop(0.5,'#140628');grd.addColorStop(1,th.g1);
+  cx.fillStyle=grd;cx.fillRect(0,GY,W,H-GY);
+
+  cx.save();cx.strokeStyle=th.neon;cx.shadowColor=th.neon;cx.shadowBlur=18;
+  cx.lineWidth=3;cx.beginPath();cx.moveTo(0,GY);cx.lineTo(W,GY);cx.stroke();cx.restore();
+
+  cx.save();cx.strokeStyle='rgba(153,51,255,0.1)';cx.lineWidth=1;
+  var off=bgX%50;
+  for(var gx=-50+off;gx<W+50;gx+=50){
+    cx.beginPath();cx.moveTo(gx,GY);cx.lineTo(gx+80,H);cx.stroke();
+  }
+  cx.restore();
+}
+
+// ══════════════════════════════════════════════
+// DRAW HERO
+// ══════════════════════════════════════════════
+function drawHero(){
+  var hx=Math.round(hero.x), hy=Math.round(hero.y);
+  var bx=hx-16, by=hy-54;
+  var leg=hero.onGround?(hero.walkF%2===0?2:0):0;
+
+  cx.save();cx.globalAlpha=0.3;cx.fillStyle='#000';
+  cx.beginPath();cx.ellipse(hx,hy,18,5,0,0,Math.PI*2);cx.fill();cx.restore();
+
+  pr(bx+2, by+50,11,5,'#1a1030'); pr(bx+19,by+50,11,5,'#1a1030');
+  pr(bx+3, by+38+leg,9,14,'#2a4ab0');
+  pr(bx+20,by+38-leg,9,14,'#2a4ab0');
+  pr(bx+4, by+22,24,18,'#1a44c0');
+  pr(bx+4, by+37,24, 4,'#8a6020');
+  pr(bx+12,by+22, 8,15,'#1232a0');
+  pr(bx+0, by+24, 6,14,'#cc7848');
+  pr(bx+28,by+24, 6,12,'#cc7848');
+  pr(bx+32,by+27,18, 7,'#444');
+  pr(bx+46,by+25, 5, 5,'#222');
+  if(hero.shootFX>0){
+    var fl=hero.shootFX/12;
+    cx.save();cx.globalAlpha=fl;cx.shadowColor='#ffee44';cx.shadowBlur=20;
+    pr(bx+50,by+22,10,12,'#ffee44');pr(bx+52,by+20,6,16,'#ff9900');cx.restore();
+  }
+  pr(bx+12,by+15, 8, 9,'#cc7848');
+  pr(bx+7, by+3, 18,14,'#cc7848');
+  pr(bx+5, by-4, 22,11,'#1a3070');
+  pr(bx+9, by-8, 14, 7,'#1a3070');
+  pr(bx+9, by+4, 14, 4,'#44aaff');
+  pr(bx+10,by+9,  4, 3,'#111');
+  pr(bx+18,by+9,  4, 3,'#111');
+  pr(bx+5, by+7,  4, 4,'#ff3300');
+}
+
+// ══════════════════════════════════════════════
+// DRAW BUBBLES (options flottantes)
+// ══════════════════════════════════════════════
+function drawBubbleOpt(bb){
+  if(!bb.alive&&bb.bad) return;
+  var by=bb.y+Math.sin(frame*0.02+bb.bob)*6;
+  var bx=bb.x-bb.w/2, ty=by-bb.h/2;
+
+  var border='#7755aa', bg='rgba(14,5,30,0.93)', tc='#d8ccff';
+  if(bb.revealed&&!bb.bad){border='#22ff88';bg='rgba(5,50,20,0.97)';tc='#88ffaa';}
+
+  cx.save();
+  rrect(bx+3,ty+3,bb.w,bb.h,6,'rgba(0,0,0,0.45)',null);
+  cx.lineWidth=2;
+  if(bb.flash>0){cx.shadowColor=border;cx.shadowBlur=18;bb.flash--;}
+  rrect(bx,ty,bb.w,bb.h,6,bg,border);
+  cx.shadowBlur=0;
+  cx.fillStyle=tc;cx.textAlign='center';cx.textBaseline='top';
+  cx.font='700 14px Nunito,sans-serif';
+  for(var i=0;i<bb.lines.length;i++) cx.fillText(bb.lines[i],bb.x,ty+8+i*17);
+  if(bb.revealed&&!bb.bad){
+    cx.font='12px "Press Start 2P",monospace';
+    cx.shadowColor='#22ff88';cx.shadowBlur=14;
+    cx.fillStyle='#44ff99';
+    cx.fillText('✅ VRAIE !',bb.x,ty-20);cx.shadowBlur=0;
+  }
+  cx.restore();
+}
+
+// ══════════════════════════════════════════════
+// DRAW HUD
+// ══════════════════════════════════════════════
+function drawHUD(){
+  cx.fillStyle='rgba(0,0,0,0.82)';cx.fillRect(0,0,W,38);
+  cx.save();cx.strokeStyle='#6622cc';cx.shadowColor='#6622cc';cx.shadowBlur=6;
+  cx.lineWidth=1;cx.beginPath();cx.moveTo(0,38);cx.lineTo(W,38);cx.stroke();cx.restore();
+
+  cx.textBaseline='middle';
+  cx.font='12px "Press Start 2P",monospace';
+  cx.fillStyle='#ffcc00';cx.textAlign='left';cx.fillText('SCORE: '+score,12,19);
+
+  var h=Math.max(0,lives), e=Math.max(0,3-lives);
+  var hearts='';for(var i=0;i<h;i++)hearts+='♥';for(var i=0;i<e;i++)hearts+='♡';
+  cx.fillStyle='#ff3355';cx.textAlign='center';cx.font='15px "Press Start 2P",monospace';
+  cx.fillText(hearts,W/2,19);
+
+  cx.font='12px "Press Start 2P",monospace';cx.fillStyle='#44ffcc';cx.textAlign='right';
+  cx.fillText('Q '+(qIdx+1)+'/'+SESSION.length,W-12,19);
+
+  cx.font='700 13px Nunito,sans-serif';cx.textAlign='center';cx.fillStyle='rgba(190,140,250,0.9)';
+  cx.fillText('← → bouger  |  ↑ sauter  |  SOURIS viser  |  CLIC / ESPACE tirer',W/2,H-12);
+}
+
+// ── Flèche d'avancée quand la question est terminée ──
+function drawAdvanceArrow(){
+  var pulse=0.6+0.4*Math.sin(frame*0.12);
+  cx.save();
+  cx.globalAlpha=pulse;
+  cx.font='40px "Press Start 2P",monospace';
+  cx.textAlign='center';cx.textBaseline='middle';
+  cx.shadowColor='#44ffcc';cx.shadowBlur=26;
+  cx.fillStyle='#44ffcc';
+  cx.fillText('➡',W-70,GY-110);
+  cx.font='800 17px Nunito,sans-serif';
+  cx.fillText('AVANCE !',W-70,GY-60);
+  cx.restore();
+}
+
+// ── Viseur souris ──
+function drawCrosshair(){
+  cx.save();
+  cx.strokeStyle='rgba(255,238,68,0.85)';cx.lineWidth=1.5;
+  cx.shadowColor='#ffee44';cx.shadowBlur=6;
+  cx.beginPath();cx.arc(aim.x,aim.y,9,0,Math.PI*2);cx.stroke();
+  cx.beginPath();cx.moveTo(aim.x-14,aim.y);cx.lineTo(aim.x-5,aim.y);cx.stroke();
+  cx.beginPath();cx.moveTo(aim.x+5,aim.y);cx.lineTo(aim.x+14,aim.y);cx.stroke();
+  cx.beginPath();cx.moveTo(aim.x,aim.y-14);cx.lineTo(aim.x,aim.y-5);cx.stroke();
+  cx.beginPath();cx.moveTo(aim.x,aim.y+5);cx.lineTo(aim.x,aim.y+14);cx.stroke();
+  cx.restore();
+}
+
+// ══════════════════════════════════════════════
+// TITLE SCREEN
+// ══════════════════════════════════════════════
+function drawTitle(){
+  drawBG();
+  cx.fillStyle='rgba(5,0,15,0.72)';cx.fillRect(0,0,W,H);
+  cx.save();
+  cx.font='20px "Press Start 2P",monospace';cx.textAlign='center';cx.textBaseline='middle';
+  cx.shadowColor='#ff6600';cx.shadowBlur=40;cx.fillStyle='#ff7700';
+  cx.fillText('FAKE BLASTER',W/2,95);cx.shadowBlur=0;
+  cx.font='11px "Press Start 2P",monospace';cx.fillStyle='#bb88ff';
+  cx.fillText('ESPRIT CRITIQUE',W/2,130);cx.restore();
+
+  var rules=[
+    ['🎯  Les réponses flottent dans le ciel — vise avec la souris','#d8ccff'],
+    ['💥  Détruis toutes les FAUSSES réponses (+50 pts)','#ff5544'],
+    ['✅  Ne tire PAS sur la bonne réponse (−1 vie)','#44ffcc'],
+    ['➡  Quand tout est détruit, avance à droite pour continuer','#ffcc44'],
+  ];
+  cx.textBaseline='top';cx.textAlign='center';
+  for(var i=0;i<rules.length;i++){
+    cx.font='700 16px Nunito,sans-serif';
+    cx.fillStyle=rules[i][1];cx.fillText(rules[i][0],W/2,180+i*32);
+  }
+
+  if(Math.sin(frame*0.07)>0){
+    cx.font='800 16px Nunito,sans-serif';cx.textAlign='center';cx.textBaseline='middle';
+    cx.fillStyle='#ffffff';cx.fillText('▶  ESPACE ou CLIC pour commencer  ◀',W/2,H-50);
+  }
+  cx.font='600 13px Nunito,sans-serif';cx.textAlign='center';cx.textBaseline='middle';
+  cx.fillStyle='rgba(170,120,230,0.8)';
+  cx.fillText('← → : bouger   |   ↑ W : sauter   |   SOURIS : viser   |   CLIC Z X ESPACE : tirer',W/2,H-20);
+}
+
+// ══════════════════════════════════════════════
+// FIN DE PARTIE (défaite / victoire)
+// ══════════════════════════════════════════════
+function drawGameOver(){
+  drawBG();
+  cx.fillStyle='rgba(5,0,15,0.82)';cx.fillRect(0,0,W,H);
+  cx.save();
+  cx.font='22px "Press Start 2P",monospace';cx.textAlign='center';cx.textBaseline='middle';
+  cx.shadowColor='#ff2244';cx.shadowBlur=40;cx.fillStyle='#ff2244';
+  cx.fillText('GAME OVER',W/2,130);cx.shadowBlur=0;
+  cx.font='13px "Press Start 2P",monospace';cx.fillStyle='#ffcc00';
+  cx.fillText('SCORE FINAL : '+score,W/2,195);
+  cx.font='700 16px Nunito,sans-serif';cx.fillStyle='#b9a0e0';
+  cx.fillText('Continue à entrainer ton esprit critique !',W/2,250);
+  if(Math.sin(frame*0.07)>0){
+    cx.font='800 16px Nunito,sans-serif';cx.fillStyle='#fff';
+    cx.fillText('▶  ESPACE ou CLIC pour rejouer  ◀',W/2,330);
+  }
+  cx.restore();
+}
+
+function drawWin(){
+  drawBG();
+  cx.fillStyle='rgba(5,0,15,0.82)';cx.fillRect(0,0,W,H);
+  cx.save();
+  cx.font='20px "Press Start 2P",monospace';cx.textAlign='center';cx.textBaseline='middle';
+  cx.shadowColor='#44ffcc';cx.shadowBlur=40;cx.fillStyle='#44ffcc';
+  cx.fillText('MISSION ACCOMPLIE !',W/2,130);cx.shadowBlur=0;
+  cx.font='13px "Press Start 2P",monospace';cx.fillStyle='#ffcc00';
+  cx.fillText('SCORE FINAL : '+score,W/2,195);
+  cx.font='700 16px Nunito,sans-serif';cx.fillStyle='#b9e0c8';
+  cx.fillText('Tu as démasqué toutes les fausses infos de la série !',W/2,250);
+  if(Math.sin(frame*0.07)>0){
+    cx.font='800 16px Nunito,sans-serif';cx.fillStyle='#fff';
+    cx.fillText('▶  ESPACE ou CLIC pour rejouer  ◀',W/2,330);
+  }
+  cx.restore();
+}
+
+// ══════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════
+function render(){
+  cx.save();
+  if(shakeT>0){
+    var s=shakeT*0.38;
+    cx.translate((Math.random()-0.5)*s,(Math.random()-0.5)*s);
+  }
+  cx.clearRect(-20,-20,W+40,H+40);
+
+  if(gstate==='title')   {drawTitle();   cx.restore();return;}
+  if(gstate==='gameover'){drawGameOver();cx.restore();return;}
+  if(gstate==='win')     {drawWin();     cx.restore();return;}
+
+  drawBG();
+
+  if(flashT>0){cx.save();cx.fillStyle=flashCol;cx.globalAlpha=flashT/24*0.32;cx.fillRect(0,0,W,H);cx.restore();}
+
+  for(var i=0;i<bubbles.length;i++) drawBubbleOpt(bubbles[i]);
+
+  drawHero();
+
+  cx.save();cx.fillStyle='#ffee44';cx.shadowColor='#ffee44';cx.shadowBlur=12;
+  for(var i=0;i<bullets.length;i++){
+    var b=bullets[i];
+    cx.save();cx.translate(b.x,b.y);cx.rotate(Math.atan2(b.vy,b.vx));
+    cx.fillRect(-7,-2,14,4);cx.restore();
+  }
+  cx.restore();
+
+  for(var i=0;i<particles.length;i++){
+    var p=particles[i];
+    cx.save();cx.globalAlpha=Math.max(0,p.life);
+    cx.fillStyle=p.col;cx.shadowColor=p.col;cx.shadowBlur=8;
+    cx.fillRect(p.x-p.sz/2,p.y-p.sz/2,p.sz,p.sz);cx.restore();
+  }
+
+  for(var i=0;i<floats.length;i++){
+    var ft=floats[i];
+    cx.save();cx.globalAlpha=Math.min(1,ft.life*0.9);
+    cx.font='11px "Press Start 2P",monospace';cx.textAlign='center';cx.textBaseline='middle';
+    cx.fillStyle=ft.col;cx.shadowColor=ft.col;cx.shadowBlur=14;
+    cx.fillText(ft.text,ft.x,ft.y);cx.restore();
+  }
+
+  if(cleared) drawAdvanceArrow();
+  drawCrosshair();
+  drawHUD();
+  cx.restore();
+}
+
+// ══════════════════════════════════════════════
+// MAIN LOOP
+// ══════════════════════════════════════════════
+function loop(){
+  update();
+  render();
+  requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+</body>
+</html>

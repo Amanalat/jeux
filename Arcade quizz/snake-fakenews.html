@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snake - Fake News & Esprit Critique</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Exo+2:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #060612;
+    --panel: #0c0c22;
+    --blue: #4fc3f7;
+    --blue-glow: rgba(79,195,247,0.3);
+    --green: #69f0ae;
+    --red: #ff5252;
+    --red-glow: rgba(255,82,82,0.3);
+    --yellow: #ffd740;
+    --text: #e0e0ff;
+    --dim: #4040aa;
+  }
+
+  body {
+    background: var(--bg);
+    font-family: 'Exo 2', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    gap: 12px;
+    padding: 10px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(79,195,247,0.012) 3px, rgba(79,195,247,0.012) 4px);
+    pointer-events: none;
+    z-index: 200;
+  }
+
+  h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    color: var(--blue);
+    text-shadow: 0 0 20px var(--blue), 0 0 40px var(--blue);
+    letter-spacing: 3px;
+    text-align: center;
+    line-height: 1.8;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #9a9ad0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .hud {
+    display: flex;
+    gap: 24px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: #9a9ad0;
+  }
+  .hud span { color: var(--blue); }
+
+  .main-layout {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .arena-wrap {
+    position: relative;
+    border: 2px solid rgba(79,195,247,0.4);
+    box-shadow: 0 0 30px rgba(79,195,247,0.15), inset 0 0 30px rgba(79,195,247,0.03);
+    max-width: 100%;
+  }
+
+  canvas { display: block; max-width: 100%; height: auto; }
+
+  /* Info panel */
+  .side-panel {
+    width: 200px;
+    min-width: 160px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 13px;
+  }
+  @media (max-width: 480px) {
+    .side-panel { width: 100%; flex-direction: row; flex-wrap: wrap; }
+    .legend { flex: 1; min-width: 140px; }
+    .feedback-box { flex: 1; min-width: 140px; }
+  }
+
+  .legend {
+    background: var(--panel);
+    border: 1px solid rgba(79,195,247,0.2);
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 13px;
+    line-height: 1.9;
+  }
+  .legend h3 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--blue);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .leg-row { display: flex; align-items: center; gap: 8px; }
+  .leg-box { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+  .leg-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .leg-red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+  .question-box {
+    background: var(--panel);
+    border: 1px solid rgba(79,195,247,0.4);
+    border-radius: 6px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: min(766px, 100%);
+  }
+  .question-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--yellow);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  #current-q {
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.45;
+    flex: 1;
+  }
+
+  .feedback-box {
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.5;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+  }
+  .feedback-box.good { background: rgba(105,240,174,0.1); border-color: var(--green); color: var(--green); }
+  .feedback-box.bad  { background: rgba(255,82,82,0.1);   border-color: var(--red);   color: var(--red);   }
+  .feedback-box.idle { background: rgba(79,195,247,0.05); border-color: rgba(79,195,247,0.2); color: var(--dim); }
+
+  /* Overlay */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    background: rgba(0,0,0,0.88);
+    z-index: 10;
+  }
+  .overlay.hidden { display: none; }
+
+  .overlay h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: var(--blue);
+    text-shadow: 0 0 20px var(--blue);
+    text-align: center;
+    line-height: 1.8;
+  }
+  .overlay .game-over-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: var(--red);
+    text-shadow: 0 0 20px var(--red);
+    text-align: center;
+  }
+  .overlay p {
+    font-size: 14px;
+    color: #b9b9e0;
+    text-align: center;
+    line-height: 1.8;
+    max-width: 320px;
+  }
+  .overlay .score-display {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--yellow);
+    text-align: center;
+    line-height: 2;
+  }
+
+  .btn {
+    font-family: 'Exo 2', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    background: transparent;
+    border: 2px solid var(--blue);
+    color: var(--blue);
+    padding: 12px 24px;
+    cursor: pointer;
+    letter-spacing: .1em;
+    text-shadow: 0 0 10px var(--blue);
+    box-shadow: 0 0 10px rgba(79,195,247,0.2);
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--blue); color: var(--bg); box-shadow: 0 0 20px rgba(79,195,247,0.5); }
+  .btn-menu {
+    font-family: 'Exo 2', sans-serif; font-size: 14px; font-weight: 700;
+    background: transparent; border: 1px solid var(--dim); color: #9a9ad0;
+    padding: 10px 20px; cursor: pointer; letter-spacing: .06em; transition: all 0.15s;
+  }
+  .btn-menu:hover { border-color: var(--blue); color: var(--blue); }
+  .menu-link-side {
+    font-family: 'Exo 2', sans-serif; font-size: 13px; font-weight: 700;
+    color: #9a9ad0; text-decoration: none;
+    border: 1px solid var(--dim); padding: 8px 10px;
+    text-align: center; letter-spacing: .06em;
+    transition: color .15s, border-color .15s; display: block;
+  }
+  .menu-link-side:hover { color: var(--blue); border-color: var(--blue); }
+
+  .controls { font-size: 13px; color: #9a9ad0; text-align: center; }
+
+  input[type=range] { height: 20px; }
+  input[type=range]::-webkit-slider-thumb { width: 20px; height: 20px; }
+  input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border: none; }
+</style>
+</head>
+<body>
+<h1>SNAKE</h1>
+<div class="subtitle">Fake News & Esprit Critique</div>
+<div class="hud">SCORE: <span id="score">0</span> &nbsp; VIE: <span id="lives">❤️❤️❤️</span> &nbsp; NIVEAU: <span id="level">1</span></div>
+
+<!-- Question bar above the game -->
+<div class="question-box" id="question-bar">
+  <span class="question-label">❓ QUESTION</span>
+  <div id="current-q">Lance le jeu pour commencer !</div>
+</div>
+
+<div class="main-layout">
+  <div class="arena-wrap">
+    <canvas id="c" width="546" height="546"></canvas>
+    <div class="overlay" id="overlay">
+      <h2>SNAKE<br>ESPRIT CRITIQUE</h2>
+      <p><strong style="color:#69f0ae">Mange UNIQUEMENT la bonne réponse !</strong><br>Manger une mauvaise réponse = −1 vie.<br><br>Toutes les réponses sont en <strong style="color:#4fc3f7">BLEU</strong> — à toi de trouver la bonne. Après chaque bouchée, la bonne devient 🟢 verte et les mauvaises 🔴 rouges.</p>
+      <button class="btn" id="startBtn">COMMENCER</button>
+      <button class="btn-menu" onclick="location.href='index.html'">← MENU</button>
+    </div>
+  </div>
+
+  <div class="side-panel">
+    <div class="legend">
+      <h3>LÉGENDE</h3>
+      <div class="leg-row"><div class="leg-box" style="background:#4fc3f7;box-shadow:0 0 6px #4fc3f7"></div> Réponse possible</div>
+      <div class="leg-row"><div class="leg-box leg-green"></div> Bonne réponse</div>
+      <div class="leg-row"><div class="leg-box leg-red"></div> Mauvaise réponse</div>
+      <div style="font-size:13px;color:#9a9ad0;margin-top:8px;line-height:1.6">Les couleurs se révèlent<br>après chaque réponse.</div>
+    </div>
+    <div class="feedback-box idle" id="feedback">
+      Prêt à jouer ?
+    </div>
+    <a href="index.html" class="menu-link-side">← MENU</a>
+    <div class="legend">
+      <h3>VITESSE</h3>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:14px;color:#9a9ad0">🐢</span>
+        <input type="range" id="speedSlider" min="1" max="5" value="3" step="1"
+          aria-label="Vitesse du serpent"
+          style="flex:1;accent-color:#4fc3f7;cursor:pointer">
+        <span style="font-size:14px;color:#9a9ad0">🐇</span>
+      </div>
+      <div style="text-align:center;font-family:'Exo 2',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;color:#4fc3f7" id="speedLabel">NORMALE</div>
+    </div>
+  </div>
+</div>
+
+<div class="controls">↑ ↓ ← → ou WASD · ESPACE = Pause</div>
+
+<script src="questions.js"></script>
+<script src="questions-6e5e.js"></script>
+<script src="questions-niveau1.js"></script>
+<script src="questions-niveau2.js"></script>
+<script src="questions-niveau3.js"></script>
+<script src="qcm-store.js"></script>
+<script>if(typeof QCMStore!=='undefined'){var _s=QCMStore.getSessionQuestions();if(_s&&_s.length)window.DEFAULT_QCM=_s;}</script>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const scoreEl = document.getElementById('score');
+const livesEl = document.getElementById('lives');
+const levelEl = document.getElementById('level');
+const currentQEl = document.getElementById('current-q');
+const feedbackEl = document.getElementById('feedback');
+const startBtn = document.getElementById('startBtn');
+
+const GRID = 21;
+const COLS = Math.floor(canvas.width / GRID);
+const ROWS = Math.floor(canvas.height / GRID);
+
+// ============================================================
+// GAME STATE
+// ============================================================
+let snake, dir, nextDir, items, score, lives, level, gameLoop, running, paused, particles, correctCount;
+let currentQuestion = null;
+let feedbackTimeout = null;
+let highScore = 0;
+let revealed = false; // true = show green/red after wrong answer
+let revealTimeout = null;
+
+const ITEM_COUNT_CORRECT = 1;
+const ITEM_COUNT_WRONG = 3;
+
+function pickQuestion() {
+  return DEFAULT_QCM[Math.floor(Math.random() * DEFAULT_QCM.length)];
+}
+
+// How many grid cells the label needs vertically (label rendered below item)
+const LABEL_ROWS = 3; // reserve space below each item for text
+const BORDER_PAD = 3; // cells from edge to keep items away from border
+
+function itemsOverlap(a, b) {
+  // Items overlap if their cells or label zones collide
+  // Each item occupies: its cell (x,y) + label zone below (y+1 to y+LABEL_ROWS)
+  // We require MIN_DIST cells between items horizontally, and no label zone overlap
+  const MIN_DIST = 7; // minimum horizontal distance between item centers
+  const dx = Math.abs(a.x - b.x);
+  const dy = Math.abs(a.y - b.y);
+  // Too close horizontally and labels could overlap
+  if (dx < MIN_DIST && dy < LABEL_ROWS + 2) return true;
+  return false;
+}
+
+function spawnItems() {
+  if (!currentQuestion) currentQuestion = pickQuestion();
+  currentQEl.textContent = currentQuestion.q;
+  items = [];
+
+  const snakeSet = new Set(snake.map(s => `${s.x},${s.y}`));
+
+  // Block cells directly ahead of the snake's head (next 8 steps) to avoid
+  // eating an item before the player has a chance to react
+  const AHEAD = 8;
+  for (let i = 1; i <= AHEAD; i++) {
+    const bx = (snake[0].x + dir.x * i + COLS) % COLS;
+    const by = (snake[0].y + dir.y * i + ROWS) % ROWS;
+    snakeSet.add(`${bx},${by}`);
+  }
+
+  function rndPos(existingItems) {
+    let p, attempts = 0;
+    do {
+      // Keep away from borders so labels are always readable
+      p = {
+        x: BORDER_PAD + Math.floor(Math.random() * (COLS - BORDER_PAD * 2)),
+        y: BORDER_PAD + Math.floor(Math.random() * (ROWS - BORDER_PAD * 2 - LABEL_ROWS))
+      };
+      attempts++;
+      if (attempts > 200) break; // safety
+    } while (
+      snakeSet.has(`${p.x},${p.y}`) ||
+      existingItems.some(it => itemsOverlap(it, p))
+    );
+    return p;
+  }
+
+  // Correct answer
+  const correctText = currentQuestion.options[currentQuestion.answer];
+  const pos = rndPos([]);
+  items.push({...pos, text: correctText, good: true});
+
+  // Wrong answers (all options except the correct one), shuffled
+  const wrongPool = currentQuestion.options.filter((_, i) => i !== currentQuestion.answer);
+  for (let i = wrongPool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [wrongPool[i], wrongPool[j]] = [wrongPool[j], wrongPool[i]];
+  }
+  for (let i = 0; i < Math.min(ITEM_COUNT_WRONG, wrongPool.length); i++) {
+    const p = rndPos(items);
+    items.push({...p, text: wrongPool[i], good: false});
+  }
+}
+
+function init() {
+  snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10},{x:7,y:10}];
+  dir = {x:1,y:0};
+  nextDir = {x:1,y:0};
+  score = 0;
+  lives = 3;
+  level = 1;
+  correctCount = 0;
+  particles = [];
+  revealed = false;
+  currentQuestion = pickQuestion();
+  spawnItems();
+  updateHUD();
+}
+
+const speedSlider = document.getElementById('speedSlider');
+const speedLabel = document.getElementById('speedLabel');
+
+const SPEED_LABELS = ['TRÈS LENTE', 'LENTE', 'NORMALE', 'RAPIDE', 'TURBO'];
+const SPEED_BASE   = [260, 200, 150, 100, 60]; // ms per tick at level 1
+
+speedSlider.addEventListener('input', () => {
+  const v = parseInt(speedSlider.value) - 1;
+  speedLabel.textContent = SPEED_LABELS[v];
+  if (running && !paused) {
+    clearInterval(gameLoop);
+    gameLoop = setInterval(tick, getSpeed());
+  }
+});
+
+function getSpeed() {
+  const base = SPEED_BASE[parseInt(speedSlider.value) - 1];
+  return Math.max(40, base - (level - 1) * 15);
+}
+
+function startGame() {
+  // Nouveau tirage de questions à chaque partie (5/10/30 selon le hub)
+  if (typeof QCMStore !== 'undefined') {
+    var _p = QCMStore.getSessionQuestions();
+    if (_p && _p.length) window.DEFAULT_QCM = _p;
+  }
+  init();
+  overlay.classList.add('hidden');
+  running = true;
+  paused = false;
+  clearInterval(gameLoop);
+  gameLoop = setInterval(tick, getSpeed());
+  setFeedback('idle', 'Mange UNIQUEMENT la bonne réponse !');
+}
+
+function tick() {
+  if (paused) return;
+  dir = {...nextDir};
+  const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y};
+
+  // Wall wrap
+  head.x = (head.x + COLS) % COLS;
+  head.y = (head.y + ROWS) % ROWS;
+
+  // Self collision
+  if (snake.some(s => s.x === head.x && s.y === head.y)) return die('auto-collision !');
+
+  snake.unshift(head);
+
+  // Check item collision
+  const hitIdx = items.findIndex(it => it.x === head.x && it.y === head.y);
+  if (hitIdx !== -1) {
+    const item = items[hitIdx];
+    if (item.good) {
+      // Correct!
+      score += 10 * level;
+      if (score > highScore) highScore = score;
+      correctCount++;
+      spawnParticles(head.x, head.y, '#69f0ae');
+      setFeedback('good', '✅ Bonne réponse ! +' + (10*level) + ' pts');
+      if (correctCount % 5 === 0) {
+        level++;
+        clearInterval(gameLoop);
+        gameLoop = setInterval(tick, getSpeed());
+      }
+      revealed = true;
+      clearTimeout(revealTimeout);
+      revealTimeout = setTimeout(() => {
+        revealed = false;
+        currentQuestion = pickQuestion();
+        spawnItems();
+      }, 1200);
+    } else {
+      // Wrong!
+      lives--;
+      spawnParticles(head.x, head.y, '#ff5252');
+      setFeedback('bad', '❌ Fausse réponse ! -1 vie');
+      snake.pop();
+      // Reveal all items (green/red)
+      revealed = true;
+      clearTimeout(revealTimeout);
+      if (lives <= 0) return die('Plus de vies !');
+      revealTimeout = setTimeout(() => {
+        revealed = false;
+        currentQuestion = pickQuestion();
+        spawnItems();
+      }, 2000);
+    }
+    updateHUD();
+  } else {
+    snake.pop();
+  }
+
+  draw();
+}
+
+function setFeedback(type, msg) {
+  clearTimeout(feedbackTimeout);
+  feedbackEl.className = 'feedback-box ' + type;
+  feedbackEl.textContent = msg;
+  if (type !== 'idle') {
+    feedbackTimeout = setTimeout(() => {
+      feedbackEl.className = 'feedback-box idle';
+      feedbackEl.textContent = 'Mange UNIQUEMENT la bonne réponse !';
+    }, 2000);
+  }
+}
+
+function spawnParticles(gx, gy, color) {
+  for (let i = 0; i < 10; i++) {
+    const angle = (Math.PI*2*i)/10;
+    particles.push({
+      x: gx*GRID+GRID/2, y: gy*GRID+GRID/2,
+      vx: Math.cos(angle)*(1+Math.random()*2),
+      vy: Math.sin(angle)*(1+Math.random()*2),
+      life: 1, size: 3+Math.random()*3, color
+    });
+  }
+}
+
+function die(reason) {
+  clearInterval(gameLoop);
+  running = false;
+  draw();
+  overlay.classList.remove('hidden');
+  overlay.innerHTML = `
+    <div class="game-over-title">GAME OVER</div>
+    <div class="score-display">SCORE: ${score}<br>MEILLEUR: ${highScore}</div>
+    <p style="font-size:14px;color:#b9b9e0">💡 ${reason}</p>
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:center">
+      <button class="btn" id="startBtn">REJOUER</button>
+      <button class="btn-menu" onclick="location.href='index.html'">← MENU &amp; QUESTIONS</button>
+    </div>
+  `;
+  document.getElementById('startBtn').addEventListener('click', startGame);
+}
+
+function updateHUD() {
+  scoreEl.textContent = score;
+  livesEl.textContent = '❤️'.repeat(Math.max(0, lives));
+  levelEl.textContent = level;
+}
+
+// ============================================================
+// DRAW
+// ============================================================
+function draw() {
+  if (!snake || !items || !particles) return;
+  // BG
+  ctx.fillStyle = '#060612';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(79,195,247,0.04)';
+  ctx.lineWidth = 0.5;
+  for (let x = 0; x <= COLS; x++) {
+    ctx.beginPath(); ctx.moveTo(x*GRID,0); ctx.lineTo(x*GRID,canvas.height); ctx.stroke();
+  }
+  for (let y = 0; y <= ROWS; y++) {
+    ctx.beginPath(); ctx.moveTo(0,y*GRID); ctx.lineTo(canvas.width,y*GRID); ctx.stroke();
+  }
+
+  // Particles
+  particles.forEach((p, i) => {
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 6;
+    ctx.fillRect(p.x - p.size/2, p.y - p.size/2, p.size, p.size);
+    p.x += p.vx; p.y += p.vy; p.life -= 0.07; p.size *= 0.93;
+  });
+  particles = particles.filter(p => p.life > 0);
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+
+  // Items (answers)
+  const now = Date.now();
+  const ITEM_BLUE = '#4fc3f7';
+
+  items.forEach(item => {
+    const cx = item.x * GRID + GRID/2;
+    const cy = item.y * GRID + GRID/2;
+    const pulse = 0.5 + 0.5 * Math.sin(now / 300 + item.x + item.y);
+
+    // Blue by default; reveal true color (green/red) only after an answer is eaten
+    const color = revealed ? (item.good ? '#69f0ae' : '#ff5252') : ITEM_BLUE;
+    const bg    = revealed ? (item.good ? 'rgba(105,240,174,0.15)' : 'rgba(255,82,82,0.15)') : 'rgba(79,195,247,0.1)';
+
+    // Cell BG
+    ctx.fillStyle = bg;
+    ctx.fillRect(item.x*GRID+1, item.y*GRID+1, GRID-2, GRID-2);
+
+    // Border with glow
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 5 + pulse * 7;
+    ctx.strokeRect(item.x*GRID+2, item.y*GRID+2, GRID-4, GRID-4);
+    ctx.shadowBlur = 0;
+
+    // Icon: ? when hidden, ✓/✗ when revealed
+    ctx.font = 'bold 13px Exo 2';
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(revealed ? (item.good ? '✓' : '✗') : '?', cx, cy);
+  });
+
+  // Labels below each item
+  ctx.font = 'bold 15px Exo 2';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  items.forEach(item => {
+    const cx = item.x * GRID + GRID/2;
+    const ty = item.y * GRID + GRID + 3;
+
+    const color = revealed ? (item.good ? '#69f0ae' : '#ff5252') : ITEM_BLUE;
+
+    // Word-wrap to ~16 chars per line, max 3 lines (texte complet lisible)
+    const words = item.text.split(' ');
+    let lines = [], cur = '';
+    words.forEach(w => {
+      const test = cur ? cur + ' ' + w : w;
+      if (test.length > 16) { if (cur) lines.push(cur); cur = w; }
+      else cur = test;
+    });
+    if (cur) lines.push(cur);
+    lines = lines.slice(0, 3);
+
+    // Dark background behind label for readability
+    const maxW = Math.max(...lines.map(l => ctx.measureText(l).width));
+    const padX = 5, padY = 3;
+    ctx.fillStyle = 'rgba(6,6,18,0.88)';
+    ctx.fillRect(cx - maxW/2 - padX, ty - padY, maxW + padX*2, lines.length*19 + padY*2);
+
+    ctx.fillStyle = color;
+    lines.forEach((line, i) => ctx.fillText(line, cx, ty + i*19));
+  });
+
+  // Snake
+  snake.forEach((seg, i) => {
+    const t = i / snake.length;
+    ctx.globalAlpha = 1 - t * 0.45;
+
+    if (i === 0) {
+      ctx.shadowColor = '#4fc3f7';
+      ctx.shadowBlur = 18;
+      ctx.fillStyle = '#4fc3f7';
+    } else {
+      ctx.shadowColor = '#0288d1';
+      ctx.shadowBlur = 8;
+      ctx.fillStyle = `hsl(${200 - t*20}, 80%, ${55 - t*20}%)`;
+    }
+
+    const pad = i === 0 ? 1 : 2;
+    ctx.fillRect(seg.x*GRID+pad, seg.y*GRID+pad, GRID-pad*2, GRID-pad*2);
+
+    if (i === 0) {
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#060612';
+      let e1, e2;
+      if (dir.x === 1)  { e1={x:14,y:4};  e2={x:14,y:12}; }
+      else if (dir.x===-1) { e1={x:4,y:4};  e2={x:4,y:12}; }
+      else if (dir.y===-1) { e1={x:4,y:4};  e2={x:12,y:4}; }
+      else                  { e1={x:4,y:14}; e2={x:12,y:14}; }
+      ctx.fillRect(seg.x*GRID+e1.x, seg.y*GRID+e1.y, 3, 3);
+      ctx.fillRect(seg.x*GRID+e2.x, seg.y*GRID+e2.y, 3, 3);
+    }
+  });
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !running) { location.href = 'index.html'; e.preventDefault(); return; }
+  const map = {
+    ArrowUp:{x:0,y:-1}, ArrowDown:{x:0,y:1}, ArrowLeft:{x:-1,y:0}, ArrowRight:{x:1,y:0},
+    w:{x:0,y:-1}, s:{x:0,y:1}, a:{x:-1,y:0}, d:{x:1,y:0},
+    W:{x:0,y:-1}, S:{x:0,y:1}, A:{x:-1,y:0}, D:{x:1,y:0},
+  };
+  if (map[e.key]) {
+    const nd = map[e.key];
+    if (nd.x !== -dir.x || nd.y !== -dir.y) nextDir = nd;
+    e.preventDefault();
+  }
+  if (e.key === ' ' && running) {
+    paused = !paused;
+    if (paused) setFeedback('idle', '⏸ PAUSE');
+    else setFeedback('idle', 'Mange UNIQUEMENT la bonne réponse !');
+    e.preventDefault();
+  }
+});
+
+startBtn.addEventListener('click', startGame);
+
+function animFrame() {
+  if (running && !paused) draw();
+  requestAnimationFrame(animFrame);
+}
+animFrame();
+// Don't call draw() here — snake/items are undefined until startGame()
+</script>
+</body>
+</html>

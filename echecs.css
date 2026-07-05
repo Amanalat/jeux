@@ -1,0 +1,682 @@
+/* ===== RESET & BASE ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== HEADER ===== */
+header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0.8rem 1.5rem;
+  background: #16213e;
+  border-bottom: 2px solid #0f3460;
+}
+
+header h1 {
+  font-size: 1.3rem;
+  color: #e0e0e0;
+  white-space: nowrap;
+}
+
+#mode-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tab-btn {
+  padding: 0.4rem 1.2rem;
+  border: 2px solid #0f3460;
+  background: transparent;
+  color: #aaa;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  border-color: #e2b96f;
+  color: #e2b96f;
+}
+
+.tab-btn.active {
+  background: #e2b96f;
+  border-color: #e2b96f;
+  color: #1a1a2e;
+  font-weight: 600;
+}
+
+/* ===== LAYOUT PRINCIPAL ===== */
+main {
+  display: flex;
+  flex: 1;
+  min-height: 0;          /* essentiel pour que flex enfants ne débordent pas */
+  gap: 1.2rem;
+  padding: 1rem 1.2rem;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+/* ===== SECTION ÉCHIQUIER ===== */
+#board-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+#board-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+#board-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Coordonnées */
+.coords {
+  display: flex;
+  color: #888;
+  font-size: 0.7rem;
+  font-weight: 600;
+  user-select: none;
+}
+
+.coords-h {
+  flex-direction: row;
+  width: 448px;
+  margin-left: 20px;
+}
+
+.coords-h span {
+  flex: 1;
+  text-align: center;
+}
+
+.coords-v {
+  flex-direction: column;
+  width: 18px;
+}
+
+.coords-v span {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Échiquier */
+#board {
+  display: grid;
+  grid-template-columns: repeat(8, 56px);
+  grid-template-rows: repeat(8, 56px);
+  border: 2px solid #0f3460;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+.square {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s;
+  user-select: none;
+}
+
+.square.light { background: #f0d9b5; }
+.square.dark  { background: #b58863; }
+
+/* 11.1 Hover sur les cases (mode exercice uniquement) */
+#board.interactive-mode .square:hover {
+  filter: brightness(1.12);
+}
+
+/* Highlights */
+.square.highlight-last {
+  background: rgba(255, 214, 0, 0.5) !important;
+}
+
+.square.highlight-selected {
+  background: rgba(0, 180, 255, 0.55) !important;
+}
+
+.square.highlight-legal::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.22);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Case occupée par une pièce adverse : ring au lieu du point */
+.square.highlight-legal.occupied::after {
+  width: 90%;
+  height: 90%;
+  border-radius: 50%;
+  background: transparent;
+  border: 4px solid rgba(0, 0, 0, 0.22);
+}
+
+.square.highlight-correct {
+  background: rgba(60, 200, 80, 0.55) !important;
+}
+
+.square.highlight-wrong {
+  background: rgba(220, 50, 50, 0.55) !important;
+}
+
+/* Pièce */
+.piece {
+  line-height: 1;
+  transition: transform 0.15s;
+  pointer-events: none;
+}
+
+/* Pièces blanches : remplissage blanc, contour noir */
+.piece.piece-w {
+  color: #fff;
+  text-shadow:
+    0 0 2px #000,
+    0 0 3px #000,
+     1px  1px 0 #000,
+    -1px  1px 0 #000,
+     1px -1px 0 #000,
+    -1px -1px 0 #000;
+}
+
+/* Pièces noires : remplissage noir, contour blanc pour les cases foncées */
+.piece.piece-b {
+  color: #1a1a1a;
+  text-shadow:
+    0 0 2px rgba(255,255,255,0.8),
+     1px  1px 0 rgba(255,255,255,0.6),
+    -1px  1px 0 rgba(255,255,255,0.6),
+     1px -1px 0 rgba(255,255,255,0.6),
+    -1px -1px 0 rgba(255,255,255,0.6);
+}
+
+/* ===== CONTRÔLES SOUS L'ÉCHIQUIER ===== */
+#board-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+/* 9.1 Indicateur de couleur jouée */
+.player-indicator {
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+.player-indicator.player-white {
+  background: #f0d9b5;
+  color: #1a1a2e;
+  border: 2px solid #b58863;
+}
+
+.player-indicator.player-black {
+  background: #2a2a2a;
+  color: #f0d9b5;
+  border: 2px solid #555;
+}
+
+/* ===== PANNEAU LATÉRAL ===== */
+#panel {
+  flex: 1;
+  max-width: 360px;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  overflow: hidden;
+}
+
+.panel-mode {
+  background: #16213e;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  border: 1px solid #0f3460;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.panel-mode h2 {
+  font-size: 0.95rem;
+  color: #e2b96f;
+  margin-bottom: 0.5rem;
+  flex-shrink: 0;
+}
+
+.panel-mode h3 {
+  font-size: 0.92rem;
+  color: #e2b96f;
+  margin-bottom: 0.3rem;
+  flex-shrink: 0;
+}
+
+/* Catégories d'ouvertures — accordéon */
+#opening-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+  flex-shrink: 0;
+  scrollbar-width: thin;
+  scrollbar-color: #0f3460 transparent;
+}
+
+#opening-categories::-webkit-scrollbar { width: 4px; }
+#opening-categories::-webkit-scrollbar-thumb { background: #0f3460; border-radius: 2px; }
+
+.opening-category {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.opening-category:last-child { border-bottom: none; }
+
+/* En-tête cliquable de catégorie */
+.opening-category h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #888;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  padding: 0.45rem 0.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  transition: color 0.15s;
+}
+
+.opening-category h4:hover { color: #bbb; }
+
+/* Flèche accordéon */
+.opening-category h4::after {
+  content: '▸';
+  font-size: 0.65rem;
+  color: #555;
+  transition: transform 0.2s ease;
+}
+
+.opening-category.open h4::after {
+  transform: rotate(90deg);
+  color: #e2b96f;
+}
+
+/* Liste cachée par défaut */
+.opening-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.25s ease-out, padding-bottom 0.25s;
+  padding-bottom: 0;
+}
+
+/* Liste dépliée */
+.opening-category.open .opening-list {
+  max-height: 280px;
+  padding-bottom: 0.4rem;
+}
+
+.opening-btn {
+  background: #0f3460;
+  border: 1px solid #1a4a80;
+  color: #ccc;
+  border-radius: 5px;
+  padding: 0.4rem 0.7rem;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.88rem;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.opening-btn:hover {
+  background: #1a4a80;
+  color: #fff;
+}
+
+.opening-btn.active {
+  background: #e2b96f;
+  color: #1a1a2e;
+  font-weight: 600;
+  border-color: #e2b96f;
+}
+
+.opening-btn .badge-done {
+  margin-left: auto;
+  color: #4caf50;
+  font-size: 0.85rem;
+}
+
+/* Infos cours — zone scrollable quand le contenu déborde */
+#cours-info {
+  margin-top: 0.5rem;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: #0f3460 transparent;
+}
+
+#cours-info p {
+  font-size: 0.82rem;
+  color: #aaa;
+  margin-bottom: 0.4rem;
+  line-height: 1.4;
+}
+
+#cours-progress {
+  font-size: 0.78rem;
+  color: #888;
+  margin-bottom: 0.35rem;
+}
+
+.comment-box {
+  background: #0d1b2a;
+  border-left: 3px solid #e2b96f;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.85rem;
+  color: #ccc;
+  border-radius: 0 6px 6px 0;
+  min-height: 2rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+#cours-controls {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+  flex-wrap: wrap;
+}
+
+/* Exercice */
+#exercice-setup label {
+  display: block;
+  font-size: 0.88rem;
+  color: #aaa;
+  margin-bottom: 0.25rem;
+}
+
+#exo-opening-select {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  background: #0f3460;
+  border: 1px solid #1a4a80;
+  color: #e0e0e0;
+  border-radius: 5px;
+  font-size: 0.88rem;
+  margin-bottom: 0.5rem;
+}
+
+#exo-submode {
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  padding: 0.45rem 0.7rem;
+  margin-bottom: 0.5rem;
+}
+
+#exo-submode legend {
+  font-size: 0.8rem;
+  color: #888;
+  padding: 0 0.4rem;
+}
+
+#exo-submode label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  color: #ccc;
+  margin-bottom: 0.25rem;
+}
+
+#exo-turn-indicator {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.turn-white { background: #f0d9b5; color: #1a1a2e; }
+.turn-black { background: #333; color: #f0d9b5; border: 1px solid #555; }
+
+.feedback-box {
+  min-height: 1.6rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 5px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  transition: all 0.2s;
+}
+
+.feedback-correct { background: rgba(60,200,80,0.2); color: #4caf50; border: 1px solid #4caf50; }
+.feedback-wrong   { background: rgba(220,50,50,0.2);  color: #f44336; border: 1px solid #f44336; }
+.feedback-info    { background: rgba(33,150,243,0.15); color: #64b5f6; border: 1px solid #64b5f6; }
+
+#exo-progress {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.78rem;
+  color: #888;
+  margin-bottom: 0.4rem;
+}
+
+/* Grille des boutons d'exercice */
+#exercice-play .exo-btn-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+
+#btn-hint {
+  background: rgba(33,150,243,0.15);
+  border-color: #1976d2;
+  color: #64b5f6;
+}
+
+#btn-hint:hover { background: rgba(33,150,243,0.3); }
+
+#btn-solution {
+  background: rgba(255,152,0,0.12);
+  border-color: #f57c00;
+  color: #ffb74d;
+}
+
+#btn-solution:hover { background: rgba(255,152,0,0.25); }
+
+#btn-reset-exo, #btn-back-setup {
+  font-size: 0.82rem;
+}
+
+/* ===== SCORE SESSION ===== */
+#session-score {
+  background: #16213e;
+  border-radius: 8px;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid #0f3460;
+  font-size: 0.8rem;
+  color: #666;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ===== HISTORIQUE DES COUPS ===== */
+#moves-history {
+  background: #16213e;
+  border-radius: 8px;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid #0f3460;
+  flex-shrink: 0;
+}
+
+#moves-history h4 {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: #666;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
+}
+
+#moves-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.4rem;
+  font-size: 0.82rem;
+  color: #ccc;
+  max-height: 48px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #0f3460 transparent;
+}
+
+#moves-list::-webkit-scrollbar { width: 3px; }
+#moves-list::-webkit-scrollbar-thumb { background: #0f3460; border-radius: 2px; }
+
+.move-pair {
+  white-space: nowrap;
+  color: #aaa;
+}
+
+.move-pair .move-num {
+  color: #666;
+}
+
+.move-pair .move-san {
+  color: #ccc;
+}
+
+.move-pair .move-san.current {
+  color: #e2b96f;
+  font-weight: 600;
+}
+
+/* (score-session déplacé au-dessus de l'historique) */
+
+/* ===== BOUTONS GÉNÉRAUX ===== */
+button {
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #0f3460;
+  background: #0f3460;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 0.88rem;
+  transition: all 0.15s;
+}
+
+button:hover {
+  background: #1a4a80;
+  color: #fff;
+  border-color: #1a4a80;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+#btn-practice, #btn-start-exo {
+  background: #e2b96f;
+  border-color: #e2b96f;
+  color: #1a1a2e;
+  font-weight: 600;
+  width: 100%;
+  margin-top: 0.4rem;
+}
+
+#btn-practice:hover, #btn-start-exo:hover {
+  background: #f0ca88;
+  border-color: #f0ca88;
+  color: #1a1a2e;
+}
+
+/* ===== UTILITAIRES ===== */
+.hidden { display: none !important; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 860px) {
+  body { height: auto; overflow: auto; }
+
+  main {
+    flex-direction: column;
+    align-items: center;
+    overflow: auto;
+    padding: 0.8rem 1rem;
+  }
+
+  #panel {
+    max-width: 100%;
+    width: 100%;
+    overflow: visible;
+    min-height: unset;
+  }
+
+  .panel-mode { flex: unset; overflow: visible; }
+  #cours-info  { overflow: visible; flex: unset; }
+
+  .coords-h { width: 448px; }
+}
+
+@media (max-width: 520px) {
+  #board {
+    grid-template-columns: repeat(8, 44px);
+    grid-template-rows: repeat(8, 44px);
+  }
+
+  .square { width: 44px; height: 44px; font-size: 1.8rem; }
+  .coords-h { width: 352px; }
+  .coords-v span { height: 44px; }
+}

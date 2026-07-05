@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whac-A-Quiz</title>
+<script src="questions.js"></script>
+<script src="questions-6e5e.js"></script>
+<script src="questions-niveau1.js"></script>
+<script src="questions-niveau2.js"></script>
+<script src="questions-niveau3.js"></script>
+<script src="qcm-store.js"></script>
+<script>if(typeof QCMStore!=='undefined'){var _s=QCMStore.getSessionQuestions();if(_s&&_s.length)window.DEFAULT_QCM=_s;}</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Nunito:wght@600;700;800&family=Fredoka+One&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background:#0a0010;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+    min-height:100vh; overflow-y:auto;
+    font-family:'Orbitron', sans-serif;
+  }
+
+  /* scanlines overlay */
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:300;
+    background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(180,0,255,.013) 3px,rgba(180,0,255,.013) 4px);
+  }
+
+  #ui {
+    width:100%; display:flex; justify-content:space-between; align-items:center;
+    padding:8px 16px; color:#cc44ff; font-size:0.875rem; letter-spacing:.1em;
+    text-shadow:0 0 10px #cc44ff; flex-shrink:0;
+  }
+  #ui span { font-size:1.125rem; font-weight:700; }
+
+  /* ── GAME BOARD ─────────────────────────────── */
+  #board-wrap {
+    position:relative; width:100%; flex:1; min-height:320px;
+    border:2px solid #cc44ff;
+    box-shadow:0 0 30px rgba(180,0,255,.3), inset 0 0 60px rgba(0,0,0,.8);
+    background:#0a0010; overflow:hidden;
+  }
+
+  /* Question banner */
+  #question-banner {
+    position:absolute; top:0; left:0; right:0;
+    background:rgba(10,0,16,0.94); border-bottom:2px solid #cc44ff;
+    padding:10px 16px; display:none; flex-direction:column; gap:4px;
+    z-index:10; pointer-events:none;
+  }
+  #question-label { font-size:0.8125rem; color:#cc44ff; letter-spacing:.12em; opacity:.8; }
+  #question-text  {
+    font-family:'Nunito',sans-serif; font-size:1.0625rem; font-weight:800;
+    color:#fff; line-height:1.35; text-shadow:0 0 8px rgba(180,0,255,.4);
+  }
+
+  /* Timer bar — intégré dans le bandeau question */
+  #timer-bar-wrap {
+    position:relative; height:4px;
+    background:rgba(180,0,255,.15); display:none; margin-top:8px;
+  }
+  #timer-bar {
+    height:100%; width:100%;
+    background:linear-gradient(90deg,#cc44ff,#ff44cc);
+    transition:width linear; box-shadow:0 0 8px #cc44ff;
+  }
+
+  /* Holes */
+  .hole {
+    position:absolute; border-radius:50%;
+    background:
+      radial-gradient(circle at 38% 32%, #1f0038 0%, #060009 55%, #020005 100%);
+    border:2px solid #3a0058;
+    box-shadow:
+      0 8px 28px rgba(0,0,0,.92),
+      inset 0 6px 18px rgba(0,0,0,.97),
+      inset 0 -2px 6px rgba(120,0,200,0.1);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; user-select:none;
+  }
+
+  /* Moles */
+  .mole {
+    position:absolute; bottom:0; left:0; right:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+    transform:translateY(100%);
+    transition:transform 0.18s cubic-bezier(.17,.67,.42,1.25), opacity 0.15s;
+    pointer-events:none;
+    padding-bottom:4px;
+    opacity:0;
+  }
+  .mole.up   { transform:translateY(0); opacity:1; }
+  .mole.down { transform:translateY(100%); opacity:0; transition:transform 0.14s ease-in, opacity 0.08s 0.06s; }
+
+  .mole-face {
+    width:76%; aspect-ratio:1;
+    border-radius:50%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-family:'Fredoka One', 'Nunito', sans-serif; font-weight:400;
+    font-size:var(--mole-font, 13px); line-height:1.25;
+    text-align:center; padding:8px;
+    cursor:pointer; pointer-events:all;
+    transition:transform .12s, box-shadow .12s;
+    word-break:break-word; hyphens:auto;
+    overflow:hidden;
+    position:relative;
+  }
+  .mole-face:active { transform:scale(.9) !important; }
+
+  /* Wrong mole — sphère 3D orange/rouge avec highlight spéculaire */
+  .mole-face.wrong {
+    background:
+      radial-gradient(circle at 33% 26%, rgba(255,255,255,.72) 0%, rgba(255,255,255,.08) 22%, transparent 36%),
+      radial-gradient(circle at 66% 74%, rgba(160,40,0,.55) 0%, transparent 34%),
+      radial-gradient(ellipse at 50% 58%, #ff7744 0%, #d42800 42%, #8a1700 78%, #3e0800 100%);
+    border:2px solid rgba(255,110,55,.45);
+    box-shadow:
+      0 0 20px rgba(255,75,0,.5),
+      0 8px 18px rgba(0,0,0,.75),
+      inset 0 -7px 14px rgba(0,0,0,.45),
+      inset 0 4px 7px rgba(255,200,140,.13);
+    color:#fff;
+    text-shadow:0 1px 5px rgba(0,0,0,.85), 0 0 12px rgba(0,0,0,.5);
+  }
+  .mole-face.wrong:hover {
+    box-shadow:
+      0 0 34px rgba(255,75,0,.8),
+      0 8px 18px rgba(0,0,0,.75),
+      inset 0 -7px 14px rgba(0,0,0,.45),
+      inset 0 4px 7px rgba(255,200,140,.13);
+    transform:scale(1.05);
+  }
+
+  /* Correct mole = visuellement identique à wrong (joueur doit identifier) */
+  .mole-face.correct {
+    background:
+      radial-gradient(circle at 33% 26%, rgba(255,255,255,.72) 0%, rgba(255,255,255,.08) 22%, transparent 36%),
+      radial-gradient(circle at 66% 74%, rgba(160,40,0,.55) 0%, transparent 34%),
+      radial-gradient(ellipse at 50% 58%, #ff7744 0%, #d42800 42%, #8a1700 78%, #3e0800 100%);
+    border:2px solid rgba(255,110,55,.45);
+    box-shadow:
+      0 0 20px rgba(255,75,0,.5),
+      0 8px 18px rgba(0,0,0,.75),
+      inset 0 -7px 14px rgba(0,0,0,.45),
+      inset 0 4px 7px rgba(255,200,140,.13);
+    color:#fff;
+    text-shadow:0 1px 5px rgba(0,0,0,.85), 0 0 12px rgba(0,0,0,.5);
+  }
+  .mole-face.correct:hover {
+    box-shadow:
+      0 0 34px rgba(255,75,0,.8),
+      0 8px 18px rgba(0,0,0,.75),
+      inset 0 -7px 14px rgba(0,0,0,.45),
+      inset 0 4px 7px rgba(255,200,140,.13);
+    transform:scale(1.05);
+  }
+
+  /* Flash vert — bonne frappe sur une mauvaise réponse */
+  .mole-face.smashed {
+    background:
+      radial-gradient(circle at 33% 27%, rgba(255,255,255,.65) 0%, transparent 26%),
+      radial-gradient(ellipse at 50% 55%, #44ff88 0%, #00cc55 45%, #003318 100%) !important;
+    border-color:rgba(0,255,100,.6) !important;
+    box-shadow:
+      0 0 44px rgba(0,255,100,.85),
+      0 8px 18px rgba(0,0,0,.75),
+      inset 0 -5px 12px rgba(0,0,0,.4) !important;
+    transform:scale(.82) !important;
+  }
+
+  /* Whacked — boule écrasée, sombre */
+  .mole-face.hit {
+    background:
+      radial-gradient(ellipse at 50% 45%, #2a2a2a 0%, #0d0d0d 60%, #050505 100%) !important;
+    border-color:#2a2a2a !important;
+    box-shadow:inset 0 4px 14px rgba(0,0,0,.9) !important;
+    transform:scale(.78) !important;
+    opacity:.35;
+    text-shadow:none !important;
+  }
+
+  /* Penalty — bonne réponse frappée, flash rouge intense */
+  .mole-face.penalty {
+    background:
+      radial-gradient(circle at 34% 28%, rgba(255,255,255,.5) 0%, transparent 28%),
+      radial-gradient(ellipse at 50% 55%, #ff5555 0%, #cc0000 40%, #880000 80%, #440000 100%) !important;
+    border-color:rgba(255,40,40,.7) !important;
+    box-shadow:
+      0 0 44px rgba(255,0,0,.9),
+      0 0 90px rgba(255,0,0,.35),
+      inset 0 -5px 12px rgba(0,0,0,.4) !important;
+  }
+
+  /* Trous cliquables (mode facile) */
+  .hole.clickable {
+    cursor:pointer;
+    animation:hole-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes hole-pulse {
+    0%,100% { box-shadow:0 8px 28px rgba(0,0,0,.92), inset 0 6px 18px rgba(0,0,0,.97), 0 0 10px rgba(204,68,255,.25); }
+    50%      { box-shadow:0 8px 28px rgba(0,0,0,.92), inset 0 6px 18px rgba(0,0,0,.97), 0 0 28px rgba(204,68,255,.65); }
+  }
+  .hole-hint {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-size:1.8rem; opacity:.80; pointer-events:none; user-select:none;
+    animation:hole-pulse 1.6s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px rgba(204,68,255,0.9));
+  }
+
+  /* Hammer cursor */
+  #hammer {
+    position:absolute; pointer-events:none; z-index:20;
+    font-size:3.8rem; transform:translate(-50%,-60%) rotate(-35deg);
+    transition:transform .07s;
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,.85));
+    display:none;
+  }
+  #hammer.smash { transform:translate(-50%,-55%) rotate(15deg) scale(1.25); }
+
+  /* Feedback */
+  #feedback {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    padding:12px 26px; border-radius:10px;
+    font-family:'Nunito',sans-serif; font-size:1rem; font-weight:800;
+    pointer-events:none; opacity:0; transition:opacity .3s;
+    text-align:center; z-index:15; max-width:85%;
+  }
+  #feedback.show { opacity:1; }
+  #feedback.ok  { background:#10b981; color:#fff; box-shadow:0 0 24px rgba(16,185,129,.6); }
+  #feedback.ko  { background:#ef4444; color:#fff; box-shadow:0 0 24px rgba(239,68,68,.6); }
+
+  /* Overlay */
+  #overlay {
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    background:rgba(10,0,16,0.94); color:#cc44ff; text-align:center; gap:14px; z-index:50;
+  }
+  #overlay h1 {
+    font-size:2rem; font-weight:900; letter-spacing:.15em; line-height:1.15;
+    text-shadow:0 0 30px #cc44ff, 0 0 60px #cc44ff;
+  }
+  #overlay .sub {
+    font-family:'Nunito',sans-serif; font-size:1rem;
+    color:#ccc; line-height:1.9; max-width:500px; padding:0 16px;
+  }
+  #overlay button {
+    padding:12px 44px; background:transparent;
+    border:2px solid #cc44ff; color:#cc44ff;
+    font-family:'Orbitron',sans-serif; font-size:0.9rem;
+    font-weight:700; letter-spacing:.15em; cursor:pointer; transition:all .2s;
+    text-shadow:0 0 10px #cc44ff; box-shadow:0 0 20px rgba(180,0,255,.2);
+  }
+  #overlay button:hover { background:#cc44ff; color:#000; box-shadow:0 0 40px rgba(180,0,255,.6); }
+  #overlay button:active { transform:scale(.93); opacity:.85; }
+  #overlay button.btn-custom {
+    border-color:#ffaa00; color:#ffaa00; text-shadow:0 0 10px #ffaa00;
+    box-shadow:0 0 20px rgba(255,170,0,.2); font-size:0.875rem; padding:10px 32px;
+  }
+  #overlay button.btn-custom:hover { background:#ffaa00; color:#000; }
+
+  #controls {
+    width:100%; text-align:center; margin-top:6px; padding:0 16px;
+    font-family:'Nunito',sans-serif; font-size:0.8125rem; color:#99a3c4; letter-spacing:.04em;
+    flex-shrink:0;
+  }
+  #speed-row {
+    display:flex; align-items:center; justify-content:center; gap:10px 16px; flex-wrap:wrap;
+    margin-top:8px; margin-bottom:8px; padding:0 8px; font-family:'Nunito',sans-serif; font-size:0.875rem;
+    color:#cc44ff; letter-spacing:.04em; flex-shrink:0; row-gap:8px;
+  }
+  #speed-row input[type=range] { width:130px; accent-color:#cc44ff; cursor:pointer; }
+  #speed-label {
+    font-family:'Orbitron',sans-serif; font-size:0.8125rem;
+    color:#cc44ff; text-shadow:0 0 8px #cc44ff;
+    min-width:96px; text-align:left;
+  }
+  input[type=range] { height: 20px; }
+  input[type=range]::-webkit-slider-thumb { width: 20px; height: 20px; }
+  input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border: none; }
+  #mute-btn {
+    background:transparent; border:1px solid #cc44ff44; color:#cc44ff99;
+    font-size:1rem; cursor:pointer; padding:2px 8px; border-radius:4px;
+    transition:all .2s; line-height:1;
+  }
+  #mute-btn:hover { border-color:#cc44ff; color:#cc44ff; }
+  #menu-btn-bottom {
+    display:inline-block; margin-left:8px; padding:4px 14px; border-radius:6px;
+    border:1.5px solid #cc44ff66; color:#cc44ff; text-decoration:none;
+    font-weight:800; transition:all .15s;
+  }
+  #menu-btn-bottom:hover { background:#cc44ff; color:#000; }
+
+</style>
+</head>
+<body>
+
+<div id="ui">
+  <div>SCORE<br><span id="score-display">0</span></div>
+  <div style="text-align:center">WHAC-A-QUIZ<br>
+    <span style="font-family:'Nunito',sans-serif;font-size:.8125rem;font-weight:800;color:#ff6633;letter-spacing:.05em">FRAPPE LES FAUSSES RÉPONSES !</span>
+  </div>
+  <div style="text-align:right">VIES<br><span id="lives-display">❤️❤️❤️</span></div>
+</div>
+
+<div id="board-wrap">
+  <div id="question-banner">
+    <div id="question-label">QUESTION <span id="q-num">1</span> / <span id="q-total">10</span></div>
+    <div id="question-text"></div>
+    <div id="timer-bar-wrap"><div id="timer-bar"></div></div>
+  </div>
+
+  <div id="hammer">🔨</div>
+  <div id="feedback"></div>
+
+  <div id="overlay">
+    <h1>WHAC-A-QUIZ</h1>
+    <div class="sub">
+      🔨 Une question s'affiche — des réponses surgissent des trous.<br>
+      <strong style="color:#ff6633">Frappe toutes les FAUSSES réponses !</strong><br>
+      ⚠️ Ne frappe <strong style="color:#ffcc00">PAS</strong> la bonne réponse — −1 vie<br>
+      ⏱ Frappe toutes les fausses avant la fin du temps !
+    </div>
+    <div style="color:#cc44ff;font-family:'Orbitron',sans-serif;font-size:0.8125rem;letter-spacing:.12em;margin-top:4px">CHOISIR LE MODE</div>
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:center;width:100%">
+      <button onclick="startDefaultGame('easy')" style="border-color:#3ecf8e;color:#3ecf8e;text-shadow:0 0 10px #3ecf8e;box-shadow:0 0 20px rgba(62,207,142,.2);width:320px">
+        🟢 FACILE — Lis d'abord, lance toi-même
+      </button>
+      <button onclick="startDefaultGame('hard')" style="border-color:#ff6633;color:#ff6633;text-shadow:0 0 10px #ff6633;box-shadow:0 0 20px rgba(255,102,51,.2);width:320px">
+        🔴 DIFFICILE — Les réponses surgissent !
+      </button>
+      <button class="btn-custom" onclick="location.href='index.html'">← MENU &amp; QUESTIONS</button>
+    </div>
+  </div>
+</div>
+
+<div id="controls">CLIC sur les FAUSSES réponses &nbsp;|&nbsp; Ne frappe PAS la bonne réponse ! <a id="menu-btn-bottom" href="index.html">← MENU</a></div>
+<div id="speed-row">
+  🐢
+  <input type="range" id="speed-slider" min="1" max="5" value="2" step="1">
+  🚀
+  <span id="speed-label">LENTE</span>
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  🔡
+  <input type="range" id="font-slider" min="10" max="18" value="13" step="1">
+  🔠
+  <span id="font-label">13 px</span>
+  &nbsp;&nbsp;
+  <button id="mute-btn" onclick="toggleMute()">🔊</button>
+</div>
+
+
+<script>
+
+let activeQCM = DEFAULT_QCM;
+
+// ── MUTE ─────────────────────────────────────────────────────
+let muted = false;
+function toggleMute() {
+  muted = !muted;
+  document.getElementById('mute-btn').textContent = muted ? '🔇' : '🔊';
+}
+
+// ── SPEED CONTROL ────────────────────────────────────────────
+// La vitesse règle la durée du chrono et le rythme d'apparition.
+// Les boules sortent les unes après les autres (stagger) puis RESTENT jusqu'au bout.
+const SPEED_LEVELS = [
+  { label:'TRÈS LENTE', qTime:60000, stagger:2400 },
+  { label:'LENTE',      qTime:45000, stagger:1700 },
+  { label:'NORMALE',    qTime:30000, stagger:1100 },
+  { label:'RAPIDE',     qTime:20000, stagger:650  },
+  { label:'TURBO',      qTime:12000, stagger:300  },
+];
+let currentSpeed = SPEED_LEVELS[1]; // défaut : LENTE
+
+const speedSlider  = document.getElementById('speed-slider');
+const speedLabelEl = document.getElementById('speed-label');
+speedSlider.addEventListener('input', () => {
+  currentSpeed = SPEED_LEVELS[+speedSlider.value - 1];
+  speedLabelEl.textContent = currentSpeed.label;
+});
+
+// ── TAILLE DE TEXTE ───────────────────────────────────────────
+const fontSlider  = document.getElementById('font-slider');
+const fontLabelEl = document.getElementById('font-label');
+fontSlider.addEventListener('input', () => {
+  document.documentElement.style.setProperty('--mole-font', fontSlider.value + 'px');
+  fontLabelEl.textContent = fontSlider.value + ' px';
+});
+
+// ── LAYOUT: 6 holes in 2 rows of 3 (computed dynamically in buildHoles) ──
+
+// ── STATE ────────────────────────────────────────────────────
+let score, lives, gameRunning;
+let qIndex, currentQ, questionActive, feedbackTimer;
+let moleSlots;       // array of slot objects
+let qTimerStart, qTimerDuration, qTimerRAF;
+let pendingTimeouts = [];
+
+// ── HAMMER CURSOR ────────────────────────────────────────────
+const hammerEl = document.getElementById('hammer');
+const board    = document.getElementById('board-wrap');
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Escape' && !gameRunning) { location.href = 'index.html'; e.preventDefault(); }
+});
+
+board.addEventListener('mousemove', e => {
+  if (!gameRunning) return;
+  const rect = board.getBoundingClientRect();
+  hammerEl.style.left = (e.clientX - rect.left)+'px';
+  hammerEl.style.top  = (e.clientY - rect.top)+'px';
+  hammerEl.style.display = 'block';
+});
+board.addEventListener('mouseleave', () => hammerEl.style.display='none');
+
+// ── BUILD DOM HOLES ───────────────────────────────────────────
+function buildHoles() {
+  board.querySelectorAll('.hole').forEach(h=>h.remove());
+
+  const boardW   = board.offsetWidth;
+  const boardH   = board.offsetHeight;
+  const HOLE_R   = Math.min(Math.floor(boardW / 9), Math.floor((boardH - 90) / 4), 100);
+  const MOLE_VIS = Math.round(HOLE_R * 0.85);
+
+  const N = activeQCM[qIndex]?.options.length || 4;
+
+  // Zone utilisable sous le bandeau question
+  const areaTop = 90 + HOLE_R + 10;
+  const areaBot = boardH - HOLE_R - 10;
+  const topY    = Math.round(areaTop + (areaBot - areaTop) * 0.28);
+  const botY    = Math.round(areaTop + (areaBot - areaTop) * 0.72);
+  const midY    = Math.round((topY + botY) / 2);
+
+  let HOLE_POSITIONS;
+  if (N === 4) {
+    // Trapèze : rangée haute resserrée, rangée basse plus écartée
+    HOLE_POSITIONS = [
+      { cx: Math.round(boardW * 0.38), cy: topY },
+      { cx: Math.round(boardW * 0.62), cy: topY },
+      { cx: Math.round(boardW * 0.22), cy: botY },
+      { cx: Math.round(boardW * 0.78), cy: botY },
+    ];
+  } else if (N === 3) {
+    HOLE_POSITIONS = [
+      { cx: Math.round(boardW * 0.50), cy: topY },
+      { cx: Math.round(boardW * 0.28), cy: botY },
+      { cx: Math.round(boardW * 0.72), cy: botY },
+    ];
+  } else {
+    HOLE_POSITIONS = Array.from({length: N}, (_, i) =>
+      ({ cx: Math.round(boardW * ((i + 1) / (N + 1))), cy: midY })
+    );
+  }
+
+  const shuffled = [...HOLE_POSITIONS].sort(()=>Math.random()-.5);
+
+  moleSlots = shuffled.map((pos, i) => {
+    const hole = document.createElement('div');
+    hole.className = 'hole';
+    hole.style.cssText = `
+      width:${HOLE_R*2}px; height:${HOLE_R*2}px;
+      left:${pos.cx - HOLE_R}px; top:${pos.cy - HOLE_R}px;
+    `;
+
+    const mole = document.createElement('div');
+    mole.className = 'mole';
+    mole.style.height = (HOLE_R*2 + MOLE_VIS)+'px';
+
+    const face = document.createElement('div');
+    face.className = 'mole-face';
+    face.style.width = face.style.height = (HOLE_R*1.55)+'px';
+
+    mole.appendChild(face);
+    hole.appendChild(mole);
+    board.appendChild(hole);
+
+    return { hole, mole, face, pos, index: i, optionIndex: null, up: false, timer: null };
+  });
+}
+
+
+// ── QUESTION TIMER ────────────────────────────────────────────
+function cancelQTimer() {
+  cancelAnimationFrame(qTimerRAF);
+  document.getElementById('timer-bar-wrap').style.display='none';
+}
+
+function startQTimer(ms, onExpire) {
+  qTimerStart    = performance.now();
+  qTimerDuration = ms;
+  const barWrap = document.getElementById('timer-bar-wrap');
+  const bar     = document.getElementById('timer-bar');
+  barWrap.style.display = 'block';
+  bar.style.transition  = 'none';
+  bar.style.width       = '100%';
+
+  function tick(now) {
+    const elapsed = now - qTimerStart;
+    const pct     = Math.max(0, 1 - elapsed/qTimerDuration);
+    bar.style.width = (pct*100)+'%';
+    bar.style.background = pct > 0.4
+      ? 'linear-gradient(90deg,#cc44ff,#ff44cc)'
+      : 'linear-gradient(90deg,#ff4400,#ff0000)';
+    if (pct > 0) { qTimerRAF = requestAnimationFrame(tick); }
+    else { barWrap.style.display = 'none'; if (onExpire) { onExpire(); } }
+  }
+  qTimerRAF = requestAnimationFrame(tick);
+}
+
+// Track which wrong options have been hit this round
+const hitOptions = new Set();
+
+// ── LEVEL ─────────────────────────────────────────────────────
+let gameLevel = 'hard'; // 'easy' | 'hard'
+
+// ── START / END ───────────────────────────────────────────────
+function startDefaultGame(level='hard') {
+  // Nouveau tirage de questions à chaque partie (5/10/30 selon le hub)
+  if (typeof QCMStore !== 'undefined') {
+    var _p = QCMStore.getSessionQuestions();
+    if (_p && _p.length) window.DEFAULT_QCM = _p;
+  }
+  activeQCM = DEFAULT_QCM; gameLevel = level; startGame();
+}
+
+function startGame() {
+  document.getElementById('overlay').style.display = 'none';
+  score=0; lives=3; qIndex=0; gameRunning=true;
+  updateUI();
+  loadQuestion();
+}
+
+function endGame(win) {
+  gameRunning = false;
+  pendingTimeouts.forEach(clearTimeout); pendingTimeouts=[];
+  cancelQTimer();
+  document.getElementById('question-banner').style.display = 'none';
+  document.getElementById('timer-bar-wrap').style.display  = 'none';
+  board.querySelectorAll('.hole').forEach(h=>h.remove());
+
+  const ov = document.getElementById('overlay');
+  ov.style.display = 'flex';
+  const lvlColor  = gameLevel === 'easy' ? '#3ecf8e' : '#ff6633';
+  const lvlLabel  = gameLevel === 'easy' ? '🟢 FACILE' : '🔴 DIFFICILE';
+  ov.innerHTML = `
+    <h1 style="color:${win?'#cc44ff':'#ff4466'}">${win?'BRAVO !<br>TOUTES<br>FRAPPÉES !':'GAME<br>OVER'}</h1>
+    <div class="sub">Score final : <strong style="color:#cc44ff">${score}</strong><br>
+    ${win?'Tu as éliminé toutes les fausses réponses !':'Continue à développer ton esprit critique !'}</div>
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:center;width:100%">
+      <button onclick="startDefaultGame('easy')" style="border-color:#3ecf8e;color:#3ecf8e;text-shadow:0 0 10px #3ecf8e;width:320px;font-size:0.875rem">
+        🟢 FACILE — Lis d'abord
+      </button>
+      <button onclick="startDefaultGame('hard')" style="border-color:#ff6633;color:#ff6633;text-shadow:0 0 10px #ff6633;width:320px;font-size:0.875rem">
+        🔴 DIFFICILE — Les réponses surgissent
+      </button>
+      <button class="btn-custom" onclick="location.href='index.html'">← MENU &amp; QUESTIONS</button>
+    </div>`;
+}
+
+// ── SOUND / UI ────────────────────────────────────────────────
+function updateUI() {
+  document.getElementById('score-display').textContent = score;
+  const h=['💀','❤️','❤️❤️','❤️❤️❤️'];
+  document.getElementById('lives-display').textContent = h[Math.max(0,lives)] || '💀';
+}
+
+function showFeedback(msg, type) {
+  const el = document.getElementById('feedback');
+  el.textContent = msg; el.className = 'show '+type;
+  clearTimeout(feedbackTimer);
+  feedbackTimer = setTimeout(() => el.className='', 2800);
+}
+
+function playSound(freq, dur, type='sine', vol=0.15) {
+  if (muted) return;
+  try {
+    const ac=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(), g=ac.createGain();
+    o.type=type; o.frequency.setValueAtTime(freq,ac.currentTime);
+    o.frequency.exponentialRampToValueAtTime(freq*.3,ac.currentTime+dur);
+    g.gain.setValueAtTime(vol,ac.currentTime); g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+dur);
+    o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime+dur);
+  } catch(e){}
+}
+
+function shuffle(arr) {
+  for (let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+
+// ── REFACTORED GAME LOGIC (replaces patchy overrides above) ──
+// Re-implement loadQuestion cleanly with hitOptions tracking
+
+// Replace the rough prototype above with a clean version:
+(function() {
+  // Correct loadQuestion with proper hit tracking
+  window.loadQuestion = function() {
+    pendingTimeouts.forEach(clearTimeout); pendingTimeouts = [];
+    cancelQTimer();
+    hitOptions.clear();
+    board.querySelectorAll('.hole').forEach(h=>h.remove());
+    if (qIndex >= activeQCM.length) { endGame(true); return; }
+
+    currentQ = activeQCM[qIndex];
+    document.getElementById('question-text').textContent = currentQ.q;
+    document.getElementById('q-num').textContent   = qIndex+1;
+    document.getElementById('q-total').textContent = activeQCM.length;
+    document.getElementById('question-banner').style.display = 'flex';
+
+    buildHoles();
+    questionActive = false;
+
+    function handleExpire() {
+      if (!questionActive) return;
+      questionActive = false;
+      pendingTimeouts.forEach(clearTimeout); pendingTimeouts = [];
+      moleSlots.forEach(s => { if (s.up) retractMoleClean(s, null); });
+      lives--;
+      updateUI();
+      playSound(120, 0.4, 'sawtooth');
+      showFeedback('⏱ Temps écoulé ! −1 vie', 'ko');
+      if (lives <= 0) { setTimeout(() => endGame(false), 800); return; }
+      setTimeout(() => { qIndex++; loadQuestion(); }, 1500);
+    }
+
+    if (gameLevel === 'easy') {
+      questionActive = true;
+      startQTimer(90000, handleExpire); // 90 s, pas de pression
+
+      const N        = currentQ.options.length;
+      const optOrder = shuffle([...Array(N).keys()]);
+
+      moleSlots.forEach((slot, idx) => {
+        const optIdx   = optOrder[idx % N];
+        const isCorrect = optIdx === currentQ.answer;
+
+        // Hint visuel dans le trou
+        const hint = document.createElement('div');
+        hint.className = 'hole-hint';
+        hint.textContent = '❓';
+        slot.hole.appendChild(hint);
+        slot.hole.classList.add('clickable');
+
+        function revealMole() {
+          if (!questionActive || slot.up || hitOptions.has(optIdx)) return;
+          hint.style.display = 'none';
+          slot.hole.classList.remove('clickable');
+          showMoleClean(slot, optIdx, isCorrect, 20000, () => {
+            // Après retrait sans frappe → retour cliquable
+            if (!hitOptions.has(optIdx) && questionActive) {
+              hint.style.display = '';
+              slot.hole.classList.add('clickable');
+              slot.hole.addEventListener('click', revealMole, { once: true });
+            }
+          });
+        }
+
+        slot.hole.addEventListener('click', revealMole, { once: true });
+      });
+    } else {
+      questionActive = true;
+      let countdown = 5;
+      const fbEl = document.getElementById('feedback');
+      fbEl.textContent = `Lisez ! Boules dans ${countdown}…`;
+      fbEl.className = 'show ok';
+      clearTimeout(feedbackTimer);
+      const cdTick = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+          fbEl.textContent = `Lisez ! Boules dans ${countdown}…`;
+        } else {
+          clearInterval(cdTick);
+          fbEl.className = '';
+          scheduleMoles();
+          startQTimer(currentSpeed.qTime, handleExpire);
+        }
+      }, 1000);
+      pendingTimeouts.push(cdTick);
+    }
+  };
+
+  function scheduleMoles() {
+    // Les boules sortent une par une (rythme selon la vitesse),
+    // puis restent visibles jusqu'à la fin du chrono.
+    const N = currentQ.options.length;
+    const order = shuffle([...Array(N).keys()]); // ordre d'apparition aléatoire
+    order.forEach((optIdx, k) => {
+      const t = setTimeout(() => {
+        if (!questionActive || hitOptions.has(optIdx)) return;
+        const slot = moleSlots[optIdx % moleSlots.length];
+        showMoleClean(slot, optIdx, optIdx === currentQ.answer, currentSpeed.qTime + 5000, null);
+      }, currentSpeed.stagger * k);
+      pendingTimeouts.push(t);
+    });
+  }
+
+  function showMoleClean(slot, optIdx, isCorrect, duration, onRetract) {
+    slot.optionIndex = optIdx;
+    slot.up = true;
+    slot.face.className = 'mole-face ' + (isCorrect ? 'correct' : 'wrong');
+    slot.face.textContent = currentQ.options[optIdx];
+
+    slot.face.onclick = () => {
+      if (!slot.up || !questionActive) return;
+      hammerEl.classList.add('smash');
+      setTimeout(()=>hammerEl.classList.remove('smash'),120);
+
+      if (isCorrect) {
+        slot.face.className = 'mole-face penalty';
+        lives--; updateUI();
+        playSound(110, 0.4, 'sawtooth');
+        showFeedback('❌ Bonne réponse frappée ! −1 vie', 'ko');
+        const doRetract = () => { retractMoleClean(slot, onRetract); };
+        setTimeout(doRetract, 500);
+        if (lives <= 0) { setTimeout(()=>endGame(false), 700); }
+      } else {
+        hitOptions.add(optIdx);
+        slot.face.className = 'mole-face smashed';
+        score += 50; updateUI();
+        playSound(520+Math.random()*180, 0.1, 'sine');
+        setTimeout(() => {
+          slot.face.className = 'mole-face hit';
+          setTimeout(() => { retractMoleClean(slot, onRetract); checkAllWrongGone(); }, 200);
+        }, 120);
+      }
+    };
+
+    slot.mole.classList.remove('down');
+    slot.mole.classList.add('up');
+
+    // Les boules restent visibles toute la durée : pas de pénalité d'échappée,
+    // c'est le chrono de la question qui fait foi (handleExpire).
+    slot.timer = setTimeout(() => {
+      if (!slot.up) return;
+      retractMoleClean(slot, onRetract);
+    }, duration);
+    pendingTimeouts.push(slot.timer);
+  }
+
+  function retractMoleClean(slot, cb) {
+    if (!slot.up) { if (cb) cb(); return; }
+    slot.up = false;
+    clearTimeout(slot.timer);
+    slot.mole.classList.remove('up');
+    slot.mole.classList.add('down');
+    slot.face.onclick = null;
+    if (cb) setTimeout(cb, 160); // wait for CSS retract
+  }
+
+  window.checkAllWrongGone = function() {
+    if (!questionActive) return;
+    const N = currentQ.options.length;
+    for (let i=0; i<N; i++) {
+      if (i !== currentQ.answer && !hitOptions.has(i)) return; // still have wrong ones
+    }
+    questionActive = false;
+    cancelQTimer();
+    score += 100; updateUI();
+    playSound(660, 0.35, 'sine');
+    showFeedback(currentQ.expl || '✅ Toutes les fausses réponses frappées !', 'ok');
+    moleSlots.forEach(s => { if (s.up) retractMoleClean(s, null); });
+    pendingTimeouts.forEach(clearTimeout); pendingTimeouts=[];
+    setTimeout(() => { qIndex++; loadQuestion(); }, 1700);
+  };
+})();
+
+
+
+</script>
+</body>
+</html>

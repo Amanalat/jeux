@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Illusion de Ponzo</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #fff;
+  padding: 24px 20px;
+  user-select: none;
+  -webkit-user-select: none;
+  max-width: 680px;
+}
+
+#question {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+#question strong {
+  color: #111;
+  font-size: 16px;
+}
+
+svg {
+  display: block;
+  max-width: 650px;
+  width: 100%;
+}
+
+.bar { cursor: grab; }
+.bar.dragging { cursor: grabbing; }
+
+#controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 10px;
+  max-width: 650px;
+}
+#btn-reset {
+  font-size: 13px;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+#btn-reset:hover { color: #444; }
+#btn-rails {
+  font-size: 13px;
+  color: #555;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+#btn-rails:hover { background: #f5f5f5; }
+
+#btn-explain {
+  display: block;
+  margin-top: 22px;
+  font-size: 14px;
+  color: #555;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+#btn-explain:hover { background: #f5f5f5; color: #111; }
+
+#explication {
+  display: none;
+  margin-top: 18px;
+  max-width: 650px;
+  background: #f8f8f8;
+  border-left: 3px solid #E67F39;
+  border-radius: 0 8px 8px 0;
+  padding: 18px 20px;
+  user-select: text;
+  -webkit-user-select: text;
+}
+#explication.visible { display: block; }
+#explication h2 { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 12px; }
+#explication p { font-size: 14px; color: #444; line-height: 1.65; margin-bottom: 10px; }
+#explication p:last-child { margin-bottom: 0; }
+#explication .highlight { color: #E67F39; font-weight: 600; }
+#explication .answer { font-weight: 700; color: #111; }
+</style>
+</head>
+<body>
+
+<p id="question">
+  <strong>Les deux barres rouges ont-elles la même longueur ?</strong><br>
+  <span style="font-size:13px;color:#999;">Glissez les barres pour les comparer côte à côte.</span>
+</p>
+
+<svg id="svg" viewBox="0 0 650 440" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Rails convergents : convergent vers le point (325, 30) -->
+  <g id="rails">
+    <!-- Rail gauche : de (325,30) vers (60,440) -->
+    <line x1="325" y1="30" x2="60" y2="440" stroke="#888" stroke-width="2.5"/>
+    <!-- Rail droit : de (325,30) vers (590,440) -->
+    <line x1="325" y1="30" x2="590" y2="440" stroke="#888" stroke-width="2.5"/>
+
+    <!-- Traverses de chemin de fer pour renforcer la perspective -->
+    <line x1="218" y1="200" x2="432" y2="200" stroke="#bbb" stroke-width="1.5"/>
+    <line x1="185" y1="260" x2="465" y2="260" stroke="#bbb" stroke-width="1.5"/>
+    <line x1="152" y1="320" x2="498" y2="320" stroke="#bbb" stroke-width="1.5"/>
+    <line x1="120" y1="380" x2="530" y2="380" stroke="#bbb" stroke-width="1.5"/>
+    <line x1="252" y1="140" x2="398" y2="140" stroke="#bbb" stroke-width="1.5"/>
+    <line x1="278" y1="90"  x2="372" y2="90"  stroke="#bbb" stroke-width="1.5"/>
+  </g>
+
+  <!-- Barre du haut (près de la convergence) — longueur 120 centrée en x=325, y=110 -->
+  <line id="bar-top"
+    x1="265" y1="110" x2="385" y2="110"
+    stroke="#D0312D" stroke-width="7" stroke-linecap="round"
+    class="bar"/>
+
+  <!-- Barre du bas (loin de la convergence) — même longueur 120, centrée en x=325, y=340 -->
+  <line id="bar-bot"
+    x1="265" y1="340" x2="385" y2="340"
+    stroke="#D0312D" stroke-width="7" stroke-linecap="round"
+    class="bar"/>
+
+</svg>
+
+<div id="controls">
+  <button id="btn-reset">↺ Remettre à neuf</button>
+  <button id="btn-rails">Masquer les rails</button>
+</div>
+
+<button id="btn-explain">▼ Voir l'explication</button>
+
+<div id="explication">
+  <h2>L'illusion de Ponzo — ce que fait votre cerveau</h2>
+
+  <p>
+    <span class="answer">Oui, les deux barres sont rigoureusement identiques.</span>
+    Elles mesurent exactement 120 unités dans le dessin. Et pourtant la barre du haut semble
+    nettement plus longue. Masquez les rails et elles paraîtront aussitôt égales.
+  </p>
+
+  <p>
+    Cette illusion a été décrite en 1913 par le psychologue italien
+    <strong>Mario Ponzo</strong>. Elle repose sur le mécanisme de
+    <span class="highlight">constance de taille</span> : notre cerveau est entraîné depuis
+    l'enfance à interpréter les lignes qui convergent comme des rails ou des routes
+    qui s'éloignent vers un point de fuite. Dans ce contexte de perspective,
+    il en déduit automatiquement que ce qui est situé plus haut (plus "loin")
+    doit être plus grand pour avoir la même taille rétinienne.
+  </p>
+
+  <p>
+    Concrètement, le cortex visuel applique une <span class="highlight">correction de
+    profondeur</span> : il amplifie mentalement la taille des objets perçus comme distants.
+    Ici les deux barres ont la même taille sur la rétine, mais celle du haut est traitée
+    comme plus éloignée — donc le cerveau la juge plus grande pour "compenser" la distance.
+  </p>
+
+  <p>
+    Ce biais est universel mais son intensité varie selon l'exposition culturelle à la
+    perspective linéaire (architecture, photographie…). Des études ont montré que des
+    personnes vivant dans des environnements sans lignes droites ni perspectives artificielles
+    sont moins sensibles à cette illusion — preuve que notre perception est en partie
+    <span class="highlight">apprise, pas innée</span>.
+  </p>
+</div>
+
+<script>
+const SVG_EL = document.getElementById('svg');
+const VB_W = 650, VB_H = 440;
+
+function toSvgPt(clientX, clientY) {
+  const r = SVG_EL.getBoundingClientRect();
+  return {
+    x: (clientX - r.left) / r.width  * VB_W,
+    y: (clientY - r.top)  / r.height * VB_H
+  };
+}
+
+function makeDraggableBar(el) {
+  let active = false, oy = 0;
+
+  function onStart(clientX, clientY) {
+    active = true;
+    el.classList.add('dragging');
+    const p = toSvgPt(clientX, clientY);
+    oy = p.y - parseFloat(el.getAttribute('y1'));
+  }
+
+  function onMove(clientX, clientY) {
+    if (!active) return;
+    const p = toSvgPt(clientX, clientY);
+    const ny = p.y - oy;
+    el.setAttribute('y1', ny);
+    el.setAttribute('y2', ny);
+  }
+
+  function onEnd() {
+    active = false;
+    el.classList.remove('dragging');
+  }
+
+  el.addEventListener('mousedown',  e => { e.preventDefault(); onStart(e.clientX, e.clientY); });
+  el.addEventListener('touchstart', e => { e.preventDefault(); onStart(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+  document.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+  document.addEventListener('touchmove', e => {
+    if (active) { e.preventDefault(); onMove(e.touches[0].clientX, e.touches[0].clientY); }
+  }, { passive: false });
+  document.addEventListener('mouseup',  onEnd);
+  document.addEventListener('touchend', onEnd);
+}
+
+makeDraggableBar(document.getElementById('bar-top'));
+makeDraggableBar(document.getElementById('bar-bot'));
+
+let railsVisible = true;
+document.getElementById('btn-rails').addEventListener('click', function() {
+  railsVisible = !railsVisible;
+  document.getElementById('rails').style.visibility = railsVisible ? '' : 'hidden';
+  this.textContent = railsVisible ? 'Masquer les rails' : 'Afficher les rails';
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  const top = document.getElementById('bar-top');
+  const bot = document.getElementById('bar-bot');
+  top.setAttribute('y1', '110'); top.setAttribute('y2', '110');
+  bot.setAttribute('y1', '340'); bot.setAttribute('y2', '340');
+  railsVisible = true;
+  document.getElementById('rails').style.visibility = '';
+  document.getElementById('btn-rails').textContent = 'Masquer les rails';
+});
+
+const btnEx = document.getElementById('btn-explain');
+const divEx = document.getElementById('explication');
+btnEx.addEventListener('click', () => {
+  const visible = divEx.classList.toggle('visible');
+  btnEx.textContent = visible ? '▲ Masquer l\'explication' : '▼ Voir l\'explication';
+});
+</script>
+</body>
+</html>

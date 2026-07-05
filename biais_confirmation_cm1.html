@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le biais de confirmation — CM1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green:  #3db76d;
+    --green-light: #d4f5e2;
+    --red:    #e8454a;
+    --red-light: #fde8e8;
+    --yellow: #f9c846;
+    --blue:   #4a9cf6;
+    --purple: #9b6ef3;
+    --bg:     #fdf8f0;
+    --card:   #ffffff;
+    --text:   #2a2035;
+    --muted:  #7a7090;
+    --radius: 20px;
+  }
+
+  body {
+    font-family: 'Nunito', 'Comic Sans MS', cursive, sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 40px;
+    color: var(--text);
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: clamp(22px, 5vw, 34px);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  header h1 span {
+    color: var(--purple);
+  }
+  header p {
+    margin-top: 6px;
+    font-size: 15px;
+    color: var(--muted);
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .pip {
+    width: 36px;
+    height: 8px;
+    border-radius: 99px;
+    background: #e0d9f0;
+    transition: background 0.4s;
+  }
+  .pip.active  { background: var(--purple); }
+  .pip.done    { background: #c5b8f0; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 760px;
+    padding: 32px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* ── SCENE ── */
+  .scene {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  /* centre */
+  .center-bubble {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .center-emoji {
+    font-size: 52px;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
+  }
+  .center-speech {
+    background: var(--yellow);
+    color: #3d2a00;
+    font-weight: 700;
+    font-size: 15px;
+    border-radius: 14px;
+    padding: 12px 16px;
+    text-align: center;
+    max-width: 190px;
+    line-height: 1.4;
+    box-shadow: 0 2px 8px rgba(249,200,70,0.35);
+  }
+
+  /* buddies */
+  .buddy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+    width: 180px;
+  }
+  .buddy-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    border: 3px solid;
+    flex-shrink: 0;
+    transition: transform 0.15s;
+  }
+  .buddy-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .speech-bubble {
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.45;
+    text-align: center;
+    border: 2px solid;
+  }
+  .agree  .buddy-avatar   { background: var(--green-light); border-color: var(--green); }
+  .agree  .speech-bubble  { background: var(--green-light); border-color: var(--green); color: #0e4a27; }
+  .disagree .buddy-avatar { background: var(--red-light);   border-color: var(--red); }
+  .disagree .speech-bubble{ background: var(--red-light);   border-color: var(--red); color: #6b0c0e; }
+
+  /* note pédagogique */
+  .pedagogy-note {
+    margin-top: 14px;
+    background: #fff8e1;
+    border: 2px solid var(--yellow);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #5a3e00;
+    text-align: center;
+    width: 100%;
+  }
+
+  /* arrows */
+  .arrow { font-size: 26px; color: #c8bed8; flex-shrink: 0; }
+  @media (max-width: 560px) { .arrow { display: none; } }
+
+  /* ── QUESTION ── */
+  .question {
+    margin-top: 28px;
+    text-align: center;
+    width: 100%;
+  }
+  .question p {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .question small {
+    font-size: 13px;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 16px;
+  }
+  .choices {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .choice-btn {
+    padding: 12px 22px;
+    border-radius: 50px;
+    border: 2.5px solid;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.13s, box-shadow 0.13s;
+    background: white;
+  }
+  .choice-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .choice-btn:active { transform: scale(0.97); }
+  .choice-btn.agree    { border-color: var(--green); color: #0e4a27; }
+  .choice-btn.agree:hover    { background: var(--green-light); }
+  .choice-btn.disagree { border-color: var(--red);   color: #6b0c0e; }
+  .choice-btn.disagree:hover { background: var(--red-light); }
+
+  /* ── RESULT ── */
+  .result {
+    display: none;
+    margin-top: 24px;
+    border-radius: 16px;
+    padding: 18px 20px;
+    width: 100%;
+    text-align: center;
+    animation: popIn 0.3s ease;
+  }
+  .result.show { display: block; }
+  @keyframes popIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+  .result.agree    { background: var(--green-light); border: 2px solid var(--green); }
+  .result.disagree { background: var(--red-light);   border: 2px solid var(--red); }
+  .result .result-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .result.agree    .result-title { color: #0e4a27; }
+  .result.disagree .result-title { color: #6b0c0e; }
+  .result .result-explain {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .result .highlight {
+    font-weight: 700;
+    color: var(--purple);
+  }
+
+  /* ── BUTTONS ── */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .btn {
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 2px solid;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform 0.12s;
+    background: white;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-replay { border-color: #c8bed8; color: var(--muted); }
+  .btn-replay:hover { background: #f3effe; }
+  .btn-next { border-color: var(--purple); color: var(--purple); background: #f3effe; }
+  .btn-next:hover { background: #e8deff; }
+  .btn-next.disabled { opacity: 0.35; pointer-events: none; }
+
+  /* ── STEP LABEL ── */
+  .step-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── FINAL ── */
+  .final {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+    padding: 10px 0;
+    animation: popIn 0.4s ease;
+  }
+  .final.show { display: flex; }
+  .final .trophy { font-size: 64px; }
+  .final h2 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--purple);
+  }
+  .final p { font-size: 15px; color: var(--muted); max-width: 500px; line-height: 1.6; }
+  .final .definition {
+    background: #f3effe;
+    border: 2px solid #c5b0f5;
+    border-radius: 16px;
+    padding: 16px 20px;
+    max-width: 520px;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .final .definition strong { color: var(--purple); }
+  .btn-restart { border-color: var(--purple); color: white; background: var(--purple); font-size: 15px; padding: 12px 28px; }
+  .btn-restart:hover { background: #8257e6; }
+
+  /* ── INTRO SCREEN ── */
+  .hidden { display: none !important; }
+  #intro-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+    padding: 10px 0;
+    animation: popIn 0.4s ease;
+  }
+  .intro-brain { font-size: 64px; line-height: 1; }
+  .intro-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: clamp(20px, 5vw, 28px);
+    font-weight: 800;
+    color: var(--purple);
+    line-height: 1.2;
+  }
+  .intro-definition {
+    background: #f3effe;
+    border: 2px solid #c5b0f5;
+    border-radius: 16px;
+    padding: 16px 20px;
+    max-width: 520px;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.75;
+    text-align: left;
+  }
+  .intro-definition strong { color: var(--purple); }
+  .intro-game-link {
+    background: #fff8e1;
+    border: 2px solid var(--yellow);
+    border-radius: 14px;
+    padding: 12px 18px;
+    max-width: 520px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #5a3e00;
+    line-height: 1.6;
+  }
+  .intro-cta {
+    font-family: 'Baloo 2', cursive;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--purple);
+  }
+  .btn-start {
+    border-color: var(--purple); color: white;
+    background: var(--purple); font-size: 15px; padding: 12px 32px;
+  }
+  .btn-start:hover { background: #8257e6; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Le <span>biais de confirmation</span> 🧠</h1>
+  <p>À qui vas-tu faire confiance&nbsp;? Choisis et découvre pourquoi&nbsp;!</p>
+</header>
+
+<div class="progress-wrap hidden" id="progress"></div>
+
+<div class="card" id="main-card">
+
+  <div id="intro-screen">
+    <div class="intro-brain">🧠</div>
+    <div class="intro-title">Le biais de confirmation</div>
+    <div class="intro-definition">
+      Notre cerveau a une tendance naturelle à <strong>chercher et retenir les informations qui confirment ce qu'il croit déjà</strong> — et à rejeter ou ignorer ce qui le contredit, même si c'est vrai.<br><br>
+      Résultat : on finit par ne voir que ce qu'on veut voir, et par croire encore plus fort ce qu'on croyait déjà !
+    </div>
+    <div class="intro-game-link">
+      🎮 Dans ce jeu, tu vas devoir choisir <strong>qui a raison</strong> dans différentes situations.<br>
+      Attention : ton cerveau va essayer de te pousser vers la réponse qui <em>confirme ce que tu ressens déjà</em>…<br>
+      Sauras-tu résister ?
+    </div>
+    <div class="intro-cta">Et maintenant, on va tester le « biais de confirmation » !</div>
+    <button class="btn btn-start" onclick="startGame()">C'est parti ! ▶</button>
+  </div>
+
+  <div id="game-area" class="hidden">
+    <div class="step-label" id="step-label">Situation 1 / 5</div>
+
+    <div class="scene" id="scene"></div>
+
+    <div class="pedagogy-note" id="pedagogy-note" style="display:none;"></div>
+
+    <div class="question" id="question-area">
+      <p>Selon toi, qui a raison&nbsp;?</p>
+      <small>Clique sur la personne dont tu retiens l'avis.</small>
+      <div class="choices" id="choices"></div>
+    </div>
+
+    <div class="result agree"    id="res-agree"></div>
+    <div class="result disagree" id="res-disagree"></div>
+
+    <div class="btn-row" id="btn-row" style="display:none; margin-top:16px;">
+      <button class="btn btn-replay" onclick="replay()">↩ Recommencer</button>
+      <button class="btn btn-next"   id="btn-next" onclick="nextStep()">Situation suivante →</button>
+    </div>
+  </div>
+
+  <div class="final" id="final-area">
+    <div class="trophy">🏆</div>
+    <h2>Bravo&nbsp;! Tu as tout fait&nbsp;!</h2>
+    <p>À chaque fois, tu as eu tendance à retenir l'avis qui correspondait à ce que la personne pensait déjà…</p>
+    <div class="definition">
+      <strong>Le biais de confirmation</strong>, c'est quand notre cerveau retient surtout les informations qui confirment ce qu'on pense déjà, et ignore les autres — même si elles sont tout aussi valables&nbsp;!
+    </div>
+    <button class="btn btn-restart" onclick="restart()">🔄 Recommencer depuis le début</button>
+  </div>
+
+</div>
+
+<script>
+const steps = [
+  {
+    emoji: "✏️",
+    center: "J'ai écrit la meilleure rédaction de la classe&nbsp;!",
+    agree:    { name: "Chloé",  emoji: "🤩", text: "C'est vrai, ton histoire était super bien écrite&nbsp;!" },
+    disagree: { name: "Nathan", emoji: "😬", text: "Bof, c'était un peu long et il y avait des fautes…" },
+    reveal: {
+      agree:    { title: "Tu as choisi Chloé !", explain: "Quand on est fier de son travail, on retient surtout les compliments. C'est le <span class='highlight'>biais de confirmation</span>&nbsp;!" },
+      disagree: { title: "Tu as choisi Nathan !", explain: "Si on doute de soi, on retient les critiques. C'est le <span class='highlight'>biais de confirmation</span>&nbsp;! Mais attention : Nathan a peut-être repéré de vraies fautes. <span class='highlight'>Écouter les critiques peut aider à progresser&nbsp;!</span>" }
+    }
+  },
+  {
+    emoji: "🏃",
+    center: "J'ai couru le plus vite à la récréation&nbsp;!",
+    agree:    { name: "Enzo", emoji: "😄", text: "Oui&nbsp;! Tu as battu tout le monde facilement&nbsp;!" },
+    disagree: { name: "Sara", emoji: "😒", text: "Non, je t'ai vu, tu as pris un raccourci&nbsp;!" },
+    note: "💡 Sara a peut-être un peu raison… Parfois, il est important d'écouter les critiques&nbsp;!",
+    reveal: {
+      agree:    { title: "Tu as choisi Enzo !", explain: "On préfère entendre qu'on a gagné honnêtement. C'est le <span class='highlight'>biais de confirmation</span>&nbsp;! Mais… est-ce que Sara n'aurait pas vu quelque chose de vrai&nbsp;?" },
+      disagree: { title: "Tu as choisi Sara !", explain: "Bonne réflexion&nbsp;: Sara soulève un fait précis. <span class='highlight'>Écouter les critiques</span>, même quand elles font mal, c'est ce qui permet de ne pas se mentir à soi-même&nbsp;!" }
+    }
+  },
+  {
+    emoji: "⚽",
+    center: "J'ai marqué le plus beau but de toute l'année&nbsp;!",
+    agree:    { name: "Théo",  emoji: "🙌", text: "Carrément, c'était un tir incroyable&nbsp;!" },
+    disagree: { name: "Manon", emoji: "🤨", text: "Tu t'étais mis hors-jeu avant de tirer, l'arbitre aurait dû l'annuler&nbsp;!" },
+    reveal: {
+      agree:    { title: "Tu as choisi Théo !", explain: "On se souvient surtout de ce qui nous met en valeur. C'est le <span class='highlight'>biais de confirmation</span>&nbsp;!" },
+      disagree: { title: "Tu as choisi Manon !", explain: "Manon soulève un point honnête. <span class='highlight'>Écouter les critiques</span> aide à voir la réalité telle qu'elle est, pas telle qu'on voudrait qu'elle soit&nbsp;!" }
+    }
+  },
+  {
+    emoji: "🎂",
+    center: "C'est moi qui ai fait le meilleur gâteau pour la fête&nbsp;!",
+    agree:    { name: "Jade", emoji: "😋", text: "Oui&nbsp;! Tout le monde en voulait un deuxième morceau&nbsp;!" },
+    disagree: { name: "Hugo", emoji: "😕", text: "Tu as oublié la levure, c'est pour ça qu'il était tout plat au milieu…" },
+    reveal: {
+      agree:    { title: "Tu as choisi Jade !", explain: "Quand on a travaillé dur, on préfère les compliments. C'est le <span class='highlight'>biais de confirmation</span>&nbsp;!" },
+      disagree: { title: "Tu as choisi Hugo !", explain: "Hugo a peut-être goûté quelque chose de vrai. <span class='highlight'>Les critiques constructives</span> aident à faire encore mieux la prochaine fois&nbsp;!" }
+    }
+  },
+  {
+    emoji: "🎭",
+    center: "J'avais le plus beau déguisement pour Carnaval&nbsp;!",
+    agree:    { name: "Léonie", emoji: "😍", text: "Oui, tout le monde te regardait, tu étais trop original&nbsp;!" },
+    disagree: { name: "Alexis", emoji: "😶", text: "On voyait que c'était fait à la dernière minute…" },
+    reveal: {
+      agree:    { title: "Tu as choisi Léonie !", explain: "On retient les avis qui confirment qu'on a réussi. C'est le <span class='highlight'>biais de confirmation</span>&nbsp;!" },
+      disagree: { title: "Tu as choisi Alexis !", explain: "Alexis a peut-être remarqué quelque chose de réel. <span class='highlight'>Écouter une critique</span>, même gênante, c'est une chance de faire mieux la prochaine fois&nbsp;!" }
+    }
+  }
+];
+
+let current = 0;
+let answered = false;
+
+function buildProgress() {
+  const p = document.getElementById('progress');
+  p.innerHTML = '';
+  steps.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'pip' + (i < current ? ' done' : i === current ? ' active' : '');
+    p.appendChild(d);
+  });
+}
+
+function buildStep() {
+  answered = false;
+  const s = steps[current];
+  document.getElementById('step-label').textContent = `Situation ${current+1} / ${steps.length}`;
+
+  document.getElementById('scene').innerHTML = `
+    <div class="buddy agree">
+      <div class="buddy-avatar" style="font-size:28px;">${s.agree.emoji}</div>
+      <div class="buddy-name">${s.agree.name}</div>
+      <div class="speech-bubble">${s.agree.text}</div>
+    </div>
+    <span class="arrow">←</span>
+    <div class="center-bubble">
+      <span class="center-emoji">${s.emoji}</span>
+      <div class="center-speech">${s.center}</div>
+    </div>
+    <span class="arrow">→</span>
+    <div class="buddy disagree">
+      <div class="buddy-avatar" style="font-size:28px;">${s.disagree.emoji}</div>
+      <div class="buddy-name">${s.disagree.name}</div>
+      <div class="speech-bubble">${s.disagree.text}</div>
+    </div>
+  `;
+
+  document.getElementById('choices').innerHTML = `
+    <button class="choice-btn agree"    onclick="choose('agree')">   ${s.agree.name} a raison&nbsp;!</button>
+    <button class="choice-btn disagree" onclick="choose('disagree')">${s.disagree.name} a raison&nbsp;!</button>
+  `;
+
+  const noteEl = document.getElementById('pedagogy-note');
+  if (s.note) { noteEl.innerHTML = s.note; noteEl.style.display = ''; }
+  else { noteEl.style.display = 'none'; }
+  document.getElementById('question-area').style.display = '';
+  document.getElementById('res-agree').classList.remove('show');
+  document.getElementById('res-disagree').classList.remove('show');
+  document.getElementById('btn-row').style.display = 'none';
+  document.getElementById('btn-next').textContent = current === steps.length - 1 ? 'Voir le bilan 🎉' : 'Situation suivante →';
+}
+
+function choose(side) {
+  if (answered) return;
+  answered = true;
+  const s = steps[current];
+  const rev = s.reveal[side];
+  const el = document.getElementById('res-' + side);
+  el.innerHTML = `<div class="result-title">${rev.title}</div><div class="result-explain">${rev.explain}</div>`;
+  el.classList.add('show');
+  document.getElementById('question-area').style.display = 'none';
+  document.getElementById('btn-row').style.display = 'flex';
+}
+
+function replay() {
+  buildStep();
+}
+
+function nextStep() {
+  current++;
+  if (current >= steps.length) {
+    document.getElementById('game-area').style.display = 'none';
+    document.getElementById('final-area').classList.add('show');
+    document.getElementById('progress').querySelectorAll('.pip').forEach(p => { p.classList.remove('active'); p.classList.add('done'); });
+  } else {
+    buildProgress();
+    buildStep();
+  }
+}
+
+function restart() {
+  current = 0;
+  document.getElementById('game-area').style.display = '';
+  document.getElementById('final-area').classList.remove('show');
+  buildProgress();
+  buildStep();
+}
+
+function startGame() {
+  document.getElementById('intro-screen').classList.add('hidden');
+  document.getElementById('game-area').classList.remove('hidden');
+  document.getElementById('progress').classList.remove('hidden');
+  buildProgress();
+  buildStep();
+}
+</script>
+</body>
+</html>

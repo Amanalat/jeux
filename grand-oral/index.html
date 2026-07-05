@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Grand Oral 🎤</title>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#150e26; --panel:#1e1538; --card:#2a1d4e;
+  --acc:#c9a0ff; --gr:#3ecf8e; --rd:#f75f5f; --bl:#62b0ff; --vi:#a855f7;
+  --tx:#f0e9ff; --mu:#9d8cc4; --bord:rgba(255,255,255,0.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);background-image:radial-gradient(ellipse at 50% -10%,rgba(255,214,140,.10) 0%,transparent 55%),radial-gradient(ellipse at 85% 85%,rgba(168,85,247,.08) 0%,transparent 55%);color:var(--tx);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px;}
+h1{font-family:'Abril Fatface',serif;font-size:clamp(1.8rem,6vw,2.6rem);color:var(--acc);text-shadow:0 0 30px rgba(201,160,255,.4);}
+.sub{color:var(--mu);font-size:.9rem;font-weight:600;margin-top:4px;}
+.author{color:var(--mu);font-size:.78rem;font-weight:600;margin-bottom:16px;opacity:.8;}
+.author a{color:var(--acc);text-decoration:none;}
+header{text-align:center;}
+
+#intro{max-width:640px;text-align:center;}
+#intro .brief{background:var(--panel);border:1px solid var(--bord);border-radius:20px;padding:24px;margin-bottom:20px;text-align:left;font-size:.95rem;line-height:1.6;font-weight:600;}
+#intro .brief b{color:var(--acc);}
+.bigbtn{background:linear-gradient(135deg,#b07cff,#7c3aed);color:#fff;border:none;border-radius:50px;padding:15px 40px;font-family:'Abril Fatface',serif;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 20px rgba(168,85,247,.35);transition:transform .2s;}
+.bigbtn:hover{transform:translateY(-2px);}
+
+#hud{display:none;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--bord);border-radius:50px;padding:9px 22px;margin-bottom:14px;font-weight:700;font-size:.9rem;flex-wrap:wrap;justify-content:center;}
+.num{font-family:'Abril Fatface',serif;font-size:1.2rem;color:var(--acc);}
+
+#game{display:none;width:100%;max-width:760px;}
+
+/* Mission / auditoire */
+.mission{background:var(--panel);border:1px solid var(--bord);border-radius:20px;padding:20px 22px;margin-bottom:14px;position:relative;overflow:hidden;animation:slidein .35s ease;}
+@keyframes slidein{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+.mission::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--acc),var(--vi));}
+.mtag{display:inline-block;background:rgba(201,160,255,.13);color:var(--acc);border:1px solid rgba(201,160,255,.35);border-radius:6px;font-size:.7rem;font-weight:800;padding:3px 10px;margin-bottom:10px;letter-spacing:1px;text-transform:uppercase;}
+.mtxt{font-size:1.05rem;font-weight:800;line-height:1.5;color:#fff;margin-bottom:12px;}
+.audience{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;background:var(--card);border:1px dashed rgba(255,255,255,.18);border-radius:14px;padding:13px 15px;}
+.audience::before{content:'📋 Fiche auditoire — confidentiel';flex-basis:100%;font-size:.66rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);}
+.audience .aemoji{font-size:2rem;flex-shrink:0;}
+.audience .aname{font-weight:800;color:var(--bl);font-size:.92rem;}
+.audience .adesc{font-weight:600;color:#d9cdf2;font-size:.86rem;line-height:1.5;}
+
+.sectitle{font-size:.78rem;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;}
+
+/* Registres */
+.reg{background:var(--panel);border:1px solid var(--bord);border-radius:16px;padding:14px 16px;margin-bottom:10px;}
+.reg-hd{display:flex;align-items:center;gap:8px;font-family:'Abril Fatface',serif;font-size:1rem;margin-bottom:3px;}
+.reg.ethos .reg-hd{color:var(--bl);}
+.reg.pathos .reg-hd{color:var(--rd);}
+.reg.logos .reg-hd{color:var(--gr);}
+.reg-sub{font-size:.76rem;font-weight:700;color:var(--mu);margin-bottom:10px;}
+.reg-opts{display:grid;gap:7px;}
+.opt{background:var(--card);border:2px solid var(--bord);border-radius:12px;padding:11px 13px;cursor:pointer;text-align:left;font-family:Georgia,'Times New Roman',serif;font-style:italic;color:var(--tx);font-size:.88rem;font-weight:400;line-height:1.45;transition:all .15s;}
+.opt:hover{border-color:rgba(255,255,255,.25);}
+.reg.ethos .opt.sel{border-color:var(--bl);background:rgba(79,163,247,.1);}
+.reg.pathos .opt.sel{border-color:var(--rd);background:rgba(247,95,95,.1);}
+.reg.logos .opt.sel{border-color:var(--gr);background:rgba(62,207,142,.1);}
+.opt.sel::before{content:"🎙️ ";}
+
+#speakbtn{width:100%;background:linear-gradient(135deg,#b07cff,#7c3aed);color:#fff;border:none;border-radius:50px;padding:15px;font-family:'Abril Fatface',serif;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 20px rgba(168,85,247,.35);transition:transform .2s;margin-top:6px;}
+#speakbtn:hover:not(:disabled){transform:translateY(-2px);}
+#speakbtn:disabled{opacity:.45;cursor:not-allowed;}
+
+/* Tribune (delivery) */
+#delivery{display:none;}
+#convbar{background:var(--panel);border:1px solid var(--bord);border-radius:16px;padding:14px 18px;margin-bottom:12px;}
+#convbar .glabels{display:flex;justify-content:space-between;font-size:.74rem;font-weight:800;margin-bottom:6px;}
+#convbar .gname{text-transform:uppercase;letter-spacing:.5px;color:var(--acc);}
+#convbar .gval{font-family:'Abril Fatface',serif;font-size:.95rem;}
+.gbg{height:18px;background:rgba(0,0,0,.35);border-radius:50px;overflow:hidden;}
+#conv-fill{height:100%;width:0%;border-radius:50px;background:linear-gradient(90deg,#f75f5f,#f7c948,#3ecf8e);transition:width .8s cubic-bezier(.34,1.2,.64,1);}
+.dstep{display:none;background:var(--panel);border:1px solid var(--bord);border-radius:16px;padding:14px 16px;margin-bottom:10px;animation:slidein .4s ease;}
+.dstep .dreg{font-family:'Abril Fatface',serif;font-size:.92rem;margin-bottom:6px;}
+.dstep.ethos .dreg{color:var(--bl);}
+.dstep.pathos .dreg{color:var(--rd);}
+.dstep.logos .dreg{color:var(--gr);}
+.dstep .dsaid{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:.95rem;line-height:1.6;color:#e2d7f7;background:rgba(0,0,0,.25);border-radius:10px;padding:12px 14px 12px 38px;margin-bottom:8px;border-left:3px solid var(--acc);position:relative;}
+.dstep .dsaid::before{content:'\201C';font-family:'Abril Fatface',serif;font-style:normal;font-size:2.1rem;color:var(--acc);position:absolute;left:10px;top:4px;line-height:1;opacity:.85;}
+.dstep .dreact{font-size:.88rem;font-weight:700;line-height:1.5;}
+.dstep .dreact b{color:var(--acc);}
+.dstep.p2 .dreact{color:var(--gr);}
+.dstep.p1 .dreact{color:var(--acc);}
+.dstep.p0 .dreact{color:var(--rd);}
+
+#verdict{display:none;border-radius:18px;padding:18px 20px;margin-bottom:12px;animation:slidein .4s ease;background:rgba(201,160,255,.08);border:2px solid var(--acc);}
+#verdict h3{font-family:'Abril Fatface',serif;font-size:1.2rem;color:var(--acc);margin-bottom:6px;}
+#verdict .vstars{font-size:1.5rem;margin-bottom:8px;}
+#verdict p{font-size:.9rem;font-weight:600;line-height:1.55;}
+#verdict p b{color:var(--acc);}
+#nextbtn{display:none;width:100%;background:linear-gradient(135deg,#b07cff,#7c3aed);color:#fff;border:none;border-radius:50px;padding:14px;font-family:'Abril Fatface',serif;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 20px rgba(168,85,247,.35);}
+
+#end{display:none;max-width:580px;text-align:center;background:var(--panel);border:1px solid var(--bord);border-radius:20px;padding:30px;}
+#end h2{font-family:'Abril Fatface',serif;font-size:1.7rem;color:var(--acc);margin-bottom:10px;}
+#end .score-big{font-family:'Abril Fatface',serif;font-size:2.4rem;color:#fff;margin:10px 0;}
+#end p{color:var(--mu);font-weight:700;margin-bottom:18px;line-height:1.55;}
+#end p b{color:var(--tx);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎤 Le Grand Oral</h1>
+  <p class="sub">Assemble ton discours : ethos, pathos, logos… adaptés à ton auditoire !</p>
+  <p class="author">par <a href="https://antoninatger.com" target="_blank">Antonin Atger</a></p>
+</header>
+
+<div id="intro">
+  <div class="brief">
+    <p>🏟️ Comme dans l'exercice en classe : une rangée défend avec l'<b>ethos</b> (l'éthique, la légitimité), une avec le <b>pathos</b> (l'émotion), une avec le <b>logos</b> (la logique). Ici, tu joues les trois rangées à la fois !</p>
+    <p style="margin-top:10px;">🎯 Pour chaque mission, <b>étudie d'abord ton auditoire</b> : ses valeurs, ses craintes, ses fiertés. Puis choisis UN argument de chaque registre pour composer ton discours.</p>
+    <p style="margin-top:10px;">⚠️ Piège : certains arguments sont <b>excellents… pour un autre public</b>. D'autres sont carrément <b>fallacieux</b>. La rhétorique, c'est l'art de l'adaptation !</p>
+  </div>
+  <button class="bigbtn" onclick="startGame()">🎤 Monter à la tribune</button>
+</div>
+
+<div id="hud">
+  <span>Discours <span class="num" id="qnum">1</span>/<span id="qtot">5</span></span>
+  <span id="hud-stars">⭐ 0</span>
+</div>
+
+<div id="game">
+  <div class="mission">
+    <span class="mtag">📜 Ta mission</span>
+    <p class="mtxt" id="mtxt"></p>
+    <div class="audience">
+      <span class="aemoji" id="aemoji"></span>
+      <div>
+        <div class="aname" id="aname"></div>
+        <div class="adesc" id="adesc"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="builder">
+    <p class="sectitle">✍️ Compose ton discours (un argument par registre)</p>
+    <div class="reg ethos">
+      <div class="reg-hd">🏛️ Ethos</div>
+      <div class="reg-sub">Convaincre par l'éthique, les valeurs, la légitimité</div>
+      <div class="reg-opts" id="opts-ethos"></div>
+    </div>
+    <div class="reg pathos">
+      <div class="reg-hd">💔 Pathos</div>
+      <div class="reg-sub">Convaincre par l'émotion</div>
+      <div class="reg-opts" id="opts-pathos"></div>
+    </div>
+    <div class="reg logos">
+      <div class="reg-hd">🧮 Logos</div>
+      <div class="reg-sub">Convaincre par la logique et les faits</div>
+      <div class="reg-opts" id="opts-logos"></div>
+    </div>
+    <button id="speakbtn" onclick="speak()" disabled>🎙️ Choisis un argument par registre</button>
+  </div>
+
+  <div id="delivery">
+    <p class="sectitle">🎙️ À la tribune…</p>
+    <div id="convbar">
+      <div class="glabels"><span class="gname">Conviction de l'auditoire</span><span class="gval" id="conv-val">0 %</span></div>
+      <div class="gbg"><div id="conv-fill"></div></div>
+    </div>
+    <div class="dstep ethos" id="step0"><div class="dreg">🏛️ Ton ethos</div><div class="dsaid"></div><div class="dreact"></div></div>
+    <div class="dstep pathos" id="step1"><div class="dreg">💔 Ton pathos</div><div class="dsaid"></div><div class="dreact"></div></div>
+    <div class="dstep logos" id="step2"><div class="dreg">🧮 Ton logos</div><div class="dsaid"></div><div class="dreact"></div></div>
+    <div id="verdict">
+      <h3 id="v-title"></h3>
+      <div class="vstars" id="v-stars"></div>
+      <p id="v-lesson"></p>
+    </div>
+    <button id="nextbtn" onclick="nextMission()">Mission suivante ➜</button>
+  </div>
+</div>
+
+<div id="end">
+  <h2 id="end-title"></h2>
+  <div class="score-big" id="end-score"></div>
+  <p id="end-msg"></p>
+  <button class="bigbtn" onclick="location.reload()">🔄 Rejouer</button>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

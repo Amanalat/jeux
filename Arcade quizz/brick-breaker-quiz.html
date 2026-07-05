@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brick Breaker Quiz</title>
+<script src="questions.js"></script>
+<script src="questions-6e5e.js"></script>
+<script src="questions-niveau1.js"></script>
+<script src="questions-niveau2.js"></script>
+<script src="questions-niveau3.js"></script>
+<script src="qcm-store.js"></script>
+<script>if(typeof QCMStore!=='undefined'){var _s=QCMStore.getSessionQuestions();if(_s&&_s.length)window.DEFAULT_QCM=_s;}</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Nunito:wght@600;700;800&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:#050010;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:100vh; overflow-x:hidden;
+    font-family:'Orbitron', sans-serif;
+  }
+
+  #ui {
+    max-width:660px; width:100%; display:flex; justify-content:space-between; align-items:center;
+    padding:8px 4px; color:#00ffcc; font-size:0.875rem; letter-spacing:.1em;
+    text-shadow:0 0 10px #00ffcc;
+  }
+  #ui span { font-size:1.125rem; font-weight:700; }
+  .consigne {
+    font-family:'Nunito',sans-serif; font-size:.9375rem; font-weight:800;
+    color:#ffaa00; letter-spacing:.05em;
+    animation:consigne-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes consigne-pulse {
+    0%,100% { text-shadow:0 0 8px rgba(255,170,0,.5); opacity:.85; }
+    50%     { text-shadow:0 0 22px rgba(255,170,0,1), 0 0 44px rgba(255,170,0,.45); opacity:1; }
+  }
+  #menu-btn-bottom {
+    display:inline-block; margin-left:8px; padding:4px 14px; border-radius:6px;
+    border:1.5px solid #00ffcc66; color:#00ffcc; text-decoration:none;
+    font-weight:800; transition:all .15s;
+  }
+  #menu-btn-bottom:hover { background:#00ffcc; color:#000; }
+
+  #canvas-wrap {
+    position:relative;
+    border:5px solid #00ffcc;
+    box-shadow:0 0 40px rgba(0,255,204,0.4), 0 0 80px rgba(0,255,204,0.15), inset 0 0 60px rgba(0,0,0,0.8);
+    width:min(660px,100%);
+  }
+  canvas { display:block; width:100%; height:auto; background:#00040f; cursor:none; }
+
+  #question-banner {
+    position:absolute; top:0; left:0; right:0;
+    background:rgba(0,4,15,0.93);
+    border-bottom:2px solid #00ffcc;
+    padding:10px 16px;
+    display:flex; flex-direction:column; gap:4px;
+    pointer-events:none;
+    opacity:0; visibility:hidden;
+    transform:translateY(-4px);
+    transition:opacity .22s ease, transform .22s ease, visibility .22s;
+  }
+  #question-banner.visible {
+    opacity:1; visibility:visible; transform:translateY(0);
+  }
+  #question-label { font-size:0.8125rem; color:#00ffcc; letter-spacing:.12em; opacity:.8; }
+  #question-text {
+    font-family:'Nunito', sans-serif; font-size:1.0625rem; font-weight:800;
+    color:#fff; line-height:1.35; text-shadow:0 0 8px rgba(0,255,204,.4);
+  }
+
+  #overlay {
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:rgba(0,4,15,0.93); color:#00ffcc; text-align:center; gap:14px;
+  }
+  #overlay h1 {
+    font-size:2rem; font-weight:900; letter-spacing:.15em;
+    text-shadow:0 0 30px #00ffcc, 0 0 60px #00ffcc; line-height:1.15;
+  }
+  #overlay .sub {
+    font-family:'Nunito',sans-serif; font-size:1rem;
+    color:#ccc; line-height:1.9; max-width:500px; padding:0 16px;
+  }
+  #overlay button {
+    padding:12px 44px; background:transparent;
+    border:2px solid #00ffcc; color:#00ffcc;
+    font-family:'Orbitron',sans-serif; font-size:0.9rem;
+    font-weight:700; letter-spacing:.15em; cursor:pointer; transition:all .2s;
+    text-shadow:0 0 10px #00ffcc; box-shadow:0 0 20px rgba(0,255,204,.2);
+  }
+  #overlay button:hover { background:#00ffcc; color:#000; box-shadow:0 0 40px rgba(0,255,204,.6); }
+  #overlay button:active { transform:scale(.93); opacity:.85; }
+  #overlay button.btn-custom {
+    border-color:#ffaa00; color:#ffaa00; text-shadow:0 0 10px #ffaa00;
+    box-shadow:0 0 20px rgba(255,170,0,.2); font-size:0.875rem; padding:10px 32px;
+  }
+  #overlay button.btn-custom:hover { background:#ffaa00; color:#000; }
+
+  #feedback {
+    position:absolute; bottom:50px; left:50%; transform:translateX(-50%);
+    padding:10px 22px; border-radius:8px;
+    font-family:'Nunito',sans-serif; font-size:0.9rem; font-weight:800;
+    pointer-events:none; opacity:0; transition:opacity .3s;
+    text-align:center; max-width:86%; z-index:10;
+  }
+  #feedback.show { opacity:1; }
+  #feedback.ok  { background:#10b981; color:#fff; box-shadow:0 0 20px rgba(16,185,129,.5); }
+  #feedback.ko  { background:#ef4444; color:#fff; box-shadow:0 0 20px rgba(239,68,68,.5); }
+
+  #controls {
+    max-width:660px; width:100%; text-align:center; margin-top:8px;
+    font-family:'Nunito',sans-serif; font-size:0.8125rem; color:#99a3c4; letter-spacing:.04em;
+  }
+  #speed-row {
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    margin-top:10px; font-family:'Nunito',sans-serif; font-size:0.875rem;
+    color:#00ffcc; letter-spacing:.04em;
+  }
+  #speed-row input[type=range] { width:160px; accent-color:#00ffcc; cursor:pointer; }
+  #font-label {
+    font-family:'Orbitron',sans-serif; font-size:0.8125rem;
+    color:#00ffcc; text-shadow:0 0 8px #00ffcc; min-width:52px; text-align:left;
+  }
+  input[type=range] { height: 20px; }
+  input[type=range]::-webkit-slider-thumb { width: 20px; height: 20px; }
+  input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border: none; }
+  #mute-btn {
+    background:transparent; border:1px solid #00ffcc44; color:#00ffcc99;
+    font-size:1rem; cursor:pointer; padding:2px 8px; border-radius:4px;
+    transition:all .2s; line-height:1;
+  }
+  #mute-btn:hover { border-color:#00ffcc; color:#00ffcc; }
+
+</style>
+</head>
+<body>
+
+<div id="ui">
+  <div>SCORE<br><span id="score-display">0</span></div>
+  <div style="text-align:center">BRICK BREAKER QUIZ<br>
+    <span class="consigne">🧱 CASSE LES FAUSSES RÉPONSES !</span>
+  </div>
+  <div style="text-align:right">VIES<br><span id="lives-display">❤️❤️❤️</span></div>
+</div>
+
+<div id="canvas-wrap">
+  <canvas id="game" width="660" height="520"></canvas>
+
+  <div id="question-banner">
+    <div id="question-label">QUESTION <span id="q-num">1</span> / <span id="q-total">10</span></div>
+    <div id="question-text"></div>
+  </div>
+
+  <div id="feedback"></div>
+
+  <div id="overlay">
+    <h1>BRICK<br>BREAKER<br>QUIZ</h1>
+    <div class="sub">
+      🧱 Une question s'affiche en haut — les réponses sont des briques.<br>
+      <strong style="color:#ffaa00">Casse toutes les FAUSSES réponses !</strong><br>
+      ⚠️ Lis les briques — toucher la <strong style="color:#ffcc00">bonne réponse</strong> coûte une vie !<br>
+      ⚠️ La balle qui tombe = −1 vie<br><br>
+      ← → ou <strong style="color:#00ffcc">Souris</strong> pour la raquette &nbsp;|&nbsp; <strong style="color:#00ffcc">ESPACE</strong> pour lancer &nbsp;|&nbsp; <strong style="color:#00ffcc">P</strong> = Pause
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
+      <button onclick="startDefaultGame()">JOUER ▶</button>
+      <button class="btn-custom" onclick="location.href='index.html'">← MENU &amp; QUESTIONS</button>
+    </div>
+  </div>
+</div>
+
+<div id="controls">← → ou SOURIS déplacer &nbsp;|&nbsp; ESPACE lancer &nbsp;|&nbsp; P = Pause &nbsp;|&nbsp; Casse les FAUSSES briques <a id="menu-btn-bottom" href="index.html">← MENU</a></div>
+<div id="speed-row">
+  🔡
+  <input type="range" id="font-slider" min="10" max="20" value="14" step="1">
+  🔠
+  <span id="font-label">14 px</span>
+  &nbsp;&nbsp;
+  <button id="mute-btn" onclick="toggleMute()">🔊</button>
+</div>
+
+
+<script>
+
+// ── MUTE ─────────────────────────────────────────────────────
+let muted = false;
+function toggleMute() {
+  muted = !muted;
+  document.getElementById('mute-btn').textContent = muted ? '🔇' : '🔊';
+}
+
+// ── TAILLE DE TEXTE ───────────────────────────────────────────
+let brickFontSize = 14;
+const fontSlider  = document.getElementById('font-slider');
+const fontLabelEl = document.getElementById('font-label');
+fontSlider.addEventListener('input', () => {
+  brickFontSize = +fontSlider.value;
+  fontLabelEl.textContent = brickFontSize + ' px';
+});
+
+let activeQCM = DEFAULT_QCM;
+
+// ── CANVAS ───────────────────────────────────────────────────
+const canvas = document.getElementById('game');
+const ctx    = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+// ── CONSTANTS ────────────────────────────────────────────────
+const BANNER_H    = 80;   // question banner height (bounce ceiling)
+const BRICK_TOP   = 100;  // y of first row of bricks
+const BRICK_H     = 55;
+const BRICK_GAP_X = 9;
+const BRICK_GAP_Y = 9;
+const PADDLE_Y    = H - 26;
+const PADDLE_W0   = 110;
+const PADDLE_H    = 12;
+const BALL_R      = 8;
+const BALL_SPD    = 3.0;
+const WALL        = 6;
+const WRONG_COLORS = ['#ff6644','#aa44ff','#00aaff','#ff44aa'];
+
+// ── STATE ────────────────────────────────────────────────────
+let score, lives, gameRunning, animId;
+let paused = false;
+let qIndex, currentQ, questionActive, feedbackTimer;
+let bricks, particles, stars;
+let ballLaunched;
+
+const paddle = { x: W/2, w: PADDLE_W0, y: PADDLE_Y, h: PADDLE_H };
+const ball   = { x: W/2, y: PADDLE_Y - BALL_R - 2, vx: 0, vy: 0, r: BALL_R, spd: BALL_SPD };
+
+// ── INPUT ────────────────────────────────────────────────────
+const keys = {};
+window.addEventListener('keydown', e => {
+  keys[e.code] = true;
+  if (e.code === 'Space') {
+    e.preventDefault();
+    if (gameRunning && !ballLaunched) launchBall();
+  }
+  if (e.code === 'Escape') {
+    if (gameRunning) { paused = !paused; }
+    else { location.href = 'index.html'; }
+    e.preventDefault();
+  }
+  if (e.code === 'KeyP' && gameRunning) { paused = !paused; e.preventDefault(); }
+});
+window.addEventListener('keyup', e => keys[e.code] = false);
+
+canvas.addEventListener('mousemove', e => {
+  if (!gameRunning) return;
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = W / rect.width;
+  paddle.x = Math.max(paddle.w/2, Math.min(W - paddle.w/2, (e.clientX - rect.left) * scaleX));
+});
+canvas.addEventListener('click', () => { if (gameRunning && !ballLaunched) launchBall(); });
+
+// ── COLORS ───────────────────────────────────────────────────
+function shuffleColors() {
+  const c = [...WRONG_COLORS];
+  for (let i=c.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [c[i],c[j]] = [c[j],c[i]];
+  }
+  return c;
+}
+
+// ── BRICKS ───────────────────────────────────────────────────
+function spawnBricks() {
+  bricks = [];
+  const q = activeQCM[qIndex];
+  const N = q.options.length;
+  const margin = 18;
+  const cols   = N <= 3 ? N : 2;
+  const avail  = W - 2*margin;
+  const bw     = (avail - (cols-1)*BRICK_GAP_X) / cols;
+  const colors = shuffleColors();
+
+  for (let i=0; i<N; i++) {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    bricks.push({
+      x: margin + col*(bw + BRICK_GAP_X),
+      y: BRICK_TOP + row*(BRICK_H + BRICK_GAP_Y),
+      w: bw, h: BRICK_H,
+      text:      q.options[i],
+      isCorrect: i === q.answer,
+      color:     colors[i % colors.length],
+      dead:      false,
+      flash:     0,
+      hitting:   false,
+    });
+  }
+}
+
+function drawBrick(b) {
+  if (b.dead) return;
+  ctx.save();
+
+  // Toutes les briques ont le même rendu — c'est le joueur qui doit identifier la bonne
+  ctx.shadowColor = b.color;
+  ctx.shadowBlur  = b.flash > 0 ? 24 : 8;
+  ctx.fillStyle   = b.flash > 0 ? b.color : b.color + '28';
+  ctx.strokeStyle = b.color;
+  ctx.lineWidth   = 1.5;
+
+  roundRect(ctx, b.x, b.y, b.w, b.h, 8);
+  ctx.fill(); ctx.stroke();
+  ctx.restore();
+
+  // Text
+  ctx.fillStyle = '#ffffff';
+  const fs = b.text.length > 28 ? Math.max(11, brickFontSize - 2) : brickFontSize;
+  ctx.font = `700 ${fs}px Nunito, sans-serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  wrapText(ctx, b.text, b.x+b.w/2, b.y+b.h/2, b.w-22, fs + 4);
+}
+
+// ── BALL ─────────────────────────────────────────────────────
+function resetBall() {
+  ball.x = paddle.x;
+  ball.y = paddle.y - ball.r - 2;
+  ball.vx = 0; ball.vy = 0;
+  ballLaunched = false;
+}
+
+function launchBall() {
+  const angle = -Math.PI/2 + (Math.random()-0.5)*0.85;
+  ball.vx = ball.spd * Math.cos(angle);
+  ball.vy = ball.spd * Math.sin(angle);
+  ballLaunched = true;
+}
+
+function drawBall() {
+  ctx.save();
+  ctx.shadowColor = '#00ffcc'; ctx.shadowBlur = 18;
+  const g = ctx.createRadialGradient(ball.x-2, ball.y-2, 1, ball.x, ball.y, ball.r);
+  g.addColorStop(0, '#ffffff'); g.addColorStop(1, '#00ffcc');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
+// ── PADDLE ───────────────────────────────────────────────────
+function drawPaddle() {
+  ctx.save();
+  ctx.shadowColor = '#00ffcc'; ctx.shadowBlur = 22;
+  const g = ctx.createLinearGradient(paddle.x-paddle.w/2, 0, paddle.x+paddle.w/2, 0);
+  g.addColorStop(0, '#003322'); g.addColorStop(0.5, '#00ffcc'); g.addColorStop(1, '#003322');
+  ctx.fillStyle = g;
+  roundRect(ctx, paddle.x-paddle.w/2, paddle.y-paddle.h/2, paddle.w, paddle.h, 6);
+  ctx.fill();
+  ctx.restore();
+}
+
+// ── COLLISIONS ───────────────────────────────────────────────
+function checkBrickCollisions() {
+  for (const b of bricks) {
+    if (b.dead || b.hitting) continue;
+    const cx = Math.max(b.x, Math.min(ball.x, b.x+b.w));
+    const cy = Math.max(b.y, Math.min(ball.y, b.y+b.h));
+    const dx = ball.x - cx, dy = ball.y - cy;
+    if (dx*dx + dy*dy >= ball.r*ball.r) continue;
+
+    // Bounce direction: smallest overlap axis
+    const ox = ball.r - Math.abs(dx);
+    const oy = ball.r - Math.abs(dy);
+    if (ox < oy) ball.vx = -ball.vx; else ball.vy = -ball.vy;
+
+    if (b.isCorrect) {
+      b.flash = 20;
+      lives--;
+      updateUI();
+      playSound(110, 0.45, 'sawtooth');
+      showFeedback('❌ Brique DORÉE touchée ! −1 vie', 'ko');
+      ballLaunched = false;
+      if (lives <= 0) setTimeout(() => endGame(false), 600);
+    } else {
+      b.hitting = true;
+      b.flash = 14;
+      spawnParticles(b.x+b.w/2, b.y+b.h/2, b.color, 14);
+      playSound(480 + Math.random()*220, 0.1, 'sine');
+      score += 50; updateUI();
+      setTimeout(() => { b.dead = true; checkAllWrongGone(); }, 220);
+    }
+    break;
+  }
+}
+
+function checkAllWrongGone() {
+  if (!questionActive) return;
+  if (bricks.some(b => !b.isCorrect && !b.dead)) return;
+  questionActive = false;
+  score += 100; updateUI();
+  playSound(660, 0.35, 'sine');
+  const correct = bricks.find(b => b.isCorrect);
+  if (correct) spawnParticles(correct.x+correct.w/2, correct.y+correct.h/2, '#ffcc00', 32);
+  showFeedback(currentQ.expl || '✅ Toutes les fausses réponses détruites !', 'ok');
+  setTimeout(() => { qIndex++; loadQuestion(); }, 1700);
+}
+
+// ── STARS / UI ───────────────────────────────────────────────
+function makeStars() {
+  stars = [];
+  for (let i=0;i<80;i++)
+    stars.push({ x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.2+.25, b:Math.random() });
+}
+
+function updateUI() {
+  document.getElementById('score-display').textContent = score;
+  const h = ['💀','❤️','❤️❤️','❤️❤️❤️'];
+  document.getElementById('lives-display').textContent = h[Math.max(0,lives)] || '💀';
+}
+
+function showFeedback(msg, type) {
+  const el = document.getElementById('feedback');
+  el.textContent = msg; el.className = 'show '+type;
+  clearTimeout(feedbackTimer);
+  feedbackTimer = setTimeout(() => el.className='', 2800);
+}
+
+// ── QUESTION ─────────────────────────────────────────────────
+function loadQuestion() {
+  if (qIndex >= activeQCM.length) { endGame(true); return; }
+  currentQ = activeQCM[qIndex];
+  document.getElementById('question-text').textContent = currentQ.q;
+  document.getElementById('q-num').textContent   = qIndex+1;
+  document.getElementById('q-total').textContent = activeQCM.length;
+  document.getElementById('question-banner').classList.add('visible');
+  spawnBricks();
+  resetBall();
+  questionActive = true;
+  if (qIndex === 0) showFeedback('🧱 Détruis toutes les FAUSSES réponses — la bonne doit rester !', 'ok');
+}
+
+// ── START / END ───────────────────────────────────────────────
+function startDefaultGame() {
+  // Nouveau tirage de questions à chaque partie (5/10/30 selon le hub)
+  if (typeof QCMStore !== 'undefined') {
+    var _p = QCMStore.getSessionQuestions();
+    if (_p && _p.length) window.DEFAULT_QCM = _p;
+  }
+  activeQCM = DEFAULT_QCM;
+  startGame();
+}
+
+function startGame() {
+  document.getElementById('overlay').style.display = 'none';
+  score=0; lives=3; qIndex=0; particles=[]; ballLaunched=false; paused=false;
+  paddle.x=W/2; paddle.w=PADDLE_W0; ball.spd=BALL_SPD;
+  makeStars(); updateUI(); gameRunning=true;
+  loadQuestion();
+  if (animId) cancelAnimationFrame(animId);
+  gameLoop();
+}
+
+function endGame(win) {
+  gameRunning = false;
+  document.getElementById('question-banner').classList.remove('visible');
+  const ov = document.getElementById('overlay');
+  ov.style.display = 'flex';
+  ov.innerHTML = `
+    <h1 style="color:${win?'#00ffcc':'#ff4466'}">${win?'BRAVO !<br>TOUTES<br>CASSÉES !':'GAME<br>OVER'}</h1>
+    <div class="sub">Score final : <strong style="color:#00ffcc">${score}</strong><br>
+    ${win?'Tu as détruit toutes les fausses réponses !':'Continue à développer ton esprit critique !'}</div>
+    <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
+      <button onclick="startDefaultGame()">REJOUER ▶</button>
+      <button class="btn-custom" onclick="location.href='index.html'">← MENU &amp; QUESTIONS</button>
+    </div>`;
+}
+
+// ── PARTICLES / SOUND ─────────────────────────────────────────
+function spawnParticles(x, y, color, count=12) {
+  for (let i=0;i<count;i++) {
+    const a=Math.random()*Math.PI*2, s=Math.random()*4+1;
+    particles.push({ x,y, vx:Math.cos(a)*s, vy:Math.sin(a)*s,
+      life:1, decay:Math.random()*.035+.015, r:Math.random()*4+2, color });
+  }
+}
+
+function playSound(freq, dur, type='sine', vol=0.15) {
+  if (muted) return;
+  try {
+    const ac=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(), g=ac.createGain();
+    o.type=type; o.frequency.setValueAtTime(freq,ac.currentTime);
+    o.frequency.exponentialRampToValueAtTime(freq*.3,ac.currentTime+dur);
+    g.gain.setValueAtTime(vol,ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+dur);
+    o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime+dur);
+  } catch(e){}
+}
+
+// ── HELPERS ──────────────────────────────────────────────────
+function wrapText(ctx, text, cx, cy, maxW, lineH) {
+  const words = text.split(' '); let line = '', lines = [];
+  for (const w of words) {
+    const t = line ? line + ' ' + w : w;
+    if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t;
+  }
+  if (line) lines.push(line);
+  const sy = cy - (lines.length - 1) * lineH / 2;
+  lines.forEach((l, i) => ctx.fillText(l, cx, sy + i * lineH));
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r); ctx.closePath();
+}
+
+// ── GAME LOOP ─────────────────────────────────────────────────
+function gameLoop() {
+  animId = requestAnimationFrame(gameLoop);
+  ctx.clearRect(0,0,W,H);
+
+  // Stars (static for Breakout — no scroll)
+  stars.forEach(s => {
+    ctx.globalAlpha = .2+s.b*.6;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+
+  // Scanlines
+  ctx.strokeStyle='rgba(0,255,204,0.02)'; ctx.lineWidth=1;
+  for (let y=0; y<H; y+=20) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  if (!gameRunning) return;
+
+  if (paused) {
+    ctx.font='700 20px Orbitron,sans-serif'; ctx.fillStyle='rgba(0,255,204,.9)';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('⏸ PAUSE', W/2, H/2);
+    ctx.font='400 13px Orbitron,sans-serif'; ctx.fillStyle='rgba(0,255,204,.6)';
+    ctx.fillText('P ou ECHAP pour continuer', W/2, H/2+32);
+    return;
+  }
+
+  // Paddle movement
+  if (keys['ArrowLeft'] ||keys['KeyA']) paddle.x = Math.max(paddle.w/2,   paddle.x-7);
+  if (keys['ArrowRight']||keys['KeyD']) paddle.x = Math.min(W-paddle.w/2, paddle.x+7);
+
+  if (!ballLaunched) {
+    // Ball sits on paddle
+    ball.x = paddle.x;
+    ball.y = paddle.y - ball.r - 2;
+  } else {
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    // Wall bounces
+    if (ball.x - ball.r <= 0)        { ball.x = ball.r;    ball.vx =  Math.abs(ball.vx); }
+    if (ball.x + ball.r >= W)        { ball.x = W-ball.r;  ball.vx = -Math.abs(ball.vx); }
+    if (ball.y - ball.r <= BANNER_H) { ball.y = BANNER_H+ball.r; ball.vy = Math.abs(ball.vy); playSound(440,.04,'square',0.08); }
+
+    // Paddle bounce
+    const px0=paddle.x-paddle.w/2, px1=paddle.x+paddle.w/2;
+    const py0=paddle.y-paddle.h/2;
+    if (ball.x>=px0 && ball.x<=px1 && ball.y+ball.r>=py0 && ball.y+ball.r<=py0+paddle.h+6 && ball.vy>0) {
+      const hit = (ball.x - paddle.x) / (paddle.w/2);
+      const spd = Math.hypot(ball.vx, ball.vy);
+      const ang = hit*(Math.PI/3);
+      ball.vx = spd * Math.sin(ang);
+      ball.vy = -Math.abs(spd * Math.cos(ang));
+      ball.y  = py0 - ball.r;
+      playSound(330,.07,'square',0.1);
+    }
+
+    // Ball lost
+    if (ball.y - ball.r > H+10) {
+      lives--; updateUI();
+      playSound(150,.5,'sawtooth');
+      showFeedback('💥 La balle est tombée ! −1 vie', 'ko');
+      if (lives <= 0) { setTimeout(()=>endGame(false),600); return; }
+      ballLaunched = false;
+    }
+
+    if (questionActive) checkBrickCollisions();
+  }
+
+  // Bricks
+  bricks.forEach(b => { if (b.flash>0) b.flash--; drawBrick(b); });
+
+  // Particles
+  particles = particles.filter(p => {
+    p.x+=p.vx; p.y+=p.vy; p.vy+=.07; p.life-=p.decay;
+    if (p.life<=0) return false;
+    ctx.globalAlpha=p.life;
+    ctx.fillStyle=p.color;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); ctx.fill();
+    ctx.globalAlpha=1;
+    return true;
+  });
+
+  drawPaddle();
+  drawBall();
+
+  // Launch hint
+  if (!ballLaunched && questionActive) {
+    ctx.font='600 13px Orbitron,sans-serif';
+    ctx.fillStyle='rgba(0,255,204,0.55)';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('ESPACE ou CLIC pour lancer', W/2, paddle.y-22);
+  }
+
+  // HUD
+  ctx.font='600 13px Orbitron'; ctx.fillStyle='rgba(0,255,204,0.45)';
+  ctx.textAlign='right'; ctx.textBaseline='bottom';
+  ctx.fillText(`Q${qIndex+1}/${activeQCM.length} — ${score} pts`, W-10, H-8);
+}
+
+
+</script>
+</body>
+</html>

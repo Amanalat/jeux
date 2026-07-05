@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Illusion de Delboeuf</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #fff;
+  padding: 24px 20px;
+  user-select: none;
+  -webkit-user-select: none;
+  max-width: 680px;
+}
+
+#question {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+#question strong {
+  color: #111;
+  font-size: 16px;
+}
+
+svg {
+  display: block;
+  max-width: 650px;
+  width: 100%;
+}
+
+.orange-c { cursor: grab; }
+.orange-c.dragging { cursor: grabbing; }
+
+#controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  max-width: 650px;
+  flex-wrap: wrap;
+}
+#btn-reset {
+  font-size: 13px;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+#btn-reset:hover { color: #444; }
+#btn-anneaux {
+  font-size: 13px;
+  color: #555;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+#btn-anneaux:hover { background: #f5f5f5; }
+
+#btn-explain {
+  display: block;
+  margin-top: 22px;
+  font-size: 14px;
+  color: #555;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+#btn-explain:hover { background: #f5f5f5; color: #111; }
+
+#explication {
+  display: none;
+  margin-top: 18px;
+  max-width: 650px;
+  background: #f8f8f8;
+  border-left: 3px solid #E67F39;
+  border-radius: 0 8px 8px 0;
+  padding: 18px 20px;
+  user-select: text;
+  -webkit-user-select: text;
+}
+#explication.visible { display: block; }
+#explication h2 { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 12px; }
+#explication p { font-size: 14px; color: #444; line-height: 1.65; margin-bottom: 10px; }
+#explication p:last-child { margin-bottom: 0; }
+#explication .highlight { color: #E67F39; font-weight: 600; }
+#explication .answer { font-weight: 700; color: #111; }
+</style>
+</head>
+<body>
+
+<p id="question">
+  <strong>Les deux cercles orange sont-ils de la même taille ?</strong><br>
+  <span style="font-size:13px;color:#999;">Glissez les cercles orange pour les superposer, ou masquez les anneaux.</span>
+</p>
+
+<svg id="svg" viewBox="0 0 650 420" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Côté gauche : grand anneau extérieur r=130, cercle orange central r=40 -->
+  <circle id="anneau-grand" cx="178" cy="210" r="130"
+    fill="none" stroke="#444" stroke-width="4"/>
+  <circle id="orange-left" class="orange-c"
+    cx="178" cy="210" r="40" fill="#E67F39"/>
+
+  <!-- Côté droit : petit anneau extérieur r=54, cercle orange central r=40 -->
+  <circle id="anneau-petit" cx="472" cy="210" r="54"
+    fill="none" stroke="#444" stroke-width="4"/>
+  <circle id="orange-right" class="orange-c"
+    cx="472" cy="210" r="40" fill="#E67F39"/>
+
+</svg>
+
+<div id="controls">
+  <button id="btn-reset">↺ Remettre à neuf</button>
+  <button id="btn-anneaux">Masquer les anneaux</button>
+</div>
+
+<button id="btn-explain">▼ Voir l'explication</button>
+
+<div id="explication">
+  <h2>L'illusion de Delboeuf — ce que fait votre cerveau</h2>
+
+  <p>
+    <span class="answer">Oui, les deux cercles orange sont exactement identiques.</span>
+    Ils ont tous les deux un rayon de 40 unités. Et pourtant, le cercle de gauche
+    (entouré du grand anneau) paraît plus petit, et celui de droite (dans le petit anneau)
+    paraît plus grand. Superposez-les ou masquez les anneaux pour vous en convaincre.
+  </p>
+
+  <p>
+    Cette illusion a été décrite en 1865 par le philosophe et mathématicien belge
+    <strong>Joseph Remi Léopold Delboeuf</strong>. Comme l'illusion d'Ebbinghaus, elle
+    repose sur l'<span class="highlight">évaluation relative de la taille</span> :
+    le cerveau ne perçoit pas un cercle de manière absolue, il le compare
+    à son contexte immédiat.
+  </p>
+
+  <p>
+    Mais Delboeuf ajoute une subtilité propre aux <em>anneaux concentriques</em> :
+    la taille perçue du cercle central dépend de la
+    <span class="highlight">proportion entre le cercle et son anneau</span>.
+    Quand l'anneau est très grand, l'espace entre les deux est ample, et le cercle
+    paraît "perdu" — donc petit. Quand l'anneau est juste un peu plus grand,
+    le cercle semble remplir presque tout l'espace disponible — donc grand.
+  </p>
+
+  <p>
+    Ce phénomène a des applications pratiques inattendues : des études ont montré que
+    servir dans une grande assiette conduit à se servir davantage de nourriture, car
+    la portion paraît plus petite dans le grand contenant (effet Delboeuf appliqué à
+    la taille des assiettes). De même, un même verre paraît plus rempli s'il est étroit
+    que s'il est large — notre cerveau <span class="highlight">juge toujours par rapport
+    au contenant, jamais de façon absolue</span>.
+  </p>
+</div>
+
+<script>
+const SVG_EL = document.getElementById('svg');
+const VB_W = 650, VB_H = 420;
+
+function toSvgPt(clientX, clientY) {
+  const r = SVG_EL.getBoundingClientRect();
+  return {
+    x: (clientX - r.left) / r.width  * VB_W,
+    y: (clientY - r.top)  / r.height * VB_H
+  };
+}
+
+function makeDraggable(el) {
+  let active = false, ox = 0, oy = 0;
+
+  function onStart(clientX, clientY) {
+    active = true;
+    el.classList.add('dragging');
+    el.parentNode.appendChild(el);
+    const p = toSvgPt(clientX, clientY);
+    ox = p.x - parseFloat(el.getAttribute('cx'));
+    oy = p.y - parseFloat(el.getAttribute('cy'));
+  }
+
+  function onMove(clientX, clientY) {
+    if (!active) return;
+    const p = toSvgPt(clientX, clientY);
+    el.setAttribute('cx', p.x - ox);
+    el.setAttribute('cy', p.y - oy);
+  }
+
+  function onEnd() {
+    active = false;
+    el.classList.remove('dragging');
+  }
+
+  el.addEventListener('mousedown',  e => { e.preventDefault(); onStart(e.clientX, e.clientY); });
+  el.addEventListener('touchstart', e => { e.preventDefault(); onStart(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+  document.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+  document.addEventListener('touchmove', e => {
+    if (active) { e.preventDefault(); onMove(e.touches[0].clientX, e.touches[0].clientY); }
+  }, { passive: false });
+  document.addEventListener('mouseup',  onEnd);
+  document.addEventListener('touchend', onEnd);
+}
+
+makeDraggable(document.getElementById('orange-left'));
+makeDraggable(document.getElementById('orange-right'));
+
+let anneauxVisible = true;
+document.getElementById('btn-anneaux').addEventListener('click', function() {
+  anneauxVisible = !anneauxVisible;
+  document.getElementById('anneau-grand').style.visibility = anneauxVisible ? '' : 'hidden';
+  document.getElementById('anneau-petit').style.visibility = anneauxVisible ? '' : 'hidden';
+  this.textContent = anneauxVisible ? 'Masquer les anneaux' : 'Afficher les anneaux';
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  const oL = document.getElementById('orange-left');
+  const oR = document.getElementById('orange-right');
+  oL.setAttribute('cx', '178'); oL.setAttribute('cy', '210');
+  oR.setAttribute('cx', '472'); oR.setAttribute('cy', '210');
+  anneauxVisible = true;
+  document.getElementById('anneau-grand').style.visibility = '';
+  document.getElementById('anneau-petit').style.visibility = '';
+  document.getElementById('btn-anneaux').textContent = 'Masquer les anneaux';
+});
+
+const btnEx = document.getElementById('btn-explain');
+const divEx = document.getElementById('explication');
+btnEx.addEventListener('click', () => {
+  const visible = divEx.classList.toggle('visible');
+  btnEx.textContent = visible ? '▲ Masquer l\'explication' : '▼ Voir l\'explication';
+});
+</script>
+</body>
+</html>

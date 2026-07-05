@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM Classique — Arcade Quizz</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Exo+2:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="questions.js"></script>
+<script src="questions-6e5e.js"></script>
+<script src="questions-niveau1.js"></script>
+<script src="questions-niveau2.js"></script>
+<script src="questions-niveau3.js"></script>
+<script src="qcm-store.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060612;--panel:#0c0c22;--panel2:#10103a;
+  --blue:#4fc3f7;--green:#69f0ae;--red:#ff5252;
+  --yellow:#ffd740;--purple:#ce93d8;--dim:#4040aa;
+  --text:#e0e0ff;--border:rgba(79,195,247,.18)
+}
+body{
+  background:var(--bg);font-family:'Exo 2',sans-serif;color:var(--text);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  padding:24px 16px 60px;gap:0
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(79,195,247,.012) 3px,rgba(79,195,247,.012) 4px);
+  pointer-events:none;z-index:0
+}
+
+/* ── OVERLAY ── */
+#overlay{
+  position:fixed;inset:0;background:rgba(6,6,18,.96);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;z-index:100;padding:24px;text-align:center
+}
+#overlay h1{
+  font-family:'Press Start 2P',monospace;font-size:clamp(14px,3.5vw,26px);
+  color:var(--yellow);text-shadow:0 0 20px var(--yellow),0 0 50px rgba(255,215,64,.3);
+  letter-spacing:3px;line-height:1.7
+}
+#overlay .sub{font-size:11px;color:var(--dim);letter-spacing:2px;font-family:'Press Start 2P',monospace}
+.set-selector{
+  display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px;margin-top:8px
+}
+.set-btn{
+  font-family:'Exo 2',sans-serif;font-size:15px;font-weight:700;
+  background:var(--panel);border:1px solid var(--border);color:#9a9ad0;
+  padding:12px 16px;cursor:pointer;letter-spacing:.02em;text-align:left;
+  transition:all .15s;border-radius:4px;width:100%
+}
+@media (max-width:440px){
+  .set-btn{font-size:14px;padding:10px 12px}
+  .set-btn .set-count{font-size:12px}
+}
+.set-btn:hover,.set-btn.active{border-color:var(--yellow);color:var(--yellow);background:rgba(255,215,64,.06)}
+.set-btn .set-count{font-size:13px;font-weight:600;color:var(--dim);display:block;margin-top:4px}
+.play-btn-main{
+  font-family:'Exo 2',sans-serif;font-size:17px;font-weight:700;
+  background:var(--yellow);color:#000;border:none;
+  padding:15px 36px;cursor:pointer;letter-spacing:.12em;margin-top:8px;
+  transition:all .15s
+}
+.play-btn-main:hover{transform:scale(1.05);box-shadow:0 0 30px rgba(255,215,64,.5)}
+.back-link{
+  font-family:'Exo 2',sans-serif;font-size:13px;font-weight:700;
+  color:#9a9ad0;text-decoration:none;border:1px solid var(--dim);
+  padding:8px 16px;letter-spacing:.06em;transition:all .15s
+}
+.back-link:hover{color:var(--blue);border-color:var(--blue)}
+
+/* ── GAME SCREEN ── */
+#game{display:none;flex-direction:column;align-items:center;width:100%;max-width:680px;gap:16px;position:relative;z-index:1}
+
+/* HUD */
+.hud{
+  display:flex;justify-content:space-between;align-items:center;
+  width:100%;padding:10px 16px;
+  background:var(--panel);border:1px solid var(--border);border-radius:50px
+}
+.hud-item{font-family:'Press Start 2P',monospace;font-size:11px;color:#9a9ad0}
+.hud-item span{color:var(--yellow)}
+
+/* Progress */
+.prog-bg{width:100%;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:3px;transition:width .4s ease}
+
+/* Question card */
+.q-card{
+  width:100%;background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:20px;position:relative;overflow:hidden
+}
+.q-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--yellow),var(--red),var(--blue),var(--green))
+}
+.cat-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--panel2);border:1px solid var(--border);border-radius:50px;
+  padding:5px 14px;font-size:13px;font-weight:600;color:#9a9ad0;margin-bottom:14px;
+  letter-spacing:.04em
+}
+.q-text{
+  font-family:'Exo 2',sans-serif;font-weight:700;font-size:1.125rem;
+  line-height:1.5;color:var(--text);margin-bottom:16px;max-width:65ch
+}
+
+/* Options */
+.options{display:flex;flex-direction:column;gap:8px}
+.opt-btn{
+  background:var(--panel2);border:1.5px solid rgba(255,255,255,.1);
+  color:var(--text);padding:12px 14px;border-radius:8px;cursor:pointer;
+  font-family:'Exo 2',sans-serif;font-size:1rem;font-weight:600;
+  text-align:left;transition:all .15s;display:flex;align-items:center;gap:10px
+}
+.opt-btn:hover:not(:disabled){border-color:var(--yellow);background:rgba(255,215,64,.06);transform:translateX(4px)}
+.letter{
+  width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Press Start 2P',monospace;font-size:11px;flex-shrink:0;
+  transition:all .15s
+}
+.opt-btn.correct{border-color:var(--green);background:rgba(105,240,174,.08);color:var(--green)}
+.opt-btn.correct .letter{background:var(--green);color:#000}
+.opt-btn.wrong{border-color:var(--red);background:rgba(255,82,82,.08);color:var(--red)}
+.opt-btn.wrong .letter{background:var(--red);color:#fff}
+.opt-btn:disabled{cursor:default}
+
+/* Feedback */
+.feedback{
+  margin-top:12px;padding:12px 14px;border-radius:8px;
+  font-size:.9375rem;line-height:1.55;
+  opacity:0;max-height:0;overflow:hidden;
+  transition:opacity .25s ease, max-height .25s ease, padding .25s ease;
+  padding-top:0;padding-bottom:0;
+}
+.feedback.show{
+  display:flex;gap:8px;align-items:flex-start;
+  opacity:1;max-height:120px;padding-top:12px;padding-bottom:12px;
+}
+.feedback.ok{background:rgba(105,240,174,.08);border-left:3px solid var(--green);color:var(--green)}
+.feedback.ko{background:rgba(255,82,82,.08);border-left:3px solid var(--red);color:#ffaabb}
+
+/* Option button active press */
+.opt-btn:active:not(:disabled){transform:scale(.98) translateX(2px);}
+@media (max-width:360px){
+  .options{gap:5px}
+  .opt-btn{padding:10px 10px;font-size:.875rem}
+}
+
+/* Next button */
+.next-btn{
+  display:none;width:100%;padding:14px;
+  font-family:'Exo 2',sans-serif;font-size:15px;font-weight:700;letter-spacing:.08em;
+  background:transparent;border:2px solid var(--blue);color:var(--blue);
+  cursor:pointer;transition:all .15s
+}
+.next-btn.show{display:block}
+.next-btn:hover{background:var(--blue);color:var(--bg)}
+
+/* ── RESULTS ── */
+#results{
+  display:none;flex-direction:column;align-items:center;
+  width:100%;max-width:680px;gap:20px;position:relative;z-index:1
+}
+.res-title{
+  font-family:'Press Start 2P',monospace;font-size:clamp(14px,3vw,22px);
+  text-align:center;line-height:1.7
+}
+.score-ring{
+  width:150px;height:150px;border-radius:50%;
+  background:conic-gradient(var(--green) 0% var(--pct),rgba(255,255,255,.06) var(--pct));
+  display:flex;align-items:center;justify-content:center
+}
+.score-inner{
+  width:118px;height:118px;border-radius:50%;background:var(--panel);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px
+}
+.score-num{font-family:'Press Start 2P',monospace;font-size:26px;color:var(--yellow)}
+.score-label{font-size:13px;color:#9a9ad0}
+.breakdown{
+  width:100%;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px
+}
+.breakdown-title{
+  font-family:'Press Start 2P',monospace;font-size:10px;color:var(--yellow);margin-bottom:14px
+}
+.cat-row{
+  display:flex;align-items:center;gap:10px;padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);font-size:.875rem
+}
+.cat-row:last-child{border-bottom:none}
+.cat-name{min-width:200px;flex:1;color:#9a9ad0}
+.cat-bar-bg{width:80px;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;flex-shrink:0}
+.cat-bar-fill{height:100%;background:var(--green);border-radius:3px}
+.cat-score{font-size:.875rem;color:#9a9ad0;min-width:36px;text-align:right}
+.res-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.btn-restart{
+  font-family:'Exo 2',sans-serif;font-size:15px;font-weight:700;
+  background:var(--yellow);color:#000;border:none;padding:13px 26px;cursor:pointer;
+  letter-spacing:.08em;transition:all .15s
+}
+.btn-restart:hover{transform:scale(1.05)}
+.btn-home{
+  font-family:'Exo 2',sans-serif;font-size:15px;font-weight:700;
+  background:transparent;border:2px solid var(--dim);color:#9a9ad0;
+  padding:13px 26px;cursor:pointer;letter-spacing:.08em;text-decoration:none;
+  transition:all .15s;display:inline-flex;align-items:center
+}
+.btn-home:hover{border-color:var(--blue);color:var(--blue)}
+</style>
+</head>
+<body>
+
+<!-- ── OVERLAY ─────────────────────────────────────────────── -->
+<div id="overlay">
+  <div class="sub">QCM ARCADE</div>
+  <h1>QCM<br>CLASSIQUE</h1>
+
+  <div class="set-selector" id="set-selector"></div>
+
+  <label style="font-family:'Exo 2',sans-serif;font-size:13px;font-weight:600;color:var(--dim);cursor:pointer;display:flex;align-items:center;gap:10px;user-select:none;letter-spacing:.5px">
+    <input type="checkbox" id="auto-advance" style="accent-color:var(--yellow);width:14px;height:14px;cursor:pointer">
+    AUTO-AVANCE (3 s)
+  </label>
+  <button class="play-btn-main" onclick="startGame()">▶ JOUER</button>
+  <a class="back-link" href="index.html">← RETOUR</a>
+</div>
+
+<!-- ── GAME ───────────────────────────────────────────────── -->
+<div id="game">
+  <div class="hud">
+    <div class="hud-item">Q <span id="q-num">1</span>/<span id="q-total">30</span></div>
+    <div class="hud-item">⭐ <span id="score-live">0</span></div>
+    <div class="hud-item"><a href="index.html" style="color:#9a9ad0;text-decoration:none;font-family:'Press Start 2P',monospace;font-size:11px;letter-spacing:1px" onmouseover="this.style.color='#4fc3f7'" onmouseout="this.style.color=''">← MENU</a></div>
+  </div>
+  <div class="prog-bg"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+
+  <div class="q-card">
+    <div class="cat-pill" id="cat-pill">Catégorie</div>
+    <div class="q-text" id="q-text">Question...</div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <button class="next-btn" id="next-btn" onclick="nextQ()">QUESTION SUIVANTE ➜</button>
+</div>
+
+<!-- ── RESULTS ────────────────────────────────────────────── -->
+<div id="results">
+  <div class="res-title" id="res-title">BRAVO !</div>
+  <div class="score-ring" id="score-ring">
+    <div class="score-inner">
+      <div class="score-num" id="final-score">0</div>
+      <div class="score-label" id="final-label">sur 30</div>
+    </div>
+  </div>
+  <div class="breakdown" id="breakdown"></div>
+  <div class="res-actions">
+    <button class="btn-restart" onclick="restart()">🔄 REJOUER</button>
+    <a class="btn-home" href="index.html">← ACCUEIL</a>
+  </div>
+</div>
+
+<script>
+// ── Série active : choisie au hub (index.html), pas ici ──────
+const activeInfo = QCMStore.getActiveInfo();
+const sel = document.getElementById('set-selector');
+if (activeInfo.count) {
+  const n = Math.min(QCMStore.loadSessionCount(), activeInfo.count);
+  sel.innerHTML = `<div style="font-family:'Exo 2',sans-serif;font-size:15px;font-weight:600;color:#9a9ad0;text-align:center">📚 ${activeInfo.label} — partie de ${n} question${n>1?'s':''}<br><span style="font-size:13px;color:var(--dim)">(série et longueur se choisissent au menu principal)</span></div>`;
+} else {
+  sel.innerHTML = `<div style="font-family:'Exo 2',sans-serif;font-size:15px;font-weight:600;color:#ffd740;text-align:center">⚠️ Aucune série sélectionnée — choisis-la au menu principal</div>`;
+}
+
+// ── State ────────────────────────────────────────────────────
+let shuffled = [], current = 0, score = 0, answered = false;
+let catStats = {};
+let autoAdvTimer = null;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ── Start ────────────────────────────────────────────────────
+function startGame() {
+  // Tirage de la partie : sessionCount questions au hasard dans la série du hub
+  let raw = QCMStore.getSessionQuestions();
+  if (!raw || !raw.length) raw = (typeof DEFAULT_QCM !== 'undefined') ? shuffle(DEFAULT_QCM).slice(0, QCMStore.loadSessionCount()) : [];
+  if (!raw.length) { alert('Aucune question disponible — choisis une série au menu principal.'); return; }
+
+  // Build shuffled questions with shuffled options
+  shuffled = shuffle(raw).map(q => {
+    const indices = shuffle(Array.from({ length: q.options.length }, (_, i) => i));
+    const options = indices.map(i => q.options[i]);
+    const answer = indices.indexOf(q.answer);
+    return { ...q, options, answer };
+  });
+
+  current = 0; score = 0; answered = false; catStats = {};
+  clearTimeout(autoAdvTimer);
+  document.getElementById('overlay').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  const game = document.getElementById('game');
+  game.style.display = 'flex';
+  document.getElementById('q-total').textContent = shuffled.length;
+  document.getElementById('final-label').textContent = 'sur ' + shuffled.length;
+  loadQ();
+}
+
+// ── Load question ────────────────────────────────────────────
+function loadQ() {
+  const q = shuffled[current];
+  const cat = q.cat || '';
+
+  document.getElementById('q-num').textContent = current + 1;
+  document.getElementById('score-live').textContent = score;
+  document.getElementById('prog-fill').style.width = (current / shuffled.length * 100) + '%';
+  const cpill = document.getElementById('cat-pill');
+  cpill.textContent = cat;
+  cpill.style.display = cat ? '' : 'none';
+  document.getElementById('q-text').textContent = q.q;
+
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.options.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="letter">${letters[i]}</span>${o}`;
+    btn.onclick = () => pick(i, q.answer, q.expl, cat);
+    opts.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').className = 'next-btn';
+  answered = false;
+
+  if (cat && !catStats[cat]) catStats[cat] = { c: 0, t: 0 };
+  if (cat) catStats[cat].t++;
+}
+
+// ── Pick answer ──────────────────────────────────────────────
+function pick(i, correct, expl, cat) {
+  if (answered) return;
+  answered = true;
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedback');
+  if (i === correct) {
+    btns[i].classList.add('correct');
+    score++;
+    if (cat) catStats[cat].c++;
+    fb.className = 'feedback ok show';
+    fb.innerHTML = '✅ ' + (expl || 'Bonne réponse !');
+  } else {
+    btns[i].classList.add('wrong');
+    btns[correct].classList.add('correct');
+    fb.className = 'feedback ko show';
+    fb.innerHTML = '❌ ' + (expl || 'Mauvaise réponse.');
+  }
+
+  document.getElementById('score-live').textContent = score;
+  const nb = document.getElementById('next-btn');
+  nb.className = 'next-btn show';
+  nb.textContent = current < shuffled.length - 1 ? 'QUESTION SUIVANTE ➜' : 'VOIR MES RÉSULTATS 🏆';
+
+  clearTimeout(autoAdvTimer);
+  if (document.getElementById('auto-advance').checked) {
+    autoAdvTimer = setTimeout(nextQ, 3000);
+  }
+}
+
+// ── Next ─────────────────────────────────────────────────────
+function nextQ() {
+  clearTimeout(autoAdvTimer);
+  current++;
+  if (current < shuffled.length) loadQ();
+  else showResults();
+}
+
+// ── Results ──────────────────────────────────────────────────
+function showResults() {
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('game').style.display = 'none';
+  const rs = document.getElementById('results');
+  rs.style.display = 'flex';
+
+  const pct = score / shuffled.length;
+  let title;
+  if (pct >= .9)      title = '🎉 CHAMPION !';
+  else if (pct >= .7) title = '👏 TRÈS BIEN !';
+  else if (pct >= .5) title = '🙂 PAS MAL !';
+  else                title = '💪 COURAGE !';
+
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('final-score').textContent = score;
+  const ring = document.getElementById('score-ring');
+  ring.style.setProperty('--pct', (pct * 100) + '%');
+
+  let html = '<div class="breakdown-title">📊 RÉSULTATS PAR THÈME</div>';
+  const entries = Object.entries(catStats).sort((a, b) => b[1].t - a[1].t);
+  if (entries.length > 0) {
+    entries.forEach(([cat, d]) => {
+      const p = d.t > 0 ? Math.round(d.c / d.t * 100) : 0;
+      html += `<div class="cat-row">
+        <span class="cat-name">${cat}</span>
+        <div class="cat-bar-bg"><div class="cat-bar-fill" style="width:${p}%"></div></div>
+        <span class="cat-score">${d.c}/${d.t}</span>
+      </div>`;
+    });
+  } else {
+    html += `<div class="cat-row"><span class="cat-name" style="color:var(--text)">Score total : ${score}/${shuffled.length}</span></div>`;
+  }
+  document.getElementById('breakdown').innerHTML = html;
+}
+
+// ── Restart ──────────────────────────────────────────────────
+function restart() {
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('overlay').style.display = 'flex';
+}
+</script>
+</body>
+</html>

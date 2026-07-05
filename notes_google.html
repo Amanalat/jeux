@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mock “style Maps” – Avis (démo fictive)</title>
+  <style>
+    :root{
+      --bg:#f1f3f4;
+      --card:#fff;
+      --text:#202124;
+      --muted:#5f6368;
+      --line:#e0e0e0;
+      --chip:#e8f0fe;
+      --blue:#1a73e8;
+      --star:#fbbc04;
+      --shadow: 0 1px 2px rgba(60,64,67,.15), 0 2px 6px rgba(60,64,67,.10);
+      --radius:16px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--font); }
+    .app{
+      max-width:1200px; margin:0 auto; padding:18px;
+      display:grid; gap:16px;
+      grid-template-columns: 380px 1fr;
+    }
+    @media (max-width: 980px){ .app{grid-template-columns: 1fr;} }
+
+    /* Left panel */
+    .place{
+      background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+      overflow:hidden;
+      display:flex; flex-direction:column;
+    }
+    .hero{
+      height:170px;
+      background:
+        linear-gradient(135deg, rgba(26,115,232,.10), rgba(251,188,4,.12)),
+        radial-gradient(circle at 20% 20%, rgba(26,115,232,.20), transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(251,188,4,.18), transparent 45%),
+        radial-gradient(circle at 40% 90%, rgba(52,168,83,.18), transparent 55%),
+        #eaf1fb;
+      position:relative;
+    }
+    .badge{
+      position:absolute; left:14px; top:14px;
+      padding:6px 10px; border-radius:999px;
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(0,0,0,.06);
+      font-size:12px; color:var(--muted);
+      backdrop-filter: blur(6px);
+    }
+    .placeContent{ padding:14px 14px 16px; }
+    .titleRow{ display:flex; align-items:flex-start; gap:10px; }
+    .pin{
+      width:38px; height:38px; border-radius:12px;
+      background:rgba(26,115,232,.10);
+      display:grid; place-items:center;
+      border:1px solid rgba(26,115,232,.18);
+      flex:0 0 auto;
+    }
+    .pin svg{ width:18px; height:18px; fill:var(--blue); }
+    h1{ font-size:18px; margin:0; line-height:1.25; }
+    .sub{ margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.35; }
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .chip{
+      padding:6px 10px; border-radius:999px; font-size:12px;
+      background:#f8f9fa; border:1px solid var(--line); color:var(--muted);
+    }
+    .chip.blue{ background:var(--chip); border-color:rgba(26,115,232,.20); color:#174ea6; }
+    .actions{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+    .btn{
+      appearance:none; border:1px solid var(--line); background:#fff;
+      padding:8px 10px; border-radius:12px; cursor:pointer;
+      font-size:13px; color:var(--text);
+      display:flex; gap:8px; align-items:center;
+    }
+    .btn.primary{
+      border-color:rgba(26,115,232,.35);
+      color:#174ea6;
+      background:rgba(26,115,232,.06);
+    }
+    .btn:hover{ filter:brightness(.98); }
+
+    .section{
+      margin-top:14px;
+      border-top:1px solid var(--line);
+      padding-top:12px;
+    }
+    .sectionTitle{
+      margin:0 0 10px; font-size:13px; color:var(--muted);
+      display:flex; justify-content:space-between; align-items:center;
+    }
+
+    /* Fake map panel */
+    .mapCard{
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:hidden;
+      background:#fff;
+      position:relative;
+      height:190px;
+    }
+    .mapCanvas{
+      position:absolute; inset:0;
+      background:
+        linear-gradient(0deg, rgba(255,255,255,.55), rgba(255,255,255,.55)),
+        repeating-linear-gradient(0deg, rgba(32,33,36,.10) 0 2px, transparent 2px 24px),
+        repeating-linear-gradient(90deg, rgba(32,33,36,.08) 0 2px, transparent 2px 26px),
+        radial-gradient(circle at 30% 30%, rgba(26,115,232,.22), transparent 35%),
+        radial-gradient(circle at 75% 55%, rgba(52,168,83,.18), transparent 40%),
+        radial-gradient(circle at 45% 75%, rgba(251,188,4,.20), transparent 38%),
+        #e6efe6;
+    }
+    .road{
+      position:absolute; inset:0;
+      background:
+        linear-gradient(25deg, transparent 45%, rgba(255,255,255,.9) 45% 49%, transparent 49%),
+        linear-gradient(120deg, transparent 52%, rgba(255,255,255,.85) 52% 56%, transparent 56%);
+      mix-blend-mode: multiply;
+      opacity:.9;
+    }
+    .marker{
+      position:absolute; left:56%; top:44%;
+      transform: translate(-50%,-100%);
+      width:28px; height:28px;
+      filter: drop-shadow(0 6px 8px rgba(0,0,0,.15));
+    }
+    .marker svg{ width:28px; height:28px; }
+    .zoom{
+      position:absolute; right:10px; bottom:10px;
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .zoom button{
+      width:34px; height:34px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.92);
+      cursor:pointer;
+      font-size:18px; color:var(--text);
+      box-shadow: 0 1px 2px rgba(60,64,67,.12);
+    }
+    .mapLabel{
+      position:absolute; left:10px; bottom:10px;
+      padding:6px 10px; border-radius:999px;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(0,0,0,.06);
+      font-size:12px; color:var(--muted);
+    }
+
+    /* Photos grid */
+    .photos{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:8px;
+    }
+    .photo{
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.06);
+      height:78px;
+      position:relative;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(26,115,232,.22), transparent 55%),
+        radial-gradient(circle at 80% 40%, rgba(251,188,4,.22), transparent 55%),
+        radial-gradient(circle at 50% 90%, rgba(52,168,83,.18), transparent 60%),
+        linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.00));
+    }
+    .photo:nth-child(2){ background:
+        radial-gradient(circle at 30% 40%, rgba(251,188,4,.22), transparent 55%),
+        radial-gradient(circle at 70% 55%, rgba(26,115,232,.20), transparent 55%),
+        linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.00));
+    }
+    .photo:nth-child(3){ background:
+        radial-gradient(circle at 30% 55%, rgba(52,168,83,.22), transparent 55%),
+        radial-gradient(circle at 75% 35%, rgba(26,115,232,.18), transparent 55%),
+        linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.00));
+    }
+    .photo:nth-child(4){ background:
+        radial-gradient(circle at 40% 35%, rgba(26,115,232,.18), transparent 55%),
+        radial-gradient(circle at 75% 70%, rgba(251,188,4,.20), transparent 55%),
+        linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.00));
+    }
+    .photo:nth-child(5){ background:
+        radial-gradient(circle at 20% 70%, rgba(251,188,4,.22), transparent 55%),
+        radial-gradient(circle at 80% 35%, rgba(52,168,83,.20), transparent 55%),
+        linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.00));
+    }
+    .photo:nth-child(6){ background:
+        radial-gradient(circle at 35% 35%, rgba(52,168,83,.22), transparent 55%),
+        radial-gradient(circle at 75% 55%, rgba(251,188,4,.18), transparent 55%),
+        linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.00));
+    }
+    .photoTag{
+      position:absolute; left:8px; bottom:8px;
+      padding:3px 8px; border-radius:999px;
+      background:rgba(255,255,255,.88);
+      border:1px solid rgba(0,0,0,.06);
+      font-size:11px; color:var(--muted);
+      backdrop-filter: blur(6px);
+    }
+
+    .footerNote{
+      margin-top:12px; font-size:12px; color:var(--muted);
+      border-top:1px dashed var(--line);
+      padding-top:10px;
+    }
+    .fakeTag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      background:rgba(95,99,104,.08);
+      color:var(--muted);
+    }
+    .dot{ width:6px; height:6px; border-radius:50%; background:var(--muted); opacity:.6; }
+
+    /* Right: reviews panel */
+    .panel{
+      background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+      padding:14px;
+    }
+    .panelHeader{
+      display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
+      border-bottom:1px solid var(--line);
+      padding-bottom:12px; margin-bottom:12px;
+    }
+    .h2{ font-size:16px; margin:0 0 8px; }
+    .ratingRow{ display:flex; align-items:flex-end; gap:12px; }
+    .ratingBig{ font-size:44px; font-weight:700; letter-spacing:-.02em; line-height:1; }
+    .stars{ display:flex; gap:2px; margin:0 0 6px; }
+    .stars svg{ width:16px; height:16px; }
+    .count{ color:var(--muted); font-size:13px; margin-top:2px; }
+
+    .hist{ margin-left:auto; min-width: 270px; }
+    @media (max-width: 980px){
+      .hist{ min-width:0; width:100%; }
+      .panelHeader{ flex-direction:column; align-items:stretch; }
+      .ratingRow{ align-items:center; }
+    }
+    .barRow{
+      display:grid; grid-template-columns: 18px 1fr 36px;
+      align-items:center; gap:8px; margin:6px 0;
+      font-size:12px; color:var(--muted);
+    }
+    .bar{
+      height:8px; background:#f1f3f4; border-radius:999px; overflow:hidden;
+      border:1px solid rgba(0,0,0,.03);
+    }
+    .bar > span{ display:block; height:100%; width:0%; background:#dadce0; }
+
+    .toolbar{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+      margin:12px 0 6px;
+    }
+    select, input[type="search"]{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:13px;
+      outline:none;
+    }
+    input[type="search"]{ flex:1 1 220px; }
+    .toggle{
+      display:flex; gap:10px; align-items:center;
+      padding:8px 10px; border:1px solid var(--line);
+      border-radius:12px; background:#fff;
+      font-size:13px; color:var(--text);
+      user-select:none;
+    }
+    .toggle input{ accent-color: var(--blue); }
+
+    .reviews{ display:flex; flex-direction:column; gap:10px; margin-top:10px; }
+    .review{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:#fff;
+    }
+    .rTop{ display:flex; justify-content:space-between; gap:10px; }
+    .who{ display:flex; gap:10px; align-items:flex-start; }
+    .avatar{
+      width:34px; height:34px; border-radius:50%;
+      background: linear-gradient(135deg, rgba(26,115,232,.15), rgba(251,188,4,.12));
+      border:1px solid rgba(0,0,0,.06);
+      flex:0 0 auto;
+    }
+    .name{ font-weight:600; font-size:13px; margin:0; }
+    .meta{
+      display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+      margin-top:3px; color:var(--muted); font-size:12px;
+    }
+    .pill{
+      padding:2px 8px; border-radius:999px;
+      background:#f8f9fa; border:1px solid rgba(0,0,0,.06);
+      color:var(--muted); font-size:11px;
+    }
+    .pill.good{ background: rgba(52,168,83,.08); border-color: rgba(52,168,83,.18); color:#137333; }
+    .pill.bad{ background: rgba(234,67,53,.07); border-color: rgba(234,67,53,.16); color:#a50e0e; }
+    .text{
+      margin:10px 0 0; font-size:13px; line-height:1.45;
+      color:var(--text);
+      white-space:pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Left: place + map + photos -->
+    <aside class="place">
+      <div class="hero">
+        <div class="badge">Démo fictive • “look & feel” inspiré, pas une copie</div>
+      </div>
+
+      <div class="placeContent">
+        <div class="titleRow">
+          <div class="pin" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2c-3.9 0-7 3.1-7 7 0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3.1-7-7-7zm0 9.5c-1.4 0-2.5-1.1-2.5-2.5S10.6 6.5 12 6.5s2.5 1.1 2.5 2.5S13.4 11.5 12 11.5z"/>
+            </svg>
+          </div>
+          <div>
+            <h1>Le Vieux Comptoir</h1>
+            <p class="sub">Brasserie • €€ • Centre-ville<br/>Ouvert · Ferme à 23:00</p>
+
+            <div class="chips">
+              <span class="chip blue">Sur place</span>
+              <span class="chip">À emporter</span>
+              <span class="chip">Terrasse</span>
+              <span class="chip">Végétarien</span>
+            </div>
+
+            <div class="actions">
+              <button class="btn primary" type="button" id="btnDirections">Itinéraire</button>
+              <button class="btn" type="button" id="btnSave">Enregistrer</button>
+              <button class="btn" type="button" id="btnShare">Partager</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="sectionTitle">
+            <span>Carte</span>
+            <span class="chip">Aperçu</span>
+          </div>
+          <div class="mapCard" role="img" aria-label="Panneau carte fictif">
+            <div class="mapCanvas"></div>
+            <div class="road"></div>
+            <div class="marker" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path fill="#1a73e8" d="M12 2c-3.9 0-7 3.1-7 7 0 5.5 7 13 7 13s7-7.5 7-13c0-3.9-3.1-7-7-7zm0 9.4c-1.3 0-2.4-1.1-2.4-2.4S10.7 6.6 12 6.6s2.4 1.1 2.4 2.4S13.3 11.4 12 11.4z"/>
+              </svg>
+            </div>
+            <div class="mapLabel">Centre-ville · Rayon 500 m</div>
+            <div class="zoom" aria-hidden="true">
+              <button type="button" id="zoomIn">+</button>
+              <button type="button" id="zoomOut">−</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="sectionTitle">
+            <span>Photos</span>
+            <span class="chip">6</span>
+          </div>
+          <div class="photos" aria-label="Photos fictives">
+            <div class="photo"><div class="photoTag">Salle</div></div>
+            <div class="photo"><div class="photoTag">Plat</div></div>
+            <div class="photo"><div class="photoTag">Terrasse</div></div>
+            <div class="photo"><div class="photoTag">Dessert</div></div>
+            <div class="photo"><div class="photoTag">Menu</div></div>
+            <div class="photo"><div class="photoTag">Ambiance</div></div>
+          </div>
+        </div>
+
+        <div class="footerNote">
+          <span class="fakeTag"><span class="dot"></span>Maquette UI — avis inventés pour démo (ne pas publier comme vrais avis).</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right: reviews -->
+    <main class="panel">
+      <div class="panelHeader">
+        <div>
+          <p class="h2">Avis</p>
+          <div class="ratingRow">
+            <div class="ratingBig" id="avg">—</div>
+            <div>
+              <div class="stars" id="avgStars" aria-label="Note moyenne"></div>
+              <div class="count"><span id="count">—</span> avis</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hist" aria-label="Répartition des notes">
+          <div class="barRow"><div>5</div><div class="bar"><span id="b5"></span></div><div id="p5">—</div></div>
+          <div class="barRow"><div>4</div><div class="bar"><span id="b4"></span></div><div id="p4">—</div></div>
+          <div class="barRow"><div>3</div><div class="bar"><span id="b3"></span></div><div id="p3">—</div></div>
+          <div class="barRow"><div>2</div><div class="bar"><span id="b2"></span></div><div id="p2">—</div></div>
+          <div class="barRow"><div>1</div><div class="bar"><span id="b1"></span></div><div id="p1">—</div></div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <input id="q" type="search" placeholder="Rechercher dans les avis" />
+        <select id="sort">
+          <option value="relevant" selected>Tri : Pertinence</option>
+          <option value="newest">Tri : Plus récents</option>
+          <option value="oldest">Tri : Plus anciens</option>
+          <option value="highest">Tri : Notes les plus hautes</option>
+          <option value="lowest">Tri : Notes les plus basses</option>
+        </select>
+        <label class="toggle">
+          <input id="last2y" type="checkbox" />
+          2 dernières années
+        </label>
+      </div>
+
+      <div class="reviews" id="reviews"></div>
+    </main>
+  </div>
+
+  <script>
+    // ---------------------------
+    // Données (démo fictive)
+    // Objectif pédagogique : montrer que la moyenne globale (2,3) est trompeuse
+    // car elle mélange une mauvaise période (1-3★) et une excellente période récente (4-5★)
+    // => 24 avis : 12×1★ + 4×2★ + 2×3★ (anciens) + 4×5★ + 2×4★ (récents)
+    // => total = 54 points / 24 avis = 2,25 ≈ 2,3
+    // Récents = dans les 2 dernières années (>= mars 2024)
+    // Changement de chef : début 2024
+    // ---------------------------
+    const REVIEWS = [
+      // Anciens — très mauvais (1★)
+      { name:"Camille R.", stars:1, date:"2018-06-21", text:"Service catastrophique. Attente interminable, plats froids et aucun geste commercial. À éviter absolument." },
+      { name:"Nicolas D.", stars:1, date:"2019-02-10", text:"Très déçu. Personnel désagréable, cuisine sans saveur. On sent clairement le manque de gestion." },
+      { name:"Sarah L.", stars:1, date:"2019-11-19", text:"Restaurant laissé à l'abandon. Salle sale, erreur dans la commande, et aucune excuse." },
+      { name:"Hugo M.", stars:1, date:"2020-03-08", text:"Une vraie déception. Rapport qualité-prix inexistant. Dommage car le lieu a du potentiel." },
+      { name:"Léa P.", stars:1, date:"2020-10-27", text:"Mauvaise expérience du début à la fin. Plats brûlés, addition incorrecte. On ne reviendra pas." },
+      { name:"Thomas G.", stars:1, date:"2021-01-12", text:"Cuisine médiocre, service lent. On a attendu une éternité pour être servis." },
+      { name:"Julie A.", stars:1, date:"2021-03-05", text:"Accueil froid, erreurs en cuisine, aucune organisation. Franchement décevant." },
+      { name:"Romain S.", stars:1, date:"2021-07-14", text:"Plats tièdes et sans goût. Et le serveur semblait agacé qu'on pose des questions." },
+      { name:"Nina B.", stars:1, date:"2021-11-30", text:"Hygiène douteuse (tables collantes, toilettes…). On est partis avant le dessert." },
+      { name:"Olivier T.", stars:1, date:"2022-04-08", text:"Trop cher pour ce que c'est. On sent que personne ne tient la barre en cuisine." },
+      { name:"Mélanie C.", stars:1, date:"2022-06-22", text:"Longue attente, plat renvoyé car froid, pas d'excuse. Dommage." },
+      { name:"Yanis K.", stars:1, date:"2022-10-02", text:"Service désorganisé. On a dû relancer trois fois pour avoir de l'eau. Inadmissible." },
+
+      // Anciens — mauvais mais pas catastrophiques (2★)
+      { name:"Laura V.", stars:2, date:"2022-12-15", text:"On peut manger, mais rien de mémorable. Le service était au moins souriant ce soir-là. Pas assez pour recommander." },
+      { name:"Bastien L.", stars:2, date:"2023-02-09", text:"Portions trop petites pour le prix, mais la soupe était honnête. Dans l'ensemble, encore trop décevant." },
+      { name:"Sofia M.", stars:2, date:"2023-05-16", text:"Accueil correct pour une fois, mais la cuisine reste trop moyenne. Il faudrait vraiment changer de chef." },
+      { name:"Pauline F.", stars:2, date:"2023-08-01", text:"Pas horrible, pas bon. On a fini nos assiettes mais sans enthousiasme. Ça manque de quelqu'un qui sache cuisiner." },
+
+      // Anciens — corrects par exception (3★)
+      { name:"Maxime P.", stars:3, date:"2023-10-18", text:"On a eu un repas correct ce soir-là — il y avait apparemment un cuisinier remplaçant. Première fois que je me sens bien accueilli ici depuis longtemps. Mais c'est l'exception, pas la règle." },
+      { name:"Élodie N.", stars:3, date:"2023-12-20", text:"Repas honnête. Le cuisinier du soir avait l'air de s'y connaître vraiment. C'est dommage que ça ne soit pas toujours comme ça — le lieu a du potentiel." },
+
+      // Récents (très bons, après arrivée du nouveau chef début 2024)
+      { name:"Mehdi K.", stars:5, date:"2024-03-14", text:"Nouveau chef depuis janvier, et ça change TOUT. Service impeccable, plats délicieux, ambiance chaleureuse. Je n'aurais jamais cru revenir ici un jour !" },
+      { name:"Anaïs V.", stars:5, date:"2024-07-03", text:"Rien à voir avec avant. Le nouveau chef fait des merveilles avec des produits frais. Bravo à toute la nouvelle équipe !" },
+      { name:"Mina S.", stars:5, date:"2025-02-19", text:"Depuis l'arrivée du nouveau chef, c'est devenu une adresse sûre. Tout est maîtrisé, de l'entrée au dessert. Ignorez les anciens avis !" },
+      { name:"Arthur C.", stars:5, date:"2025-08-11", text:"Je n'y retournais plus depuis trois ans… quel choc ! Le nouveau chef a complètement transformé la cuisine. Savoureux, généreux, soigné." },
+      { name:"Inès F.", stars:4, date:"2025-11-22", text:"Très bon repas. Le nouveau chef maîtrise bien ses plats — j'enlève une étoile car le dessert était un poil trop sucré, mais on reviendra sans hésiter." },
+      { name:"Louis T.", stars:4, date:"2026-02-02", text:"Excellente soirée. Service attentionné depuis le changement d'équipe en cuisine. Les anciens avis négatifs ne reflètent clairement plus du tout ce restaurant." },
+    ];
+
+    // --- Helpers ---
+    const fmtDate = (iso) => {
+      const d = new Date(iso + "T12:00:00");
+      const now = new Date();
+      const diffDays = Math.floor((now - d) / (1000*60*60*24));
+      if (diffDays < 14) return "il y a " + diffDays + " jour" + (diffDays>1?"s":"");
+      const diffMonths = Math.floor(diffDays / 30);
+      if (diffMonths < 24) return "il y a " + diffMonths + " mois";
+      const diffYears = Math.floor(diffMonths / 12);
+      return "il y a " + diffYears + " an" + (diffYears>1?"s":"");
+    };
+
+    function starSVG(filled){
+      return filled
+        ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="var(--star)" d="M12 17.3l-6.18 3.73 1.64-7.03L2 9.24l7.19-.61L12 2l2.81 6.63 7.19.61-5.46 4.76 1.64 7.03z"/></svg>`
+        : `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#dadce0" d="M12 17.3l-6.18 3.73 1.64-7.03L2 9.24l7.19-.61L12 2l2.81 6.63 7.19.61-5.46 4.76 1.64 7.03z"/></svg>`;
+    }
+    function starsHTML(n){
+      let out = "";
+      for(let i=1;i<=5;i++) out += starSVG(i<=n);
+      return out;
+    }
+
+    function computeStats(items){
+      const total = items.length || 1;
+      const sum = items.reduce((a,r)=>a+r.stars,0);
+      const avg = (sum / total);
+      const counts = [0,0,0,0,0,0];
+      items.forEach(r => counts[r.stars]++);
+      return { avg, counts, total };
+    }
+
+    function isRecent(iso){
+      const d = new Date(iso + "T00:00:00");
+      const now = new Date();
+      const twoYearsAgo = new Date(now);
+      twoYearsAgo.setFullYear(now.getFullYear() - 2);
+      return d >= twoYearsAgo;
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // --- Rendering ---
+    const elReviews = document.getElementById("reviews");
+    const elAvg = document.getElementById("avg");
+    const elAvgStars = document.getElementById("avgStars");
+    const elCount = document.getElementById("count");
+
+    const bars = {
+      1: { w: document.getElementById("b1"), p: document.getElementById("p1") },
+      2: { w: document.getElementById("b2"), p: document.getElementById("p2") },
+      3: { w: document.getElementById("b3"), p: document.getElementById("p3") },
+      4: { w: document.getElementById("b4"), p: document.getElementById("p4") },
+      5: { w: document.getElementById("b5"), p: document.getElementById("p5") },
+    };
+
+    function render(items){
+      const { avg, counts, total } = computeStats(items);
+      elAvg.textContent = avg.toFixed(1).replace(".", ",");
+      elAvgStars.innerHTML = starsHTML(Math.round(avg));
+      elCount.textContent = total;
+
+      const max = Math.max(...counts.slice(1), 1);
+      for(let s=1;s<=5;s++){
+        const pct = Math.round((counts[s]/(total||1))*100);
+        const width = Math.round((counts[s]/max)*100);
+        bars[s].w.style.width = width + "%";
+        bars[s].p.textContent = pct + "%";
+      }
+
+      elReviews.innerHTML = items.map(r => {
+        const recent = isRecent(r.date);
+        const pill = recent ? `<span class="pill good">Récent</span>` : `<span class="pill bad">Ancien</span>`;
+        return `
+          <article class="review">
+            <div class="rTop">
+              <div class="who">
+                <div class="avatar" aria-hidden="true"></div>
+                <div>
+                  <p class="name">${escapeHtml(r.name)}</p>
+                  <div class="meta">
+                    <span class="stars" aria-label="${r.stars} étoiles">${starsHTML(r.stars)}</span>
+                    <span>•</span>
+                    <span>${fmtDate(r.date)}</span>
+                    ${pill}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="text">${escapeHtml(r.text)}</p>
+          </article>
+        `;
+      }).join("");
+    }
+
+    // --- Filtering & sorting ---
+    const elQ = document.getElementById("q");
+    const elSort = document.getElementById("sort");
+    const elLast2y = document.getElementById("last2y");
+
+    function apply(){
+      let items = [...REVIEWS];
+
+      if (elLast2y.checked){
+        items = items.filter(r => isRecent(r.date));
+      }
+
+      const q = elQ.value.trim().toLowerCase();
+      if(q){
+        items = items.filter(r =>
+          r.name.toLowerCase().includes(q) ||
+          r.text.toLowerCase().includes(q)
+        );
+      }
+
+      const byDateDesc = (a,b) => new Date(b.date) - new Date(a.date);
+      const byDateAsc  = (a,b) => new Date(a.date) - new Date(b.date);
+
+      switch(elSort.value){
+        case "newest": items.sort(byDateDesc); break;
+        case "oldest": items.sort(byDateAsc); break;
+        case "highest": items.sort((a,b)=> b.stars - a.stars || byDateDesc(a,b)); break;
+        case "lowest": items.sort((a,b)=> a.stars - b.stars || byDateDesc(a,b)); break;
+        case "relevant":
+        default:
+          // Pertinence "narrative": récents excellents en haut, anciens mauvais ensuite.
+          items.sort((a,b)=>{
+            const ar = isRecent(a.date), br = isRecent(b.date);
+            if (ar !== br) return br - ar;          // récents d'abord
+            if (ar && br) return b.stars - a.stars || byDateDesc(a,b);
+            return a.stars - b.stars || byDateAsc(a,b);
+          });
+      }
+
+      render(items);
+    }
+
+    // UI “fake actions”
+    document.getElementById("btnDirections").addEventListener("click", ()=> alert("Démo fictive : bouton Itinéraire"));
+    document.getElementById("btnSave").addEventListener("click", ()=> alert("Démo fictive : enregistré"));
+    document.getElementById("btnShare").addEventListener("click", ()=> alert("Démo fictive : lien copié"));
+
+    // Fake zoom
+    let zoomLevel = 1;
+    const mapCanvas = document.querySelector(".mapCanvas");
+    const road = document.querySelector(".road");
+    function setZoom(z){
+      zoomLevel = Math.max(1, Math.min(3, z));
+      const scale = 1 + (zoomLevel-1) * 0.12;
+      mapCanvas.style.transform = `scale(${scale})`;
+      road.style.transform = `scale(${scale})`;
+      mapCanvas.style.transformOrigin = "56% 44%";
+      road.style.transformOrigin = "56% 44%";
+    }
+    document.getElementById("zoomIn").addEventListener("click", ()=> setZoom(zoomLevel+1));
+    document.getElementById("zoomOut").addEventListener("click", ()=> setZoom(zoomLevel-1));
+    setZoom(1);
+
+    // events
+    elQ.addEventListener("input", apply);
+    elSort.addEventListener("change", apply);
+    elLast2y.addEventListener("change", apply);
+
+    // init
+    apply();
+  </script>
+</body>
+</html>

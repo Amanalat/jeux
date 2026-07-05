@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Illusion d’optique animée</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 30px;
+    }
+
+    .wrapper {
+      position: relative;
+      width: 640px;
+      height: 640px;
+      overflow: hidden;
+      border: 1px solid #444;
+    }
+
+    .illusion {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: filter 0.1s linear;
+    }
+
+    /* calque optionnel pour accentuer la perception des ronds */
+    .circles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.1s linear;
+    }
+
+    .controls {
+      width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Illusion d’optique – révélation des 16 ronds</h1>
+
+  <div class="wrapper">
+    <!-- remplace le src par ton image -->
+    <img
+      id="illusionImg"
+      class="illusion"
+      src="coffer illusion.jpg"
+      alt="Illusion d’optique"
+    />
+
+    <!-- SVG avec 16 ronds -->
+    <svg id="circlesLayer" class="circles" viewBox="0 0 640 640">
+      <!-- 4 x 4 cercles -->
+      <!-- centres approximatifs -->
+      <g fill="none" stroke="rgba(255,0,0,0.9)" stroke-width="3">
+        <circle cx="80"  cy="120" r="42" />
+        <circle cx="240" cy="120" r="42" />
+        <circle cx="400" cy="120" r="42" />
+        <circle cx="560" cy="120" r="42" />
+
+        <circle cx="80"  cy="280" r="42" />
+        <circle cx="240" cy="280" r="42" />
+        <circle cx="400" cy="280" r="42" />
+        <circle cx="560" cy="280" r="42" />
+
+        <circle cx="80"  cy="440" r="42" />
+        <circle cx="240" cy="440" r="42" />
+        <circle cx="400" cy="440" r="42" />
+        <circle cx="560" cy="440" r="42" />
+
+        <circle cx="80"  cy="560" r="42" />
+        <circle cx="240" cy="560" r="42" />
+        <circle cx="400" cy="560" r="42" />
+        <circle cx="560" cy="560" r="42" />
+      </g>
+    </svg>
+  </div>
+
+  <div class="controls">
+    <label for="blurSlider">Flou du fond</label>
+    <input id="blurSlider" type="range" min="0" max="12" step="0.1" value="0" />
+  </div>
+
+  <script>
+    const slider = document.getElementById("blurSlider");
+    const img = document.getElementById("illusionImg");
+    const circles = document.getElementById("circlesLayer");
+
+    slider.addEventListener("input", () => {
+      const blur = parseFloat(slider.value);
+
+      // flou du fond
+      img.style.filter = `blur(${blur}px)`;
+
+      // les ronds deviennent progressivement visibles
+      // plus le flou augmente, plus on les affiche
+      const opacity = Math.min(blur / 8, 1);
+      circles.style.opacity = opacity;
+    });
+  </script>
+</body>
+</html>

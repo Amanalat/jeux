@@ -1,0 +1,236 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif);background:transparent;padding:0 0 1.5rem}
+.page-title{font-size:18px;font-weight:600;color:var(--color-text-primary,#111827);margin-bottom:4px;padding-top:1rem}
+.page-sub{font-size:13px;color:var(--color-text-secondary,#4b5563);margin-bottom:2px}
+.page-hint{font-size:11px;color:var(--color-text-tertiary,#6b7280);margin-bottom:16px}
+.svg-wrap{position:relative;width:100%;max-width:660px;touch-action:none;user-select:none}
+svg{display:block;width:100%;overflow:visible}
+#rot-btn{position:absolute;display:none;background:var(--color-background-primary,#fff);border:0.5px solid var(--color-border-secondary,#d1d5db);border-radius:var(--border-radius-md,8px);padding:5px 11px;font-size:12px;font-weight:500;color:var(--color-text-primary,#111827);cursor:pointer;white-space:nowrap;z-index:5;transform:translateX(-50%);box-shadow:0 3px 12px rgba(0,0,0,.08)}
+#rot-btn:hover{background:var(--color-background-secondary,#f3f4f6)}
+.controls{display:flex;align-items:center;gap:16px;margin-top:8px;max-width:660px}
+.ctrl-btn{font-size:12px;color:var(--color-text-secondary,#4b5563);background:none;border:none;cursor:pointer;text-decoration:underline;padding:0}
+.ctrl-btn:hover{color:var(--color-text-primary,#111827)}
+.exp-btn{display:block;margin-top:20px;font-size:13px;color:var(--color-text-secondary,#4b5563);background:none;border:0.5px solid var(--color-border-tertiary,#d1d5db);border-radius:var(--border-radius-md,8px);padding:6px 14px;cursor:pointer;max-width:660px}
+.exp-btn:hover{background:var(--color-background-secondary,#f3f4f6);color:var(--color-text-primary,#111827)}
+.exp-panel{display:none;margin-top:14px;max-width:660px;border-left:2px solid var(--color-border-secondary,#d1d5db);padding:14px 18px;background:var(--color-background-secondary,#f9fafb);border-radius:0 var(--border-radius-md,8px) var(--border-radius-md,8px) 0}
+.exp-panel.open{display:block}
+.exp-panel h3{font-size:14px;font-weight:600;color:var(--color-text-primary,#111827);margin-bottom:10px}
+.exp-panel p{font-size:13px;color:var(--color-text-secondary,#4b5563);line-height:1.65;margin-bottom:8px}
+.exp-panel p:last-child{margin-bottom:0}
+.exp-panel strong{font-weight:600;color:var(--color-text-primary,#111827)}
+</style>
+
+<h2 class="page-title">Illusion de Müller-Lyer</h2>
+<p class="page-sub">Essaye de voir si les lignes sont de la même taille</p>
+<p class="page-hint">Glisse les lignes horizontales pour les comparer · glisse les flèches &gt; et &lt; sur les bords · clique sur une flèche pour afficher le bouton rotation</p>
+
+<div class="svg-wrap" id="wrap">
+  <svg id="svg" viewBox="0 0 660 260" xmlns="http://www.w3.org/2000/svg" aria-label="Illusion de Müller-Lyer interactive"></svg>
+  <button id="rot-btn" type="button">↻ Rotation</button>
+</div>
+
+<div class="controls">
+  <button class="ctrl-btn" id="reset-btn" type="button">↺ Remettre à neuf</button>
+  <span style="font-size:11px;color:var(--color-text-tertiary,#6b7280)" id="status-txt"></span>
+</div>
+
+<button class="exp-btn" id="exp-btn" type="button">▼ Voir l'explication</button>
+
+<div class="exp-panel" id="exp-panel">
+  <h3>L'illusion de Müller-Lyer — pourquoi notre cerveau se fait avoir</h3>
+  <p><strong>Les deux lignes horizontales ont exactement la même longueur au départ.</strong> Pourtant, elles ne semblent pas identiques parce que les flèches placées à leurs extrémités changent notre perception.</p>
+  <p>Quand les pointes donnent l'impression de s'ouvrir vers l'extérieur, le cerveau peut interpréter la forme comme un angle proche ou saillant. La ligne paraît alors plus courte.</p>
+  <p>Quand les pointes semblent se refermer vers l'intérieur, elles peuvent évoquer un angle rentrant, comme le coin d'une pièce qui part en profondeur. Le cerveau applique alors des indices de perspective et la ligne paraît plus longue.</p>
+  <p>Cette illusion montre que notre perception n'est pas une simple mesure géométrique : le cerveau interprète le contexte visuel. Même quand on sait que les lignes sont de la même taille, l'effet peut continuer à fonctionner.</p>
+</div>
+
+<script>
+const SVG=document.getElementById('svg');
+const WRAP=document.getElementById('wrap');
+const ROT=document.getElementById('rot-btn');
+const STATUS=document.getElementById('status-txt');
+const VW=660,VH=260,X1=140,X2=520,FIN=60,FA=34*Math.PI/180,SW=4.5;
+
+function mkS(){
+  return{
+    lines:[
+      {y:92,fins:[{x:X1,rot:0},{x:X2,rot:180}]},
+      {y:182,fins:[{x:X1,rot:180},{x:X2,rot:0}]}
+    ],
+    sel:null
+  };
+}
+let S=mkS();
+let DR=null;
+
+function el(t,a){
+  const e=document.createElementNS('http://www.w3.org/2000/svg',t);
+  for(const[k,v]of Object.entries(a||{}))e.setAttribute(k,v);
+  return e;
+}
+
+const ELS=[];
+for(let li=0;li<2;li++){
+  const shaft=el('line',{'stroke-linecap':'round','stroke-width':SW});
+  const shHit=el('line',{stroke:'transparent','stroke-width':30,style:'cursor:ns-resize'});
+  const fins=[];
+
+  SVG.append(shaft,shHit);
+
+  shHit.addEventListener('pointerdown',e=>{
+    e.stopPropagation();
+    startDrag(e,'line',li);
+  });
+
+  for(let fi=0;fi<2;fi++){
+    const l1=el('line',{'stroke-linecap':'round','stroke-width':SW});
+    const l2=el('line',{'stroke-linecap':'round','stroke-width':SW});
+    const hit=el('circle',{r:42,fill:'transparent',style:'cursor:ew-resize'});
+    SVG.append(l1,l2,hit);
+    fins.push({l1,l2,hit});
+
+    hit.addEventListener('pointerdown',e=>{
+      e.stopPropagation();
+      startDrag(e,'fin',li,fi);
+    });
+  }
+  ELS.push({shaft,shHit,fins});
+}
+
+SVG.addEventListener('pointerdown',()=>{
+  S.sel=null;
+  render();
+});
+
+function getColor(li,fi){
+  const s=S.sel;
+  const on=s&&s.li===li&&s.fi===fi;
+  return on?'var(--color-text-info,#2563eb)':'var(--color-text-primary,#111827)';
+}
+
+function render(){
+  for(let li=0;li<2;li++){
+    const LS=S.lines[li],{shaft,shHit,fins}=ELS[li],y=LS.y;
+    const fx0=X1,fx1=X2;
+
+    shaft.setAttribute('x1',fx0);shaft.setAttribute('y1',y);
+    shaft.setAttribute('x2',fx1);shaft.setAttribute('y2',y);
+    shaft.setAttribute('stroke','var(--color-text-primary,#111827)');
+
+    shHit.setAttribute('x1',fx0);shHit.setAttribute('y1',y);
+    shHit.setAttribute('x2',fx1);shHit.setAttribute('y2',y);
+
+    for(let fi=0;fi<2;fi++){
+      const fs=LS.fins[fi],{l1,l2,hit}=fins[fi];
+      const rad=fs.rot*Math.PI/180;
+      const a1=Math.PI+FA+rad,a2=Math.PI-FA+rad;
+      const c=getColor(li,fi);
+
+      l1.setAttribute('x1',fs.x);l1.setAttribute('y1',y);
+      l1.setAttribute('x2',fs.x+FIN*Math.cos(a1));
+      l1.setAttribute('y2',y+FIN*Math.sin(a1));
+      l1.setAttribute('stroke',c);
+
+      l2.setAttribute('x1',fs.x);l2.setAttribute('y1',y);
+      l2.setAttribute('x2',fs.x+FIN*Math.cos(a2));
+      l2.setAttribute('y2',y+FIN*Math.sin(a2));
+      l2.setAttribute('stroke',c);
+
+      hit.setAttribute('cx',fs.x);
+      hit.setAttribute('cy',y);
+    }
+  }
+  updateStatus();
+  posRotBtn();
+}
+
+function toSVG(cx,cy){
+  const r=SVG.getBoundingClientRect();
+  return{x:(cx-r.left)/r.width*VW,y:(cy-r.top)/r.height*VH};
+}
+
+function startDrag(e,type,li,fi){
+  e.preventDefault();
+  SVG.setPointerCapture?.(e.pointerId);
+  const sv=toSVG(e.clientX,e.clientY);
+  DR=type==='line'
+    ?{type,li,pointerId:e.pointerId,sy0:sv.y,ly0:S.lines[li].y,moved:false}
+    :{type,li,fi,pointerId:e.pointerId,sx0:sv.x,sy0:sv.y,fx0:S.lines[li].fins[fi].x,moved:false};
+}
+
+function onMove(e){
+  if(!DR)return;
+  e.preventDefault();
+  const sv=toSVG(e.clientX,e.clientY);
+
+  if(DR.type==='line'){
+    const dy=sv.y-DR.sy0;
+    if(Math.abs(dy)>2)DR.moved=true;
+    S.lines[DR.li].y=Math.max(48,Math.min(VH-48,DR.ly0+dy));
+  }else{
+    const dx=sv.x-DR.sx0;
+    if(Math.abs(dx)>2)DR.moved=true;
+    let nx=DR.fx0+dx;
+    // La flèche peut glisser horizontalement, mais elle ne modifie jamais
+    // les extrémités réelles de la ligne horizontale : X1 et X2 restent fixes.
+    S.lines[DR.li].fins[DR.fi].x=Math.max(24,Math.min(VW-24,nx));
+  }
+  render();
+}
+
+function onUp(e){
+  if(!DR)return;
+  const finished=DR;
+  DR=null;
+
+  if(finished.type==='fin'&&!finished.moved){
+    S.sel=(S.sel?.li===finished.li&&S.sel?.fi===finished.fi)?null:{li:finished.li,fi:finished.fi};
+  }
+  render();
+  try{SVG.releasePointerCapture?.(e.pointerId)}catch(err){}
+}
+
+document.addEventListener('pointermove',onMove);
+document.addEventListener('pointerup',onUp);
+document.addEventListener('pointercancel',()=>{DR=null;render();});
+window.addEventListener('resize',posRotBtn);
+
+function posRotBtn(){
+  if(!S.sel){ROT.style.display='none';return;}
+  const{li,fi}=S.sel,fs=S.lines[li].fins[fi],y=S.lines[li].y;
+  const sr=SVG.getBoundingClientRect(),wr=WRAP.getBoundingClientRect();
+  const px=fs.x/VW*sr.width+(sr.left-wr.left);
+  const py=y/VH*sr.height+(sr.top-wr.top);
+  ROT.style.display='block';
+  ROT.style.left=px+'px';
+  ROT.style.top=Math.max(2,py-50)+'px';
+}
+
+ROT.addEventListener('click',e=>{
+  e.stopPropagation();
+  if(!S.sel)return;
+  const{li,fi}=S.sel;
+  S.lines[li].fins[fi].rot=(S.lines[li].fins[fi].rot+90)%360;
+  render();
+});
+
+document.getElementById('reset-btn').addEventListener('click',()=>{
+  S=mkS();
+  DR=null;
+  render();
+});
+
+function updateStatus(){
+  const fixedLength=Math.round(Math.abs(X2-X1));
+  STATUS.textContent='';
+}
+
+const expBtn=document.getElementById('exp-btn'),expPanel=document.getElementById('exp-panel');
+expBtn.addEventListener('click',()=>{
+  const open=expPanel.classList.toggle('open');
+  expBtn.textContent=(open?'▲ Masquer':'▼ Voir')+' l\'explication';
+});
+
+render();
+</script>

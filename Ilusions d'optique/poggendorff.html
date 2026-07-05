@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Illusion de Poggendorff</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #fff;
+  padding: 24px 20px;
+  user-select: none;
+  -webkit-user-select: none;
+  max-width: 680px;
+}
+
+#question {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+#question strong {
+  color: #111;
+  font-size: 16px;
+}
+
+svg {
+  display: block;
+  max-width: 650px;
+  width: 100%;
+}
+
+#controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  max-width: 650px;
+  flex-wrap: wrap;
+}
+#btn-reset {
+  font-size: 13px;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+#btn-reset:hover { color: #444; }
+#btn-reveal {
+  font-size: 13px;
+  color: #555;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+#btn-reveal:hover { background: #f5f5f5; }
+
+#btn-explain {
+  display: block;
+  margin-top: 22px;
+  font-size: 14px;
+  color: #555;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+#btn-explain:hover { background: #f5f5f5; color: #111; }
+
+#explication {
+  display: none;
+  margin-top: 18px;
+  max-width: 650px;
+  background: #f8f8f8;
+  border-left: 3px solid #E67F39;
+  border-radius: 0 8px 8px 0;
+  padding: 18px 20px;
+  user-select: text;
+  -webkit-user-select: text;
+}
+#explication.visible { display: block; }
+#explication h2 { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 12px; }
+#explication p { font-size: 14px; color: #444; line-height: 1.65; margin-bottom: 10px; }
+#explication p:last-child { margin-bottom: 0; }
+#explication .highlight { color: #E67F39; font-weight: 600; }
+#explication .answer { font-weight: 700; color: #111; }
+</style>
+</head>
+<body>
+
+<p id="question">
+  <strong>Lequel des deux traits de droite est le prolongement du trait noir : A ou B ?</strong><br>
+  <span style="font-size:13px;color:#999;">Cliquez sur "Révéler la réponse" pour vérifier.</span>
+</p>
+
+<!--
+  Droite de référence : y = 60 + 0.6*(x − 60),  slope = 0.6
+  Bord gauche rect  x=220 → y = 156
+  Bord droit  rect  x=400 → y = 264
+
+  Trait A (rouge, VRAI)  : (400, 264) → (590, 378)
+  Trait B (bleu, LEURRE) : (400, 224) → (590, 338)   [+40px plus haut, semble continuer le noir]
+-->
+
+<svg id="svg" viewBox="0 0 650 440" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Segment caché derrière le rectangle (révélé par bouton) -->
+  <line id="hidden-seg"
+    x1="220" y1="156" x2="400" y2="264"
+    stroke="#9B2335" stroke-width="4" stroke-dasharray="10 6"
+    opacity="0" pointer-events="none"/>
+
+  <!-- Trait noir gauche -->
+  <line x1="60" y1="60" x2="220" y2="156"
+    stroke="#111" stroke-width="5.5" stroke-linecap="round"/>
+
+  <!-- Trait A (rouge — vrai prolongement) -->
+  <line x1="400" y1="264" x2="590" y2="378"
+    stroke="#9B2335" stroke-width="5.5" stroke-linecap="round"/>
+
+  <!-- Trait B (bleu — leurre, semble continuer le noir) -->
+  <line x1="400" y1="224" x2="590" y2="338"
+    stroke="#2355B2" stroke-width="5.5" stroke-linecap="round"/>
+
+  <!-- Rectangle occultant (dessiné après les traits pour les couvrir) -->
+  <rect id="rect-main"
+    x="220" y="0" width="180" height="440"
+    fill="#c2c2c2"/>
+
+  <!-- Labels A et B — dessinés après le rectangle pour être visibles -->
+  <text x="407" y="258" font-size="17" font-weight="700"
+    fill="#9B2335" font-family="system-ui" dominant-baseline="middle">A</text>
+  <text x="407" y="218" font-size="17" font-weight="700"
+    fill="#2355B2" font-family="system-ui" dominant-baseline="middle">B</text>
+
+</svg>
+
+<div id="controls">
+  <button id="btn-reset">↺ Remettre à neuf</button>
+  <button id="btn-reveal">Révéler la réponse</button>
+</div>
+
+<button id="btn-explain">▼ Voir l'explication</button>
+
+<div id="explication">
+  <h2>L'illusion de Poggendorff — ce que fait votre cerveau</h2>
+
+  <p>
+    <span class="answer">C'est le trait A (rouge) qui est le vrai prolongement.</span>
+    Le trait B (bleu), pourtant situé plus haut, semble au premier regard continuer
+    naturellement la ligne noire. C'est précisément l'illusion de Poggendorff.
+  </p>
+
+  <p>
+    Cette illusion a été décrite en 1860 par le physicien allemand
+    <strong>Johann Christian Poggendorff</strong>. Elle surgit quand une ligne diagonale
+    est interrompue par une bande opaque. Les deux segments visibles paraissent décalés :
+    le vrai prolongement semble trop bas, et un trait légèrement décalé vers le haut
+    paraît s'aligner naturellement avec le segment d'entrée.
+  </p>
+
+  <p>
+    Le mécanisme principal est une <span class="highlight">surestimation de l'angle</span>
+    entre la diagonale et les bords verticaux du rectangle. Le cerveau interprète cet angle
+    comme plus ouvert qu'il ne l'est réellement, ce qui déplace mentalement le point de
+    sortie attendu vers le haut. Il en résulte que le vrai prolongement (A) paraît "trop bas",
+    et que le leurre (B), positionné plus haut, semble correspondre à l'extrapolation naturelle.
+  </p>
+
+  <p>
+    L'illusion est d'autant plus forte que l'angle de la diagonale est proche de 45°
+    et que le rectangle est large. Elle disparaît presque entièrement pour des lignes
+    horizontales ou verticales. Ce biais a des implications pratiques réelles :
+    dans l'aviation ou la chirurgie assistée, des interfaces mal conçues peuvent
+    provoquer des erreurs d'alignement — preuve que
+    <span class="highlight">notre cerveau ne suit pas automatiquement les droites</span>.
+  </p>
+</div>
+
+<script>
+let revealed = false;
+
+document.getElementById('btn-reveal').addEventListener('click', function() {
+  revealed = !revealed;
+  document.getElementById('hidden-seg').setAttribute('opacity', revealed ? '1' : '0');
+  document.getElementById('rect-main').setAttribute('fill-opacity', revealed ? '0.28' : '1');
+  this.textContent = revealed ? 'Masquer la réponse' : 'Révéler la réponse';
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  revealed = false;
+  document.getElementById('hidden-seg').setAttribute('opacity', '0');
+  document.getElementById('rect-main').setAttribute('fill-opacity', '1');
+  document.getElementById('btn-reveal').textContent = 'Révéler la réponse';
+});
+
+const btnEx = document.getElementById('btn-explain');
+const divEx = document.getElementById('explication');
+btnEx.addEventListener('click', () => {
+  const visible = divEx.classList.toggle('visible');
+  btnEx.textContent = visible ? '▲ Masquer l\'explication' : '▼ Voir l\'explication';
+});
+</script>
+</body>
+</html>

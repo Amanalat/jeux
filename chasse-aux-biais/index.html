@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chasse aux Biais 🧠</title>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#07211d; --panel:#0c2e29; --card:#123c35;
+  --acc:#2dd4bf; --gr:#3ecf8e; --rd:#f75f5f; --bl:#4fa3f7;
+  --tx:#e7fcf7; --mu:#74a8a0; --bord:rgba(255,255,255,0.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);background-image:radial-gradient(ellipse at 15% 15%,rgba(45,212,191,.08) 0%,transparent 55%),radial-gradient(ellipse at 85% 85%,rgba(163,230,53,.05) 0%,transparent 55%);color:var(--tx);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px;}
+h1{font-family:'Lilita One',cursive;font-size:clamp(1.8rem,6vw,2.6rem);color:var(--acc);text-shadow:0 0 30px rgba(45,212,191,.4);}
+.sub{color:var(--mu);font-size:.9rem;font-weight:600;margin-top:4px;}
+.author{color:var(--mu);font-size:.78rem;font-weight:600;margin-bottom:16px;opacity:.8;}
+.author a{color:var(--acc);text-decoration:none;}
+header{text-align:center;}
+
+#intro{max-width:620px;text-align:center;}
+#intro .brief{background:var(--panel);border:1px solid var(--bord);border-radius:20px;padding:24px;margin-bottom:20px;text-align:left;font-size:.95rem;line-height:1.6;font-weight:600;}
+#intro .brief b{color:var(--acc);}
+.bigbtn{background:linear-gradient(135deg,#2dd4bf,#0f9d8f);color:#03201b;border:none;border-radius:50px;padding:15px 40px;font-family:'Lilita One',cursive;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 20px rgba(45,212,191,.35);transition:transform .2s;}
+.bigbtn:hover{transform:translateY(-2px);}
+.bigbtn.gold{background:linear-gradient(135deg,#a3e635,#65a30d);color:#16290a;box-shadow:0 4px 20px rgba(163,230,53,.3);}
+
+#hud{display:none;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--bord);border-radius:50px;padding:9px 22px;margin-bottom:14px;font-weight:700;font-size:.9rem;flex-wrap:wrap;justify-content:center;}
+.num{font-family:'Lilita One',cursive;font-size:1.2rem;color:var(--acc);}
+#streak{color:var(--gr);}
+
+#game{display:none;width:100%;max-width:700px;}
+.scard{background:var(--panel);background-image:repeating-linear-gradient(0deg,transparent 0 27px,rgba(255,255,255,.035) 27px 28px);border:1px solid var(--bord);border-radius:20px;padding:20px 22px;margin-bottom:14px;position:relative;overflow:hidden;animation:slidein .35s ease;}
+.scase{position:absolute;top:12px;right:14px;font-size:.64rem;font-weight:800;letter-spacing:1.5px;color:var(--mu);border:1px dashed var(--mu);border-radius:4px;padding:2px 8px;opacity:.8;text-transform:uppercase;}
+@keyframes slidein{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+.scard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--acc),#a3e635);}
+.stag{display:inline-block;border-radius:6px;font-size:.7rem;font-weight:800;padding:3px 10px;margin-bottom:10px;letter-spacing:1px;text-transform:uppercase;}
+.stag.piege{background:rgba(247,95,95,.13);color:var(--rd);border:1px solid rgba(247,95,95,.3);}
+.stag.biais{background:rgba(79,163,247,.13);color:var(--bl);border:1px solid rgba(79,163,247,.3);}
+.stxt{font-size:1.02rem;font-weight:700;line-height:1.55;color:#fff;}
+
+/* Respiration "compte jusqu'à 2" */
+#breath{display:flex;flex-direction:column;align-items:center;gap:8px;margin:10px 0 14px;}
+#breath-circle{width:64px;height:64px;border-radius:50%;background:radial-gradient(circle,rgba(45,212,191,.35),rgba(45,212,191,.08));border:2px solid var(--acc);display:flex;align-items:center;justify-content:center;font-family:'Lilita One',cursive;font-size:1.6rem;color:var(--acc);animation:breathe 1s ease-in-out infinite;}
+@keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
+#breath-txt{font-size:.78rem;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;}
+
+/* Chronomètre sous pression */
+#timer-wrap{display:none;flex-direction:column;align-items:center;gap:7px;margin:2px 0 16px;}
+#timer-num{font-family:'Lilita One',cursive;font-size:clamp(3rem,14vw,5rem);line-height:.9;color:var(--acc);text-shadow:0 0 30px rgba(45,212,191,.45);transition:color .3s;}
+#timer-bar{width:100%;max-width:360px;height:11px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden;}
+#timer-fill{height:100%;width:100%;background:linear-gradient(90deg,#3ecf8e,#2dd4bf);border-radius:9px;transition:width 1s linear,background .3s;}
+#timer-lab{font-size:.72rem;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;}
+#timer-lab b{color:var(--acc);}
+.timer-low #timer-num{color:var(--rd);text-shadow:0 0 34px rgba(247,95,95,.6);animation:tpulse .5s ease-in-out infinite;}
+.timer-low #timer-fill{background:linear-gradient(90deg,#f75f5f,#ff8a8a)!important;}
+.timer-low #timer-lab b{color:var(--rd);}
+@keyframes tpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
+
+#answers{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
+.abtn{background:var(--card);border:2px solid var(--bord);border-radius:13px;padding:13px 12px;cursor:pointer;text-align:left;font-family:'Nunito',sans-serif;color:var(--tx);font-size:.86rem;font-weight:700;line-height:1.3;transition:all .18s;}
+.abtn:hover:not(:disabled){border-color:rgba(255,255,255,.25);transform:translateY(-2px);}
+.abtn:disabled{cursor:default;}
+.abtn.locked{opacity:.3;filter:blur(1.5px);pointer-events:none;}
+.abtn.good{border-color:var(--gr);background:rgba(62,207,142,.12);}
+.abtn.bad{border-color:var(--rd);background:rgba(247,95,95,.12);}
+.abtn.dim{opacity:.35;}
+.abtn .asub{display:block;font-size:.72rem;font-weight:600;color:var(--mu);margin-top:2px;}
+
+#feedback{display:none;border-radius:18px;padding:16px 18px;margin-bottom:12px;animation:slidein .3s ease;}
+#feedback.ok{background:rgba(62,207,142,.1);border:2px solid var(--gr);}
+#feedback.ko{background:rgba(247,95,95,.1);border:2px solid var(--rd);}
+#fb-title{font-family:'Lilita One',cursive;font-size:1.1rem;margin-bottom:6px;}
+#feedback.ok #fb-title{color:var(--gr);}
+#feedback.ko #fb-title{color:var(--rd);}
+#fb-expl{font-size:.9rem;font-weight:600;line-height:1.55;}
+#fb-expl b{color:var(--acc);}
+#nextbtn{display:none;width:100%;max-width:700px;background:linear-gradient(135deg,#2dd4bf,#0f9d8f);color:#03201b;border:none;border-radius:50px;padding:14px;font-family:'Lilita One',cursive;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 20px rgba(45,212,191,.3);}
+
+#end{display:none;max-width:580px;text-align:center;background:var(--panel);border:1px solid var(--bord);border-radius:20px;padding:30px;}
+#end h2{font-family:'Lilita One',cursive;font-size:1.7rem;color:var(--acc);margin-bottom:10px;}
+#end .score-big{font-family:'Lilita One',cursive;font-size:3rem;color:#fff;margin:10px 0;}
+#end p{color:var(--mu);font-weight:700;margin-bottom:18px;line-height:1.55;}
+#end p b{color:var(--tx);}
+@media(max-width:520px){#answers{grid-template-columns:1fr;}}
+
+/* Boutons secondaires + menu intro */
+#intro .menu-btns{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.bigbtn.ghost{background:transparent;color:var(--acc);border:2px solid var(--acc);box-shadow:none;font-size:1rem;padding:12px 30px;}
+.bigbtn.ghost:hover{background:rgba(45,212,191,.1);}
+
+/* Fiches anti-biais */
+#fiches{display:none;width:100%;max-width:780px;}
+#fiches h2{font-family:'Lilita One',cursive;font-size:1.7rem;color:var(--acc);text-align:center;}
+#fiches .fiches-sub{color:var(--mu);font-weight:700;text-align:center;font-size:.9rem;margin:4px 0 20px;}
+#fiches-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:560px){#fiches-grid{grid-template-columns:1fr;}}
+.fiche{background:var(--panel);border:1px solid var(--bord);border-radius:18px;padding:18px 18px 16px;position:relative;overflow:hidden;animation:slidein .35s ease;}
+.fiche::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--acc),#a3e635);}
+.fiche.concept::before{background:linear-gradient(90deg,#4fa3f7,#a3e635);}
+.fiche h3{font-family:'Lilita One',cursive;font-size:1.05rem;color:var(--acc);margin-bottom:8px;line-height:1.2;}
+.fiche.concept h3{color:var(--bl);}
+.fiche .f-def{font-size:.86rem;font-weight:600;line-height:1.5;color:#fff;margin-bottom:8px;}
+.fiche .f-ex{font-size:.8rem;font-weight:600;line-height:1.45;color:var(--tx);margin-top:6px;}
+.fiche .f-lab{display:block;font-size:.64rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--mu);margin-bottom:2px;}
+.fiche .f-parade{background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.25);border-radius:11px;padding:9px 11px;margin-top:11px;font-size:.8rem;font-weight:700;line-height:1.45;}
+.fiche .f-parade .f-lab{color:var(--acc);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧠 Chasse aux Biais</h1>
+  <p class="sub">Ton cerveau va trop vite… apprends à le rattraper !</p>
+  <p class="author">par <a href="https://antoninatger.com" target="_blank">Antonin Atger</a></p>
+</header>
+
+<div id="intro">
+  <div class="brief">
+    <p>🧠 Ton cerveau a deux vitesses : le mode <b>intuitif</b> (rapide, automatique… et parfois piégé) et le mode <b>analytique</b> (plus lent, mais plus fiable).</p>
+    <p style="margin-top:10px;">🎯 Dans ce jeu, tu vas affronter des <b>énigmes-pièges</b> où l'intuition se trompe, et des <b>scénarios</b> où il faut démasquer le biais cognitif à l'œuvre.</p>
+    <p style="margin-top:10px;">🌬️ Règle d'or de la chasse : avant chaque réponse, <b>compte jusqu'à 2</b>. Les boutons restent verrouillés 2 secondes — le temps d'une respiration. C'est exactement le réflexe à avoir avant de partager une info sur les réseaux !</p>
+  </div>
+  <div class="menu-btns">
+    <button class="bigbtn" onclick="startGame()">🧠 Lancer la chasse</button>
+    <button class="bigbtn ghost" onclick="showFiches()">📑 Comprendre les biais</button>
+  </div>
+</div>
+
+<div id="hud">
+  <span>Question <span class="num" id="qnum">1</span>/<span id="qtot">12</span></span>
+  <span>Score <span class="num" id="score">0</span></span>
+  <span id="streak"></span>
+</div>
+
+<div id="game">
+  <div class="scard">
+    <span class="scase" id="scase"></span>
+    <span class="stag" id="stag"></span>
+    <p class="stxt" id="stxt"></p>
+  </div>
+  <div id="breath">
+    <div id="breath-circle">1</div>
+    <div id="breath-txt">Respire… compte jusqu'à 2</div>
+  </div>
+  <div id="timer-wrap">
+    <div id="timer-num">15</div>
+    <div id="timer-bar"><div id="timer-fill"></div></div>
+    <div id="timer-lab">⏱ Réponds vite… mais <b>JUSTE</b> !</div>
+  </div>
+  <div id="answers"></div>
+  <div id="feedback">
+    <div id="fb-title"></div>
+    <p id="fb-expl"></p>
+  </div>
+</div>
+<button id="nextbtn" onclick="nextQ()">Question suivante ➜</button>
+
+<div id="end">
+  <h2 id="end-title"></h2>
+  <div class="score-big" id="end-score"></div>
+  <p id="end-msg"></p>
+  <button class="bigbtn gold" onclick="location.reload()">🔄 Rejouer</button>
+</div>
+
+<div id="fiches">
+  <h2>📑 Les fiches anti-biais</h2>
+  <p class="fiches-sub">Comprends les pièges de ton cerveau, un par un — puis va les démasquer en jeu.</p>
+  <div id="fiches-grid"></div>
+  <button class="bigbtn ghost" onclick="hideFiches()" style="margin:18px auto 0;display:block;">← Retour au menu</button>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

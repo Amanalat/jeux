@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Répare la Une ! 🗞️</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#e8e1d2; --panel:#faf6ec; --card:#ffffff;
+  --acc:#b3261e; --gr:#1e8e5a; --rd:#c0392b; --bl:#1f6fb2;
+  --tx:#241e12; --mu:#857a64; --bord:rgba(60,48,25,0.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);background-image:radial-gradient(ellipse at 20% 0%,rgba(255,255,255,.55) 0%,transparent 50%),repeating-linear-gradient(0deg,transparent 0 3px,rgba(120,100,60,.025) 3px 4px);color:var(--tx);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px;}
+h1{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.8rem,6vw,2.6rem);color:var(--tx);}
+.sub{color:var(--mu);font-size:.9rem;font-weight:600;margin-top:4px;}
+.author{color:var(--mu);font-size:.78rem;font-weight:600;margin-bottom:16px;opacity:.9;}
+.author a{color:var(--acc);text-decoration:none;}
+header{text-align:center;border-bottom:3px double rgba(60,48,25,.45);padding:0 26px 2px;margin-bottom:14px;}
+
+#intro{max-width:640px;text-align:center;}
+#intro .brief{background:var(--panel);border:1px solid var(--bord);border-radius:6px;padding:24px;margin-bottom:20px;text-align:left;font-size:.95rem;line-height:1.6;font-weight:600;box-shadow:0 3px 14px rgba(80,60,20,.12);}
+#intro .brief b{color:var(--acc);}
+.bigbtn{background:#241e12;color:#f5efe0;border:none;border-radius:8px;padding:15px 40px;font-family:'Playfair Display',serif;font-weight:700;font-size:1.15rem;cursor:pointer;box-shadow:0 4px 14px rgba(36,30,18,.35);transition:transform .2s;}
+.bigbtn:hover{transform:translateY(-2px);}
+
+#hud{display:none;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--bord);border-radius:8px;padding:9px 22px;margin-bottom:14px;font-weight:700;font-size:.9rem;flex-wrap:wrap;justify-content:center;box-shadow:0 2px 8px rgba(80,60,20,.1);}
+.num{font-family:'Playfair Display',serif;font-weight:900;font-size:1.2rem;color:var(--acc);}
+
+#game{display:none;width:100%;max-width:760px;}
+.sectitle{font-size:.78rem;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px;}
+
+/* Journaux (la une du stagiaire + ta une) */
+.paper{background:var(--card);border:1px solid var(--bord);border-radius:4px;box-shadow:0 3px 16px rgba(80,60,20,.2);overflow:hidden;animation:slidein .35s ease;}
+@keyframes slidein{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+.masthead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:10px 16px 8px;border-bottom:3px double #241e12;}
+.mh-name{font-family:'Playfair Display',serif;font-weight:900;font-size:1.15rem;letter-spacing:1px;white-space:nowrap;}
+.mh-meta{font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);text-align:right;}
+.tabloid .masthead{background:#b3261e;border-bottom-color:#7c1812;}
+.tabloid .mh-name{color:#fff;}
+.tabloid .mh-meta{color:rgba(255,255,255,.85);}
+.paper-bd{padding:14px 18px 18px;}
+.ttag{display:inline-block;border-radius:3px;font-size:.66rem;font-weight:800;padding:3px 10px;margin-bottom:10px;letter-spacing:1.5px;text-transform:uppercase;}
+.tabloid .ttag{background:rgba(179,38,30,.08);color:#b3261e;border:1px solid rgba(179,38,30,.4);}
+#draft .ttag{background:rgba(30,142,90,.08);color:#17744a;border:1px solid rgba(30,142,90,.4);}
+.ttxt,#draft-txt{font-family:'Playfair Display',serif;font-weight:900;font-size:1.3rem;line-height:1.35;color:#181308;}
+#draft{margin-bottom:10px;}
+
+/* Sources : chemises d'archives */
+#sources{display:grid;gap:8px;}
+.source{background:#f3ead2;border:1px solid #d9cba6;border-radius:6px;overflow:hidden;}
+.source-hd{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;font-weight:800;font-size:.88rem;transition:background .15s;}
+.source-hd:hover{background:rgba(120,90,30,.07);}
+.source-hd .schev{margin-left:auto;color:var(--mu);transition:transform .25s;font-size:.8rem;}
+.source.open .schev{transform:rotate(90deg);}
+.source-hd .sread{color:var(--gr);font-size:.75rem;font-weight:800;display:none;}
+.source.read .sread{display:inline;}
+.source-bd{display:none;padding:10px 0 13px;font-size:.88rem;font-weight:600;line-height:1.55;color:#46402f;border-top:1px dashed #d9cba6;margin:0 14px;}
+.source.open .source-bd{display:block;}
+
+/* Jauges — révélées seulement à la publication */
+#gauges{display:none;background:var(--panel);border:1px solid var(--bord);border-radius:8px;padding:14px 18px;margin-top:12px;animation:slidein .3s ease;box-shadow:0 2px 8px rgba(80,60,20,.1);}
+#gauges .gtitle{font-size:.78rem;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.gauge{margin-bottom:12px;}
+.gauge:last-child{margin-bottom:0;}
+.glabels{display:flex;justify-content:space-between;font-size:.74rem;font-weight:800;margin-bottom:5px;}
+.glabels .gname{text-transform:uppercase;letter-spacing:.5px;}
+.gauge.emo .gname{color:var(--rd);}
+.gauge.prec .gname{color:var(--gr);}
+.glabels .gval{font-family:'Playfair Display',serif;font-weight:900;font-size:.95rem;}
+.gbg{height:18px;background:rgba(60,48,25,.12);border-radius:50px;position:relative;overflow:hidden;}
+.gfill{height:100%;border-radius:50px;transition:width .6s cubic-bezier(.34,1.2,.64,1);}
+.gauge.emo .gfill{background:linear-gradient(90deg,#e67e22,#c0392b);}
+.gauge.prec .gfill{background:linear-gradient(90deg,#1f6fb2,#1e8e5a);}
+.gmark{position:absolute;top:-3px;bottom:-3px;width:3px;background:#241e12;opacity:.45;border-radius:2px;}
+.ghint{font-size:.68rem;font-weight:700;color:var(--mu);margin-top:3px;}
+
+.slotgroup{margin-bottom:10px;}
+.slotname{font-size:.72rem;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.slotopts{display:grid;gap:7px;}
+.opt{background:var(--card);border:2px solid var(--bord);border-radius:8px;padding:10px 13px;cursor:pointer;text-align:left;font-family:'Nunito',sans-serif;color:var(--tx);font-size:.86rem;font-weight:700;line-height:1.35;transition:all .15s;}
+.opt:hover{border-color:rgba(60,48,25,.45);}
+.opt.sel{border-color:#241e12;background:#fdf6dd;}
+.opt.sel::before{content:"✏️ ";}
+
+#publish{width:100%;background:#1e8e5a;color:#fff;border:none;border-radius:8px;padding:14px;font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 14px rgba(30,142,90,.3);transition:transform .2s;margin-top:6px;}
+#publish:hover{transform:translateY(-2px);}
+
+#feedback{display:none;border-radius:8px;padding:16px 18px;margin-top:12px;animation:slidein .3s ease;}
+#feedback.ok{background:rgba(30,142,90,.07);border:2px solid var(--gr);}
+#feedback.ko{background:rgba(192,57,43,.07);border:2px solid var(--rd);}
+#fb-title{font-family:'Playfair Display',serif;font-weight:900;font-size:1.1rem;margin-bottom:6px;}
+#feedback.ok #fb-title{color:var(--gr);}
+#feedback.ko #fb-title{color:var(--rd);}
+#fb-expl{font-size:.9rem;font-weight:600;line-height:1.55;}
+#fb-expl b{color:var(--acc);}
+#fb-stars{font-size:1.5rem;margin-top:8px;display:none;}
+#nextbtn{display:none;width:100%;background:#241e12;color:#f5efe0;border:none;border-radius:8px;padding:14px;font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 14px rgba(36,30,18,.3);margin-top:10px;}
+
+#end{display:none;max-width:580px;text-align:center;background:var(--panel);border:1px solid var(--bord);border-radius:6px;padding:30px;box-shadow:0 3px 14px rgba(80,60,20,.12);}
+#end h2{font-family:'Playfair Display',serif;font-weight:900;font-size:1.7rem;color:var(--acc);margin-bottom:10px;}
+#end .score-big{font-family:'Playfair Display',serif;font-weight:900;font-size:2.4rem;color:var(--tx);margin:10px 0;}
+#end p{color:#5c5340;font-weight:700;margin-bottom:18px;line-height:1.55;}
+#end p b{color:var(--tx);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🗞️ Répare la Une !</h1>
+  <p class="sub">Moins d'émotion, plus de contexte : réécris les titres anxiogènes.</p>
+  <p class="author">par <a href="https://antoninatger.com" target="_blank">Antonin Atger</a></p>
+</header>
+
+<div id="intro">
+  <div class="brief">
+    <p>📰 Tu es <b>rédacteur en chef</b>. Ton stagiaire adore les titres qui font peur : majuscules, points d'exclamation, sous-entendus… De l'<b>effet de cadrage</b> à l'état pur !</p>
+    <p style="margin-top:10px;">🎯 Ta mission : <b>réécrire chaque titre</b> en choisissant de meilleurs segments, pour faire <b>baisser l'émotion 😱</b> (objectif ≤ 30) et <b>monter la précision &amp; le contexte 🎯</b> (objectif ≥ 70). Attention : certains segments en rajoutent encore dans le dramatique…</p>
+    <p style="margin-top:10px;">🙈 <b>Les jauges restent cachées pendant l'écriture</b> : à toi de juger chaque segment avec ton flair de rédac chef. Le verdict ne tombe qu'au moment de publier !</p>
+    <p style="margin-top:10px;">🔎 <b>Consulte les sources à disposition</b> avant de publier : certains segments ont l'air précis… mais ne correspondent pas à ce que disent les sources. Le rédac chef ne laissera rien passer !</p>
+  </div>
+  <button class="bigbtn" onclick="startGame()">🗞️ Prendre la rédaction</button>
+</div>
+
+<div id="hud">
+  <span>Une <span class="num" id="qnum">1</span>/<span id="qtot">6</span></span>
+  <span id="hud-stars">⭐ 0</span>
+</div>
+
+<div id="game">
+  <div class="paper tabloid">
+    <div class="masthead"><span class="mh-name">⚡ LE CRI DU WEB</span><span class="mh-meta">Édition spéciale — 0,99 €</span></div>
+    <div class="paper-bd">
+      <span class="ttag">😱 La une du stagiaire</span>
+      <p class="ttxt" id="orig-txt"></p>
+    </div>
+  </div>
+
+  <p class="sectitle">🗂️ Sources à disposition (clique pour lire)</p>
+  <div id="sources"></div>
+
+  <p class="sectitle">✏️ Ta réécriture</p>
+  <div class="paper" id="draft">
+    <div class="masthead"><span class="mh-name">🗞️ LA GAZETTE</span><span class="mh-meta" id="draft-date"></span></div>
+    <div class="paper-bd">
+      <span class="ttag">🎯 Ta une</span>
+      <p id="draft-txt"></p>
+    </div>
+  </div>
+
+  <div id="slots"></div>
+  <button id="publish" onclick="publish()">🖨️ Publier la une</button>
+
+  <div id="gauges">
+    <div class="gtitle">🧪 Verdict de l'imprimerie</div>
+    <div class="gauge emo">
+      <div class="glabels"><span class="gname">😱 Émotion</span><span class="gval" id="emo-val"></span></div>
+      <div class="gbg"><div class="gfill" id="emo-fill"></div><div class="gmark" style="left:30%"></div></div>
+      <div class="ghint">Objectif : descendre sous la barre (≤ 30)</div>
+    </div>
+    <div class="gauge prec">
+      <div class="glabels"><span class="gname">🎯 Précision &amp; contexte</span><span class="gval" id="prec-val"></span></div>
+      <div class="gbg"><div class="gfill" id="prec-fill"></div><div class="gmark" style="left:70%"></div></div>
+      <div class="ghint">Objectif : dépasser la barre (≥ 70)</div>
+    </div>
+  </div>
+
+  <div id="feedback">
+    <div id="fb-title"></div>
+    <p id="fb-expl"></p>
+    <div id="fb-stars"></div>
+  </div>
+  <button id="nextbtn" onclick="nextLevel()">Une suivante ➜</button>
+</div>
+
+<div id="end">
+  <h2 id="end-title"></h2>
+  <div class="score-big" id="end-score"></div>
+  <p id="end-msg"></p>
+  <button class="bigbtn" onclick="location.reload()">🔄 Rejouer</button>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

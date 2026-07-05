@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Terre ronde ou plate ?</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0a0e1a;
+    font-family: 'Baloo 2', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    color: #fff;
+    user-select: none;
+  }
+
+  canvas { display: block; position: fixed; inset: 0; }
+
+  #title {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: #fff;
+    text-align: center;
+    z-index: 10;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.9);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  #info-box {
+    position: fixed;
+    top: 50%;
+    right: 18px;
+    transform: translateY(-50%);
+    background: rgba(8,12,24,0.82);
+    border: 1.5px solid rgba(255,255,255,0.13);
+    border-radius: 18px;
+    padding: 14px 16px;
+    width: 185px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.72);
+    line-height: 1.55;
+    z-index: 10;
+    backdrop-filter: blur(12px);
+  }
+  #info-box strong {
+    color: #7b93ff;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.84rem;
+  }
+
+  #slider-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    padding: 14px 24px 22px;
+    background: linear-gradient(to top, rgba(8,12,24,0.97) 60%, transparent);
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #slider-labels {
+    display: flex;
+    justify-content: space-between;
+    width: min(560px, 92vw);
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  #slider-track-wrap {
+    position: relative;
+    width: min(560px, 92vw);
+    height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  #slider-bg {
+    position: absolute;
+    left: 0; right: 0;
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 99px;
+  }
+  #slider-prog {
+    position: absolute;
+    left: 0;
+    height: 8px;
+    width: 0%;
+    background: linear-gradient(90deg, #4361ee, #00c8ff);
+    border-radius: 99px;
+    pointer-events: none;
+  }
+  #slider-thumb {
+    position: absolute;
+    width: 26px; height: 26px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px #4361ee, 0 4px 14px rgba(0,0,0,0.6);
+    left: 0%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    transition: box-shadow 0.15s;
+  }
+
+  #slider {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    margin: 0;
+    -webkit-appearance: none;
+  }
+  #slider::-webkit-slider-thumb { -webkit-appearance: none; width: 40px; height: 40px; }
+  #slider:focus ~ #slider-thumb { box-shadow: 0 0 0 5px #4361ee, 0 0 20px rgba(67,97,238,0.5); }
+
+  #scene-btns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .sbtn {
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.6);
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: 0.72rem;
+    padding: 5px 13px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .sbtn:hover { background: rgba(67,97,238,0.35); border-color: #7b93ff; color: #fff; }
+  .sbtn.active { background: #4361ee; border-color: #7b93ff; color: #fff; }
+
+  #space-panel {
+    position: fixed; top: 50%; left: 18px;
+    transform: translateY(-50%);
+    z-index: 20; display: flex; flex-direction: column;
+    align-items: center; gap: 8px;
+    opacity: 0; pointer-events: none; transition: opacity 0.6s;
+    background: rgba(8,12,24,0.75);
+    border: 1.5px solid rgba(255,255,255,0.12);
+    border-radius: 18px; padding: 14px 10px;
+    backdrop-filter: blur(10px);
+  }
+  #space-panel.visible { opacity: 1; pointer-events: auto; }
+  .space-end-lbl { font-size: 1.1rem; }
+  #space-track-wrap {
+    position: relative; height: min(180px, 28vh); width: 40px;
+    display: flex; justify-content: center;
+  }
+  #space-bg {
+    position: absolute; top: 0; bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 8px; background: rgba(255,255,255,0.1); border-radius: 99px;
+  }
+  #space-prog {
+    position: absolute; bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 8px; height: 0%;
+    background: linear-gradient(to top, #4361ee, #00c8ff);
+    border-radius: 99px; pointer-events: none;
+  }
+  #space-thumb {
+    position: absolute; width: 22px; height: 22px;
+    background: #fff; border-radius: 50%;
+    box-shadow: 0 0 0 3px #4361ee, 0 3px 10px rgba(0,0,0,0.5);
+    left: 50%; transform: translateX(-50%); bottom: 0%;
+    pointer-events: none;
+  }
+  #space-slider {
+    position: absolute; inset: 0; width: 40px; height: 100%;
+    opacity: 0; cursor: pointer;
+    writing-mode: vertical-lr; direction: rtl;
+  }
+  #space-label {
+    font-size: 0.63rem; font-weight: 800;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    text-align: center; line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+<div id="space-panel">
+  <span class="space-end-lbl">🌌</span>
+  <div id="space-track-wrap">
+    <div id="space-bg"></div>
+    <div id="space-prog"></div>
+    <input type="range" id="space-slider" min="0" max="100" value="0">
+    <div id="space-thumb"></div>
+  </div>
+  <span class="space-end-lbl">🌍</span>
+  <div id="space-label">Recul<br>spatial</div>
+</div>
+
+<div id="title">🌍 La Terre : ronde ou plate ?</div>
+
+<div id="info-box">
+  <strong id="info-title">👣 Échelle humaine</strong>
+  <span id="info-text">Un homme debout à côté d'une boule bleue.</span>
+</div>
+
+<div id="slider-panel">
+  <div id="scene-btns">
+    <button class="sbtn active" onclick="animateTo(0)">① Départ</button>
+    <button class="sbtn" onclick="animateTo(220)">② Petite Terre</button>
+    <button class="sbtn" onclick="animateTo(490)">③ Milieu</button>
+    <button class="sbtn" onclick="animateTo(750)">④ Vue plate</button>
+    <button class="sbtn" onclick="animateTo(1000)">⑤ Globale</button>
+  </div>
+  <div id="slider-labels">
+    <span>🔬 Zoom max</span>
+    <span>🌍 Vue spatiale</span>
+  </div>
+  <div id="slider-track-wrap">
+    <div id="slider-bg"></div>
+    <div id="slider-prog"></div>
+    <input type="range" id="slider" min="0" max="1000" value="0">
+    <div id="slider-thumb"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const sliderEl = document.getElementById('slider');
+const sliderProg = document.getElementById('slider-prog');
+const sliderThumb = document.getElementById('slider-thumb');
+
+let W, H;
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  draw(0);
+}
+window.addEventListener('resize', resize);
+
+function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+let currentT = 0;
+
+let spaceZoom = 0; // 0 = close (t=1 view), 100 = far away full earth visible
+
+const spacePanelEl = document.getElementById('space-panel');
+const spaceSliderEl = document.getElementById('space-slider');
+const spaceProgEl = document.getElementById('space-prog');
+const spaceThumbEl = document.getElementById('space-thumb');
+
+function setSpaceZoom(v) {
+  spaceZoom = Math.max(0, Math.min(100, v));
+  spaceProgEl.style.height = spaceZoom + '%';
+  spaceThumbEl.style.bottom = spaceZoom + '%';
+  spaceSliderEl.value = spaceZoom;
+}
+
+spaceSliderEl.addEventListener('input', () => {
+  setSpaceZoom(parseInt(spaceSliderEl.value));
+});
+
+function updateSpacePanel() {
+  if (currentT >= 980) {
+    spacePanelEl.classList.add('visible');
+  } else {
+    spacePanelEl.classList.remove('visible');
+    setSpaceZoom(0);
+  }
+}
+
+let animTarget = null, animStart = null, animFrom = 0;
+const ANIM_DUR = 1100;
+
+function setT(v) {
+  currentT = Math.max(0, Math.min(1000, v));
+  const pct = (currentT / 1000) * 100;
+  sliderProg.style.width = pct + '%';
+  sliderThumb.style.left = pct + '%';
+  sliderEl.value = currentT;
+  updateInfo();
+  updateBtns();
+  updateSpacePanel();
+}
+
+sliderEl.addEventListener('input', () => {
+  animTarget = null;
+  setT(parseInt(sliderEl.value));
+});
+
+function animateTo(target) {
+  animFrom = currentT;
+  animTarget = target;
+  animStart = performance.now();
+}
+
+function updateBtns() {
+  const steps = [0, 220, 490, 750, 1000];
+  document.querySelectorAll('.sbtn').forEach((b, i) => {
+    b.classList.toggle('active', Math.abs(currentT - steps[i]) < 60);
+  });
+}
+
+const infoData = [
+  { t: 0,    icon: '👣', title: 'Échelle humaine',   text: 'Un homme debout à côté d\'une petite boule bleue.' },
+  { t: 220,  icon: '🎳', title: 'Petite Terre',      text: 'La boule grossit. La courbure est déjà visible.' },
+  { t: 490,  icon: '🔭', title: 'Vue intermédiaire', text: 'L\'homme est minuscule. La Terre s\'étend à l\'horizon.' },
+  { t: 750,  icon: '📏', title: 'Apparence plate !', text: 'À notre échelle, la surface semble parfaitement plate. C\'est l\'illusion !' },
+  { t: 1000, icon: '🌍', title: 'Vue globale',       text: 'En réalité, la Terre est bien une sphère. L\'échelle change tout !' },
+];
+function updateInfo() {
+  const d = infoData.reduce((a, b) => Math.abs(b.t - currentT) < Math.abs(a.t - currentT) ? b : a);
+  document.getElementById('info-title').textContent = d.icon + ' ' + d.title;
+  document.getElementById('info-text').textContent = d.text;
+}
+
+// Stars (fixed positions)
+const STARS = Array.from({length: 90}, () => ({
+  x: Math.random(), y: Math.random(),
+  r: Math.random() * 1.5 + 0.3,
+  phase: Math.random() * Math.PI * 2
+}));
+
+function drawStars(alpha, time) {
+  ctx.save();
+  STARS.forEach(s => {
+    ctx.globalAlpha = alpha * (0.65 + 0.35 * Math.sin(time * 0.0008 + s.phase));
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.restore();
+}
+
+// ── Stylized person ──
+// Origin = feet center. Stands ~95 units tall.
+function drawPerson(cx, cy, sc) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(sc, sc);
+
+  // Colors
+  const skin  = '#FFCFA0';
+  const shirt = '#ef233c';
+  const pants = '#2d3a8c';
+  const shoes = '#1a1a2e';
+  const hair  = '#3d2000';
+  const ol    = (c, w = 2.2) => { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.lineCap='round'; ctx.lineJoin='round'; };
+
+  // Shoes
+  ctx.fillStyle = shoes; ol('#111');
+  ctx.beginPath(); ctx.ellipse(-10, -3, 9, 4.5, -0.1, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(10, -3, 9, 4.5, 0.1, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+  // Legs
+  ctx.fillStyle = pants; ol('#1a245e');
+  ctx.beginPath(); ctx.roundRect(-16, -30, 12, 29, 5); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.roundRect(4, -30, 12, 29, 5); ctx.fill(); ctx.stroke();
+  // knee highlight
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(-10, -16, 5, 0.5, Math.PI-0.5); ctx.stroke();
+  ctx.beginPath(); ctx.arc(10, -16, 5, 0.5, Math.PI-0.5); ctx.stroke();
+
+  // Body / shirt
+  ctx.fillStyle = shirt; ol('#9b1c2e');
+  ctx.beginPath(); ctx.roundRect(-15, -62, 30, 34, [8,8,4,4]); ctx.fill(); ctx.stroke();
+  // collar V
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1.8;
+  ctx.beginPath(); ctx.moveTo(-4,-60); ctx.lineTo(0,-52); ctx.lineTo(4,-60); ctx.stroke();
+  // shirt lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(-6,-49); ctx.lineTo(-6,-32); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(6,-49); ctx.lineTo(6,-32); ctx.stroke();
+
+  // Arms
+  ctx.fillStyle = shirt; ol('#9b1c2e');
+  ctx.beginPath(); ctx.roundRect(-27, -61, 12, 26, 5); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.roundRect(15, -61, 12, 26, 5); ctx.fill(); ctx.stroke();
+
+  // Hands
+  ctx.fillStyle = skin; ol('#c8856c', 1.8);
+  ctx.beginPath(); ctx.ellipse(-21, -35, 7, 8, 0.15, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(21, -35, 7, 8, -0.15, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  // knuckle lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.12)'; ctx.lineWidth = 1;
+  [-24,-21,-18].forEach(x => { ctx.beginPath(); ctx.moveTo(x,-31); ctx.lineTo(x,-38); ctx.stroke(); });
+  [18,21,24].forEach(x => { ctx.beginPath(); ctx.moveTo(x,-31); ctx.lineTo(x,-38); ctx.stroke(); });
+
+  // Neck
+  ctx.fillStyle = skin; ol('#c8856c', 1.8);
+  ctx.beginPath(); ctx.roundRect(-5, -72, 10, 12, 3); ctx.fill(); ctx.stroke();
+
+  // Head
+  ctx.fillStyle = skin; ol('#c8856c');
+  ctx.beginPath(); ctx.ellipse(0, -87, 17, 19, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  // cheek blush
+  ctx.fillStyle = 'rgba(255,150,150,0.18)';
+  ctx.beginPath(); ctx.ellipse(-10, -83, 6, 4, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(10, -83, 6, 4, 0, 0, Math.PI*2); ctx.fill();
+
+  // Hair
+  ctx.fillStyle = hair;
+  ctx.beginPath(); ctx.ellipse(0, -100, 17, 10, 0, Math.PI, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(0, -100, 12, 5, 0, Math.PI, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(-15, -91, 4.5, 8, -0.25, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(15, -91, 4.5, 8, 0.25, 0, Math.PI*2); ctx.fill();
+
+  // Eyebrows
+  ctx.strokeStyle = hair; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(-11, -94); ctx.quadraticCurveTo(-7,-97,-3,-94); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(3, -94); ctx.quadraticCurveTo(7,-97,11,-94); ctx.stroke();
+
+  // Eyes white
+  ctx.fillStyle = '#fff'; ol('#ddd', 1);
+  ctx.beginPath(); ctx.ellipse(-6.5, -88, 5, 5.5, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(6.5, -88, 5, 5.5, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  // iris
+  ctx.fillStyle = '#3d6bb5';
+  ctx.beginPath(); ctx.ellipse(-6.5,-87.5,3.2,3.5,0,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(6.5,-87.5,3.2,3.5,0,0,Math.PI*2); ctx.fill();
+  // pupil
+  ctx.fillStyle = '#111';
+  ctx.beginPath(); ctx.ellipse(-6.5,-87.5,1.7,2,0,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(6.5,-87.5,1.7,2,0,0,Math.PI*2); ctx.fill();
+  // shine
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(-5.5,-89,1.1,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(7.5,-89,1.1,0,Math.PI*2); ctx.fill();
+
+  // Nose
+  ctx.strokeStyle = '#c8856c'; ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.moveTo(0,-85); ctx.quadraticCurveTo(3,-81,0,-79); ctx.stroke();
+
+  // Smile
+  ctx.strokeStyle = '#a0604a'; ctx.lineWidth = 1.8;
+  ctx.beginPath(); ctx.arc(0, -82, 5.5, 0.25, Math.PI - 0.25); ctx.stroke();
+
+  ctx.restore();
+}
+
+function draw(time) {
+  ctx.clearRect(0, 0, W, H);
+  const t = currentT / 1000;
+
+  // Background color transition: white → sky → space
+  let r, g, b;
+  if (t < 0.3) {
+    const p = t / 0.3;
+    r = Math.round(255 - p * 120); g = Math.round(255 - p * 50); b = Math.round(255 - p * 20);
+  } else if (t < 0.65) {
+    const p = (t - 0.3) / 0.35;
+    r = Math.round(135 - p * 125); g = Math.round(205 - p * 191); b = Math.round(235 - p * 209);
+  } else {
+    r = 10; g = 14; b = 26;
+  }
+  ctx.fillStyle = `rgb(${r},${g},${b})`;
+  ctx.fillRect(0, 0, W, H);
+
+  if (t > 0.45) drawStars(Math.min((t - 0.45) * 1.8, 0.9), time);
+
+  // Earth
+  const minR = 55, maxR = Math.max(W, H) * 9;
+  const baseRadius = minR + (maxR - minR) * Math.pow(t, 2.3);
+  // spaceZoom: 0=normal t=1 view, 100=full earth visible in frame
+  const sz = spaceZoom / 100;
+  // At sz=1, earth fits nicely in screen centered
+  const targetR = Math.min(W, H) * 0.38;
+  const radius = baseRadius * (1 - sz) + targetR * sz;
+  const earthCx = W * 0.5;
+  const baseFeetY = H * (0.58 - t * 0.28);
+  // At sz=1, earth is centered vertically
+  const targetFeetY = H * 0.5;
+  const feetY = baseFeetY * (1 - sz) + targetFeetY * sz;
+  const earthCy = feetY + radius;
+
+  // Drop shadow (small earth only)
+  if (t < 0.22) {
+    ctx.save();
+    ctx.globalAlpha = (0.22 - t) / 0.22 * 0.15;
+    ctx.fillStyle = '#888';
+    ctx.beginPath();
+    ctx.ellipse(earthCx + 10, feetY + radius * 0.07, radius * 1.1, radius * 0.13, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Earth gradient
+  const eg = ctx.createRadialGradient(
+    earthCx - radius * 0.28, earthCy - radius * 0.28, radius * 0.06,
+    earthCx, earthCy, radius
+  );
+  eg.addColorStop(0,   '#72dcf5');
+  eg.addColorStop(0.42,'#29aed4');
+  eg.addColorStop(0.78,'#1480a8');
+  eg.addColorStop(1,   '#0a5a7e');
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(earthCx, earthCy, radius, 0, Math.PI*2);
+  ctx.fillStyle = eg;
+  ctx.fill();
+
+  // continent patches
+  if (radius > 80) {
+    ctx.globalAlpha = 0.24;
+    ctx.fillStyle = '#5cbf6e';
+    [[-0.14,-0.36,0.19,0.12],[-0.04,-0.27,0.09,0.07],[0.23,-0.19,0.13,0.09],[-0.26,0.04,0.11,0.15],[0.1,0.12,0.08,0.06]].forEach(([dx,dy,rx,ry]) => {
+      ctx.beginPath();
+      ctx.ellipse(earthCx + dx*radius, earthCy + dy*radius, rx*radius, ry*radius, 0.5, 0, Math.PI*2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  // specular highlight
+  const hl = ctx.createRadialGradient(earthCx - radius*0.3, earthCy - radius*0.3, 0, earthCx - radius*0.25, earthCy - radius*0.25, radius*0.5);
+  hl.addColorStop(0, 'rgba(255,255,255,0.22)');
+  hl.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.beginPath(); ctx.arc(earthCx, earthCy, radius, 0, Math.PI*2);
+  ctx.fillStyle = hl; ctx.fill();
+
+  ctx.strokeStyle = 'rgba(10,70,100,0.6)';
+  ctx.lineWidth = Math.max(1.5, radius * 0.003);
+  ctx.beginPath(); ctx.arc(earthCx, earthCy, radius, 0, Math.PI*2);
+  ctx.stroke();
+  ctx.restore();
+
+  // Atmosphere glow
+  if (t > 0.52) {
+    const aa = Math.min((t - 0.52) * 2.4, 0.4);
+    const ag = ctx.createRadialGradient(earthCx, earthCy, radius*0.96, earthCx, earthCy, radius*1.12);
+    ag.addColorStop(0, `rgba(80,200,255,${aa})`);
+    ag.addColorStop(1, 'rgba(80,200,255,0)');
+    ctx.beginPath(); ctx.arc(earthCx, earthCy, radius*1.12, 0, Math.PI*2);
+    ctx.fillStyle = ag; ctx.fill();
+  }
+
+  // Person
+  const pSc = Math.max(0.04, 1.05 * Math.pow(1 - t, 1.08));
+  drawPerson(earthCx, feetY, pSc);
+
+  // "▼ Vous" label
+  if (t > 0.40) {
+    const la = Math.min((t - 0.40) * 3.5, 1);
+    const personTopY = feetY - 100 * pSc;
+    ctx.save();
+    ctx.globalAlpha = la;
+    ctx.fillStyle = '#ef233c';
+    ctx.font = `bold ${Math.min(14, 13 * pSc * 10 + 8)}px 'Baloo 2'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('▼ Vous', earthCx, personTopY - 12);
+    ctx.restore();
+  }
+
+  // Horizon line
+  if (t > 0.50 && t < 0.88) {
+    const ha = Math.min((t-0.50)*5,1) * Math.min((0.88-t)*5,1);
+    ctx.save();
+    ctx.globalAlpha = ha * 0.5;
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.2;
+    ctx.setLineDash([8, 11]);
+    ctx.beginPath(); ctx.moveTo(0, feetY); ctx.lineTo(W, feetY); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = ha * 0.82;
+    ctx.fillStyle = '#fff';
+    ctx.font = "bold 11px 'Baloo 2'";
+    ctx.textAlign = 'left';
+    ctx.fillText('← horizon apparent →', 14, feetY - 8);
+    ctx.restore();
+  }
+
+  // Scale badge
+  const sp = [[0,'~2 m'],[0.22,'~1 km'],[0.45,'~100 km'],[0.72,'~5 000 km'],[1,'~12 742 km']]
+    .reduce((a,b) => Math.abs(b[0]-t)<Math.abs(a[0]-t)?b:a);
+  ctx.save();
+  ctx.globalAlpha = 0.6;
+  ctx.fillStyle = t < 0.35 ? '#444' : '#bbb';
+  ctx.font = "bold 11px 'Baloo 2'"; ctx.textAlign = 'left';
+  ctx.fillText('📐 ' + sp[1], 14, H - 112);
+  ctx.restore();
+}
+
+function loop(time) {
+  // Handle animation
+  if (animTarget !== null) {
+    const p = Math.min((time - animStart) / ANIM_DUR, 1);
+    const v = animFrom + (animTarget - animFrom) * ease(p);
+    setT(v);
+    if (p >= 1) animTarget = null;
+  }
+  draw(time);
+  requestAnimationFrame(loop);
+}
+
+resize();
+updateInfo();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

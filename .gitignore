@@ -1,0 +1,26 @@
+# === Dépôts déjà indépendants (ont leur propre repo GitHub) ===
+/fakemetre/
+/recrutement-de-mehdi/
+
+# === Archives & ressources de cours (ne sont PAS des jeux web) ===
+/Obso/
+/Collège Lycée/
+/Formation seniors.pptx
+
+# === Config locale / système ===
+.claude/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Gros binaires (présentations, vidéos, docs, sauvegardes) ===
+*.pptx
+*.ppt
+*.pdf
+*.docx
+*.doc
+*.mp4
+*.mov
+*.avi
+*.pst
+*.zip

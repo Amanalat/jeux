@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Illusion du Mur du Café</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #fff;
+  padding: 24px 20px;
+  user-select: none;
+  -webkit-user-select: none;
+  max-width: 680px;
+}
+
+#question {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+#question strong {
+  color: #111;
+  font-size: 16px;
+}
+
+svg {
+  display: block;
+  max-width: 650px;
+  width: 100%;
+}
+
+#controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  max-width: 650px;
+  flex-wrap: wrap;
+}
+#btn-reset {
+  font-size: 13px;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+#btn-reset:hover { color: #444; }
+.ctrl-btn {
+  font-size: 13px;
+  color: #555;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.ctrl-btn:hover { background: #f5f5f5; }
+
+#btn-explain {
+  display: block;
+  margin-top: 22px;
+  font-size: 14px;
+  color: #555;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+#btn-explain:hover { background: #f5f5f5; color: #111; }
+
+#explication {
+  display: none;
+  margin-top: 18px;
+  max-width: 650px;
+  background: #f8f8f8;
+  border-left: 3px solid #E67F39;
+  border-radius: 0 8px 8px 0;
+  padding: 18px 20px;
+  user-select: text;
+  -webkit-user-select: text;
+}
+#explication.visible { display: block; }
+#explication h2 { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 12px; }
+#explication p { font-size: 14px; color: #444; line-height: 1.65; margin-bottom: 10px; }
+#explication p:last-child { margin-bottom: 0; }
+#explication .highlight { color: #E67F39; font-weight: 600; }
+#explication .answer { font-weight: 700; color: #111; }
+</style>
+</head>
+<body>
+
+<p id="question">
+  <strong>Les lignes grises entre les rangées sont-elles droites ou inclinées ?</strong><br>
+  <span style="font-size:13px;color:#999;">Utilisez les boutons pour vérifier par vous-même.</span>
+</p>
+
+<svg id="svg" viewBox="0 0 650 420" xmlns="http://www.w3.org/2000/svg">
+  <g id="tiles"></g>
+  <g id="mortier"></g>
+</svg>
+
+<div id="controls">
+  <button id="btn-reset">↺ Remettre à neuf</button>
+  <button id="btn-align" class="ctrl-btn">Aligner les rangées</button>
+  <button id="btn-color" class="ctrl-btn">Colorier le mortier en rouge</button>
+</div>
+
+<button id="btn-explain">▼ Voir l'explication</button>
+
+<div id="explication">
+  <h2>L'illusion du Mur du Café — ce que fait votre cerveau</h2>
+
+  <p>
+    <span class="answer">Les lignes de mortier sont parfaitement droites et horizontales.</span>
+    Elles ne penchent ni à gauche ni à droite. Alignez les rangées ou colorez le mortier
+    en rouge pour le constater immédiatement.
+  </p>
+
+  <p>
+    Cette illusion a été documentée en 1979 par le psychologue britannique
+    <strong>Richard Gregory</strong> après avoir été observée sur le mur carrelé
+    d'un café de Bristol. Son mécanisme repose sur un phénomène appelé
+    <span class="highlight">expansion de contraste de bord</span>. Là où un carreau
+    noir jouxte un carreau blanc de la rangée voisine, la frontière entre eux crée
+    une micro-région de contraste intense. Le système visuel interprète cette zone
+    comme un bord incliné, et extrapole cette pente sur toute la ligne de mortier.
+  </p>
+
+  <p>
+    Chaque ligne de mortier grise est "tiraillée" dans des directions opposées par
+    les paires de carreaux qui l'encadrent. Comme les décalages alternent d'une rangée
+    à l'autre, les distorsions perçues s'inversent en direction : certaines lignes
+    semblent pencher à gauche, d'autres à droite, renforçant l'impression d'une grille
+    <span class="highlight">en accordéon</span>.
+  </p>
+
+  <p>
+    La largeur du mortier est cruciale : trop épais ou trop fin, l'illusion disparaît.
+    À l'épaisseur optimale, le gris du mortier est traité comme une zone ambiguë dont
+    la luminosité se rapproche trop de celle des carreaux adjacents, ce qui
+    <span class="highlight">empêche le cerveau de délimiter clairement les bords</span>
+    et laisse l'angle apparent flotter entre plusieurs interprétations.
+  </p>
+</div>
+
+<script>
+const SVG_EL = document.getElementById('svg');
+const ROWS = 6;
+const COLS = 6;
+const TILE_W = 96;
+const TILE_H = 58;
+const MORTAR = 8;
+const OFFSET_AMT = TILE_W / 2;
+
+const defaultOffsets = [0, OFFSET_AMT, 0, OFFSET_AMT, 0, OFFSET_AMT];
+let offsets = [...defaultOffsets];
+let morterColor = '#999';
+let aligned = false;
+let colored = false;
+
+function draw() {
+  const tilesG = document.getElementById('tiles');
+  const mortierG = document.getElementById('mortier');
+  tilesG.innerHTML = '';
+  mortierG.innerHTML = '';
+
+  for (let row = 0; row < ROWS; row++) {
+    const rowY = row * (TILE_H + MORTAR) + 10;
+    const off = offsets[row];
+    for (let col = -1; col <= COLS; col++) {
+      const tileX = col * TILE_W + off - TILE_W;
+      const fill = (col + row) % 2 === 0 ? '#111' : '#eee';
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', tileX);
+      rect.setAttribute('y', rowY);
+      rect.setAttribute('width', TILE_W);
+      rect.setAttribute('height', TILE_H);
+      rect.setAttribute('fill', fill);
+      tilesG.appendChild(rect);
+    }
+  }
+
+  for (let row = 0; row < ROWS - 1; row++) {
+    const my = row * (TILE_H + MORTAR) + 10 + TILE_H;
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', 0);
+    rect.setAttribute('y', my);
+    rect.setAttribute('width', 650);
+    rect.setAttribute('height', MORTAR);
+    rect.setAttribute('fill', morterColor);
+    mortierG.appendChild(rect);
+  }
+}
+
+draw();
+
+document.getElementById('btn-align').addEventListener('click', function() {
+  aligned = !aligned;
+  if (aligned) {
+    offsets = new Array(ROWS).fill(0);
+    this.textContent = 'Restaurer le décalage';
+  } else {
+    offsets = [...defaultOffsets];
+    this.textContent = 'Aligner les rangées';
+  }
+  draw();
+});
+
+document.getElementById('btn-color').addEventListener('click', function() {
+  colored = !colored;
+  morterColor = colored ? '#c0392b' : '#999';
+  this.textContent = colored ? 'Restaurer le gris du mortier' : 'Colorier le mortier en rouge';
+  draw();
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  aligned = false;
+  colored = false;
+  offsets = [...defaultOffsets];
+  morterColor = '#999';
+  document.getElementById('btn-align').textContent = 'Aligner les rangées';
+  document.getElementById('btn-color').textContent = 'Colorier le mortier en rouge';
+  draw();
+});
+
+const btnEx = document.getElementById('btn-explain');
+const divEx = document.getElementById('explication');
+btnEx.addEventListener('click', () => {
+  const visible = divEx.classList.toggle('visible');
+  btnEx.textContent = visible ? '▲ Masquer l\'explication' : '▼ Voir l\'explication';
+});
+</script>
+</body>
+</html>

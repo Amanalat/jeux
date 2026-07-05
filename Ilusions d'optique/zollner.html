@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Illusion de Zöllner</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #fff;
+  padding: 24px 20px;
+  user-select: none;
+  -webkit-user-select: none;
+  max-width: 680px;
+}
+
+#question {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+#question strong {
+  color: #111;
+  font-size: 16px;
+}
+
+svg {
+  display: block;
+  max-width: 650px;
+  width: 100%;
+}
+
+#controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  max-width: 650px;
+  flex-wrap: wrap;
+}
+#btn-reset {
+  font-size: 13px;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+#btn-reset:hover { color: #444; }
+#btn-hachures {
+  font-size: 13px;
+  color: #555;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+#btn-hachures:hover { background: #f5f5f5; }
+
+#btn-explain {
+  display: block;
+  margin-top: 22px;
+  font-size: 14px;
+  color: #555;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+#btn-explain:hover { background: #f5f5f5; color: #111; }
+
+#explication {
+  display: none;
+  margin-top: 18px;
+  max-width: 650px;
+  background: #f8f8f8;
+  border-left: 3px solid #E67F39;
+  border-radius: 0 8px 8px 0;
+  padding: 18px 20px;
+  user-select: text;
+  -webkit-user-select: text;
+}
+#explication.visible { display: block; }
+#explication h2 { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 12px; }
+#explication p { font-size: 14px; color: #444; line-height: 1.65; margin-bottom: 10px; }
+#explication p:last-child { margin-bottom: 0; }
+#explication .highlight { color: #E67F39; font-weight: 600; }
+#explication .answer { font-weight: 700; color: #111; }
+</style>
+</head>
+<body>
+
+<p id="question">
+  <strong>Ces lignes longues sont-elles parallèles ?</strong><br>
+  <span style="font-size:13px;color:#999;">Glissez les lignes verticalement pour les rapprocher · cliquez sur une hachure pour la masquer.</span>
+</p>
+
+<svg id="svg" viewBox="0 0 650 330" xmlns="http://www.w3.org/2000/svg" style="touch-action:none;"></svg>
+
+<div id="controls">
+  <button id="btn-reset">↺ Remettre à neuf</button>
+  <button id="btn-hachures">Masquer toutes les hachures</button>
+</div>
+
+<button id="btn-explain">▼ Voir l'explication</button>
+
+<div id="explication">
+  <h2>L'illusion de Zöllner — ce que fait votre cerveau</h2>
+
+  <p>
+    <span class="answer">Oui, les quatre lignes longues sont parfaitement parallèles.</span>
+    Elles sont toutes tracées à la même hauteur relative et ne divergent jamais.
+    Masquez les hachures et cette évidence s'impose aussitôt.
+  </p>
+
+  <p>
+    Cette illusion a été découverte en 1860 par l'astronome et physicien allemand
+    <strong>Johann Karl Friedrich Zöllner</strong> en observant un motif sur un tissu.
+    Elle repose sur un conflit entre deux niveaux de traitement visuel.
+    Lorsque de courtes hachures traversent une longue ligne en diagonale,
+    le cerveau perçoit implicitement un <span class="highlight">angle aigu local</span>
+    entre la ligne principale et chaque hachure.
+  </p>
+
+  <p>
+    Ce mécanisme s'appelle <span class="highlight">l'expansion des angles aigus</span> :
+    le système visuel tend à surestimer les petits angles (inférieurs à 90°) et à les
+    "pousser" légèrement vers l'extérieur. Comme les hachures alternent de sens entre
+    les lignes, les distorsions locales s'accumulent dans des directions opposées,
+    donnant l'impression que les lignes convergent ou divergent comme des rails tordus.
+  </p>
+
+  <p>
+    L'illusion de Zöllner illustre le fait que notre système visuel traite simultanément
+    plusieurs niveaux d'information — orientation locale vs. direction globale — et que
+    les <span class="highlight">erreurs locales peuvent corrompre le jugement global</span>.
+    Ce type d'interférence est exploité en camouflage militaire (dazzle camouflage)
+    et dans certains motifs textiles pour créer des effets de mouvement.
+  </p>
+</div>
+
+<script>
+const SVG_EL = document.getElementById('svg');
+const VW = 650, VH = 330;
+const NS = 'http://www.w3.org/2000/svg';
+
+// Lignes rapprochées : espacement 65px
+const DEFAULT_YS = [55, 120, 185, 250];
+const HACH_LEN   = 28;   // demi-longueur d'une hachure
+const HACH_STEP  = 38;   // espacement entre hachures
+const X_START = 28, X_END = 622;
+const COS45 = Math.SQRT1_2, SIN45 = Math.SQRT1_2;
+
+const dys    = [0, 0, 0, 0];
+const groups = [];
+let dragging    = null;
+let wasDragging = false;
+let hachVisible = true;
+
+function mkEl(tag, attrs) {
+  const el = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+
+// Construction unique des groupes
+for (let i = 0; i < 4; i++) {
+  const y   = DEFAULT_YS[i];
+  const dir = (i % 2 === 0) ? 1 : -1; // alternance du sens des hachures
+  const dx  = HACH_LEN * COS45;
+  const dy  = HACH_LEN * SIN45 * dir;
+
+  const g = mkEl('g', { id: 'group-' + i, transform: 'translate(0,0)' });
+
+  // Ligne principale visible
+  g.appendChild(mkEl('line', {
+    x1: X_START, y1: y, x2: X_END, y2: y,
+    stroke: '#1a1a1a', 'stroke-width': '3.2'
+  }));
+
+  // Hachures (cliquables individuellement)
+  for (let x = X_START + HACH_STEP; x < X_END; x += HACH_STEP) {
+    const h = mkEl('line', {
+      class: 'hachure',
+      x1: x - dx, y1: y - dy, x2: x + dx, y2: y + dy,
+      stroke: '#888', 'stroke-width': '1.8', 'stroke-linecap': 'round',
+      style: 'cursor: pointer'
+    });
+    h.addEventListener('click', () => {
+      if (wasDragging) return;
+      h.style.visibility = h.style.visibility === 'hidden' ? '' : 'hidden';
+    });
+    g.appendChild(h);
+  }
+
+  // Zone de drag transparente et large (pointer-events:all = active même sur stroke transparent)
+  const hit = mkEl('line', {
+    x1: X_START, y1: y, x2: X_END, y2: y,
+    stroke: 'transparent', 'stroke-width': '42',
+    'pointer-events': 'all',
+    style: 'cursor: ns-resize'
+  });
+  hit.addEventListener('pointerdown', e => { e.preventDefault(); hit.setPointerCapture(e.pointerId); startDrag(i, e.clientY); });
+  hit.addEventListener('pointermove', e => { if (dragging?.idx === i) onMove(e.clientY); });
+  hit.addEventListener('pointerup',   onEnd);
+  hit.addEventListener('pointercancel', onEnd);
+  g.appendChild(hit);
+
+  SVG_EL.appendChild(g);
+  groups.push(g);
+}
+
+function toSvgY(clientY) {
+  const r = SVG_EL.getBoundingClientRect();
+  return (clientY - r.top) / r.height * VH;
+}
+
+function startDrag(idx, clientY) {
+  wasDragging = false;
+  dragging = { idx, startSvgY: toSvgY(clientY), startDy: dys[idx] };
+}
+
+function onMove(clientY) {
+  if (!dragging) return;
+  const delta = toSvgY(clientY) - dragging.startSvgY;
+  if (Math.abs(delta) > 3) wasDragging = true;
+  dys[dragging.idx] = Math.max(-58, Math.min(58, dragging.startDy + delta));
+  groups[dragging.idx].setAttribute('transform', `translate(0,${dys[dragging.idx].toFixed(1)})`);
+}
+
+function onEnd() {
+  dragging = null;
+  setTimeout(() => { wasDragging = false; }, 0);
+}
+
+// Les listeners globaux restent pour attraper les drags qui sortent de l'élément
+document.addEventListener('pointermove',   e => { if (dragging) onMove(e.clientY); });
+document.addEventListener('pointerup',     e => { if (dragging) onEnd(); });
+document.addEventListener('pointercancel', e => { if (dragging) onEnd(); });
+
+document.getElementById('btn-hachures').addEventListener('click', function() {
+  hachVisible = !hachVisible;
+  SVG_EL.querySelectorAll('.hachure').forEach(h => {
+    h.style.visibility = hachVisible ? '' : 'hidden';
+  });
+  this.textContent = hachVisible ? 'Masquer toutes les hachures' : 'Afficher toutes les hachures';
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  dys.fill(0);
+  groups.forEach(g => g.setAttribute('transform', 'translate(0,0)'));
+  hachVisible = true;
+  SVG_EL.querySelectorAll('.hachure').forEach(h => h.style.visibility = '');
+  document.getElementById('btn-hachures').textContent = 'Masquer toutes les hachures';
+});
+
+const btnEx = document.getElementById('btn-explain');
+const divEx = document.getElementById('explication');
+btnEx.addEventListener('click', () => {
+  const visible = divEx.classList.toggle('visible');
+  btnEx.textContent = visible ? '▲ Masquer l\'explication' : '▼ Voir l\'explication';
+});
+</script>
+</body>
+</html>
