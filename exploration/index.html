@@ -265,45 +265,39 @@
       `<ellipse cx="${cx+19}" cy="${headCy+15}" rx="8" ry="5.5"/></g>`;
 
     /* Cheveux */
-    let hairBack='', hairFront='';
+    let hairBehind='', hairTop='';
     const st=state.cheveuxStyle;
-    if(st!=='chauve'){
-      hairBack += `<ellipse cx="${cx}" cy="${headCy-6}" rx="${headRx+4}" ry="${headRy+4}" `+
-        `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2"/>`;
+    if(st==='court' || st==='long'){
+      // calotte : couvre le crâne, dégage le front (naissance haute au centre) et le haut des oreilles
+      hairTop =
+        `<path d="M ${cx-headRx-1} ${headCy+2} `+
+        `C ${cx-headRx-1} ${headTop-7} ${cx+headRx+1} ${headTop-7} ${cx+headRx+1} ${headCy+2} `+
+        `C ${cx+headRx-5} ${headCy-7} ${cx+12} ${headCy-11} ${cx} ${headCy-11} `+
+        `C ${cx-12} ${headCy-11} ${cx-headRx+5} ${headCy-7} ${cx-headRx-1} ${headCy+2} Z" `+
+        `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`;
       if(st==='long'){
-        const yE=shoulderY+48;
-        hairBack += `<path d="M ${cx-headRx-2} ${headCy-6} `+
-          `C ${cx-headRx-12} ${headCy+34} ${cx-headRx-9} ${yE-18} ${cx-headRx+5} ${yE} `+
-          `C ${cx-headRx+17} ${yE-26} ${cx-headRx+13} ${headCy+26} ${cx-headRx+11} ${headCy} Z" `+
+        const yE=shoulderY+50;
+        hairBehind =
+          `<path d="M ${cx-headRx+2} ${headCy-4} `+
+          `C ${cx-headRx-10} ${headCy+30} ${cx-headRx-7} ${yE-16} ${cx-headRx+6} ${yE} `+
+          `C ${cx-headRx+16} ${yE-22} ${cx-headRx+12} ${headCy+20} ${cx-headRx+9} ${headCy-2} Z" `+
           `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`+
-          `<path d="M ${cx+headRx+2} ${headCy-6} `+
-          `C ${cx+headRx+12} ${headCy+34} ${cx+headRx+9} ${yE-18} ${cx+headRx-5} ${yE} `+
-          `C ${cx+headRx-17} ${yE-26} ${cx+headRx-13} ${headCy+26} ${cx+headRx-11} ${headCy} Z" `+
+          `<path d="M ${cx+headRx-2} ${headCy-4} `+
+          `C ${cx+headRx+10} ${headCy+30} ${cx+headRx+7} ${yE-16} ${cx+headRx-6} ${yE} `+
+          `C ${cx+headRx-16} ${yE-22} ${cx+headRx-12} ${headCy+20} ${cx+headRx-9} ${headCy-2} Z" `+
           `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`;
       }
-      if(st==='boucle'){
-        let cl=''; [[-30,-10],[-31,-28],[-16,-40],[4,-45],[23,-39],[33,-22],[33,-2],[-3,-46]]
-          .forEach(p=> cl += `<circle cx="${cx+p[0]}" cy="${headCy+p[1]}" r="15"/>`);
-        hairBack += `<g fill="url(#gHair)">${cl}</g>`;
-      }
-    }
-    if(st==='court' || st==='long'){
-      hairFront =
-        `<path d="M ${cx-headRx+1} ${headCy-3} `+
-        `C ${cx-headRx+1} ${headTop+2} ${cx+headRx-1} ${headTop+2} ${cx+headRx-1} ${headCy-3} `+
-        `C ${cx+8} ${headCy-4} ${cx-18} ${headCy-9} ${cx-headRx+1} ${headCy-3} Z" `+
-        `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`+
-        `<path d="M ${cx-13} ${headTop+13} Q ${cx} ${headTop+7} ${cx+12} ${headTop+15}" `+
-        `fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="0.20"/>`;
     } else if(st==='boucle'){
-      let fr=''; [[-20,-7],[-6,-13],[8,-12],[20,-5]]
-        .forEach(p=> fr += `<circle cx="${cx+p[0]}" cy="${headCy+p[1]}" r="10"/>`);
-      hairFront = `<g fill="url(#gHair)">${fr}</g>`;
+      let back=''; [[-30,-8],[-31,-26],[-16,-39],[4,-44],[23,-38],[33,-20],[33,2]]
+        .forEach(p=> back += `<circle cx="${cx+p[0]}" cy="${headCy+p[1]}" r="15"/>`);
+      hairBehind = `<g fill="url(#gHair)">${back}</g>`;
+      let front=''; [[-21,-6],[-7,-12],[7,-11],[20,-4]]
+        .forEach(p=> front += `<circle cx="${cx+p[0]}" cy="${headCy+p[1]}" r="10"/>`);
+      hairTop = `<g fill="url(#gHair)">${front}</g>`;
     }
 
     /* Visage */
     const eyeY=headCy+3, dx=13;
-    const brows = '';
     const eyes =
       `<ellipse cx="${cx-dx}" cy="${eyeY}" rx="5.5" ry="6.5" fill="#fff" stroke="${shade(skin,-0.28)}" stroke-width="1"/>`+
       `<ellipse cx="${cx+dx}" cy="${eyeY}" rx="5.5" ry="6.5" fill="#fff" stroke="${shade(skin,-0.28)}" stroke-width="1"/>`+
@@ -336,8 +330,8 @@
       defs + ground +
       `<g transform="${wholeT}">`+
         `<g transform="${bodyT}">${legs}${torso}${arms}</g>`+
-        neck + hairBack + head + ears + cheeks + beard + hairFront +
-        brows + eyes + nose + mouth + glasses +
+        neck + hairBehind + head + ears + hairTop + cheeks + beard +
+        eyes + nose + mouth + glasses +
       `</g>`;
 
     document.getElementById('nomAff').textContent = state.nom || 'Explorateur·rice';
