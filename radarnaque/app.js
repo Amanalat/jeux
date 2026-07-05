@@ -121,24 +121,28 @@
      ===================================================================== */
   function montrerCarte(){
     repondu = false;
+    currentChoix = null;
     majHud();
     var c = deck[idx];
+    reperesActifs = c.reperes || REP[c.id] || [];
+    foundBon = 0;
     app.innerHTML =
       '<div class="panel">' +
         '<div class="entete">' + esc(c.entete || contexteParDefaut(c)) + '</div>' +
         '<div id="maquette">' + renderMaquette(c) + '</div>' +
       '</div>' +
-      '<div class="panel"><div id="lower">' +
-        '<div class="consigne">Selon vous, ce message est…<small>Prenez le temps de bien le lire avant de choisir.</small></div>' +
-        '<div class="decide">' +
-          '<button class="btn-arnaque" id="b-arnaque"><span class="em">🚨</span>C’est une arnaque<small>Message piégé, je me méfie</small></button>' +
-          '<button class="btn-fiable" id="b-fiable"><span class="em">✅</span>C’est fiable<small>Rien d’anormal ici</small></button>' +
-        '</div>' +
-      '</div></div>';
+      '<div class="panel"><div id="lower"></div></div>';
 
-    el('b-arnaque').onclick = function(){ repondre('arnaque'); };
-    el('b-fiable').onclick  = function(){ repondre('fiable'); };
-    animerMessages(c);
+    // affiche le message en entier puis le rend cliquable : on ENQUÊTE avant de décider
+    var host = document.querySelector('#maquette [data-anim]');
+    if (host) host.innerHTML = itemsFor(c).join('');
+    if (reperesActifs.length){
+      el('maquette').classList.add('mode-spot');
+      activerReperes(el('maquette'), reperesActifs);
+      entrerSpotting();
+    } else {
+      phaseDecision();
+    }
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
@@ -293,51 +297,45 @@
     var bon = (choix === c.verdict);
     if (bon) score++;
 
-    el('b-arnaque').disabled = true;
-    el('b-fiable').disabled = true;
-    el(choix==='arnaque' ? 'b-arnaque' : 'b-fiable').classList.add('choisi');
+    var ba = el('b-arnaque'), bf = el('b-fiable');
+    if (ba) ba.disabled = true;
+    if (bf) bf.disabled = true;
+    var chosen = el(choix==='arnaque' ? 'b-arnaque' : 'b-fiable');
+    if (chosen) chosen.classList.add('choisi');
 
-    reperesActifs = c.reperes || REP[c.id] || [];
-    foundBon = 0;
-    if (reperesActifs.length) entrerSpotting(bon);
-    else montrerCorrection(bon);
+    montrerCorrection(bon);
   }
 
-  /* ---------- Phase de REPÉRAGE des indices ---------- */
-  function entrerSpotting(bon){
-    var c = deck[idx];
-    // ré-affiche le message en entier (sans animation) pour rendre les éléments cliquables
-    el('maquette').innerHTML = renderMaquette(c);
-    var host = document.querySelector('#maquette [data-anim]');
-    if (host) host.innerHTML = itemsFor(c).join('');
-    el('maquette').classList.add('mode-spot');
-    activerReperes(el('maquette'), reperesActifs);
-
+  /* ---------- 1) Phase d'ENQUÊTE : repérer les indices AVANT de décider ---------- */
+  function entrerSpotting(){
     hintIdx = -1; hintStep = 0;
-    var estArnaque = c.verdict === 'arnaque';
     var totalBon = reperesActifs.filter(function(r){ return r.bon; }).length;
-    var consigne = estArnaque
-      ? 'Maintenant, prouvez-le&nbsp;: <b>cliquez, dans le message, sur ce qui vous paraît suspect</b> 👆<small>Rien n’est surligné&nbsp;: à vous de le trouver. L’explication s’affiche là où vous cliquez.</small>'
-      : 'Maintenant, montrez pourquoi&nbsp;: <b>cliquez sur ce qui vous rassure</b> dans le message 👆<small>Rien n’est surligné&nbsp;: à vous de le trouver. L’explication s’affiche là où vous cliquez.</small>';
-
-    var votre = currentChoix==='arnaque' ? '🚨 C’est une arnaque' : '✅ C’est fiable';
-    var vrai  = estArnaque ? 'une arnaque' : 'un message fiable';
-    var rappel = bon
-      ? '<div class="rappel-choix bon">✅ Bonne réponse&nbsp;! Vous avez dit <b>' + votre + '</b>.</div>'
-      : '<div class="rappel-choix faux">❌ Vous avez dit <b>' + votre + '</b>, mais en réalité c’est <b>' + vrai + '</b>.</div>';
-
     el('lower').innerHTML =
-      rappel +
-      '<div class="spot-consigne">' + consigne + '</div>' +
-      '<div class="spot-compteur" id="spot-compteur" data-total="' + totalBon + '">' +
-        'Indices repérés&nbsp;: <b>0</b> / ' + totalBon + '</div>' +
+      '<div class="spot-consigne"><b>Étape 1 — Enquêtez.</b> Cliquez, dans le message, sur les <b>éléments qui vous mettent la puce à l’oreille</b> (ou, au contraire, qui rassurent) 👆<small>À chaque clic, on vous dit si c’est un vrai indice — et ce qu’il signifie. Rien n’est surligné&nbsp;: à vous de fouiller.</small></div>' +
+      '<div class="spot-compteur" id="spot-compteur" data-total="' + totalBon + '">Indices trouvés&nbsp;: <b>0</b> / ' + totalBon + '</div>' +
       '<div class="spot-actions">' +
         '<button class="hint-btn" id="coup-pouce">💡 Coup de pouce</button>' +
       '</div>' +
       '<div class="hint-box" id="hint-box" hidden></div>' +
-      '<button class="next" id="voir-corr">Voir la correction ▶</button>';
+      '<button class="next" id="go-decide">J’ai enquêté, je décide ▶</button>';
     el('coup-pouce').onclick = coupDePouce;
-    el('voir-corr').onclick = function(){ hidePop(); montrerCorrection(bon); };
+    el('go-decide').onclick = phaseDecision;
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  /* ---------- 2) Phase de DÉCISION : après l'enquête, on tranche ---------- */
+  function phaseDecision(){
+    hidePop();
+    el('lower').innerHTML =
+      '<div class="consigne"><b>Étape 2 — Votre verdict.</b> D’après les indices, que faites-vous de ce message&nbsp;?<small>On s’en méfie, ou on peut lui faire confiance&nbsp;?</small></div>' +
+      '<div class="decide">' +
+        '<button class="btn-arnaque" id="b-arnaque"><span class="em">🚨</span>Se méfier<small>C’est une arnaque</small></button>' +
+        '<button class="btn-fiable" id="b-fiable"><span class="em">✅</span>Faire confiance<small>C’est fiable</small></button>' +
+      '</div>' +
+      '<button class="hint-btn" id="retour-enquete" style="margin-top:10px">↩ Revenir à l’enquête</button>';
+    el('b-arnaque').onclick = function(){ repondre('arnaque'); };
+    el('b-fiable').onclick  = function(){ repondre('fiable'); };
+    var rb = el('retour-enquete'); if (rb) rb.onclick = entrerSpotting;
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
@@ -387,20 +385,18 @@
         // l'indice est trouvé : le coup de pouce repart de zéro sur le suivant
         hintIdx = -1; hintStep = 0; hideAide(); resetHintBtn();
       }
-      showPop(span, 'ok', r.note);   // ré-affiche l'explication si on reclique
+      var est = deck[idx].verdict === 'arnaque';
+      var lbl = est ? '🚩 Signe suspect — ' : '✅ Signe rassurant — ';
+      showPop(span, 'ok', lbl + r.note);   // ré-affiche l'explication si on reclique
     } else {
       span.classList.add('decoy');
-      showPop(span, 'ko', r.note || 'Ce détail attire l’œil, mais ce n’est pas là qu’est le vrai signe.');
+      showPop(span, 'ko', '🅾️ Faux indice — ' + (r.note || 'ce détail attire l’œil, mais ce n’est pas là qu’est le vrai signe.'));
     }
   }
 
   // clic « à côté » (pas sur un indice) : petit retour rassurant à l'endroit cliqué
   function clicVide(e){
-    var estArnaque = deck[idx].verdict === 'arnaque';
-    var msg = estArnaque
-      ? 'Rien de suspect ici. Regardez plutôt les détails inhabituels : l’adresse, le lien, le ton, l’urgence…'
-      : 'Cet élément-là n’apporte pas d’indice. Cherchez ce qui rassure : une adresse connue, un ton habituel, pas de lien piégé…';
-    showPopAt(e, 'miss', msg);
+    showPopAt(e, 'miss', 'Rien d’exploitable ici. Cherchez les détails qui sortent de l’ordinaire : l’expéditeur, un lien, le ton, une urgence, une demande d’argent ou de code…');
   }
 
   function majCompteur(){
@@ -683,6 +679,33 @@
   /* =====================================================================
      INITIALISATION
      ===================================================================== */
+  /* =====================================================================
+     RETOUR / AVIS — envoi direct par e-mail (Web3Forms, comme Fakemètre)
+     ===================================================================== */
+  function openFeedback(){ var o=el('fb-overlay'); if(o){ o.classList.add('open'); var m=el('fb-message'); if(m) m.focus(); } }
+  function closeFeedback(){ var o=el('fb-overlay'); if(o) o.classList.remove('open'); }
+  function sendFeedback(){
+    var n=el('fb-name'), e=el('fb-email'), m=el('fb-message');
+    var name=(n&&n.value||'').trim(), email=(e&&e.value||'').trim(), msg=(m&&m.value||'').trim();
+    if(!msg){ alert('Écrivez un petit message avant d’envoyer 🙂'); return; }
+    var btn=el('fb-send'); if(btn){ btn.disabled=true; btn.textContent='⏳ Envoi…'; }
+    fetch('https://api.web3forms.com/submit', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({
+        access_key:'ef1fe549-c616-4a27-a6c2-97f06caa913d',
+        subject:'Avis Radar’naque' + (name ? ' — ' + name : ''),
+        name: name || 'Anonyme',
+        email: email || 'non renseigné',
+        message: msg
+      })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if(d && d.success){ alert('Merci beaucoup pour votre retour ! 🙏'); if(n)n.value=''; if(e)e.value=''; if(m)m.value=''; closeFeedback(); }
+      else { alert('Oups, l’envoi a échoué. Réessayez, ou écrivez à contact@antoninatger.com'); }
+    }).catch(function(){ alert('Oups, l’envoi a échoué. Réessayez, ou écrivez à contact@antoninatger.com'); })
+    .then(function(){ if(btn){ btn.disabled=false; btn.textContent='📨 Envoyer'; } });
+  }
+
   function init(){
     app = el('app'); hud = el('hud');
     barFill = el('barfill'); barLbl = el('barlbl'); scoreEl = el('score');
@@ -714,6 +737,13 @@
     var gb = el('gloss-btn');
     if (gb) gb.onclick = function(){ openGlossaire(); };
 
+    // bouton « Avis » + fenêtre de retour (envoi par e-mail)
+    var ab = el('avis-btn');   if (ab) ab.onclick = openFeedback;
+    var fx = el('fb-x');       if (fx) fx.onclick = closeFeedback;
+    var fc = el('fb-cancel');  if (fc) fc.onclick = closeFeedback;
+    var fs = el('fb-send');    if (fs) fs.onclick = sendFeedback;
+    var fo = el('fb-overlay'); if (fo) fo.addEventListener('click', function(e){ if (e.target === fo) closeFeedback(); });
+
     // clic sur un mot du glossaire (délégation : marche sur tout contenu injecté)
     document.addEventListener('click', function(e){
       var t = e.target;
@@ -722,7 +752,7 @@
       }
     });
     document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') fermerGlossaire();
+      if (e.key === 'Escape'){ fermerGlossaire(); closeFeedback(); }
       var t = e.target;
       if ((e.key === 'Enter' || e.key === ' ') && t && t.classList && t.classList.contains('gloss')){
         e.preventDefault(); openGlossaire(t.getAttribute('data-g'));
