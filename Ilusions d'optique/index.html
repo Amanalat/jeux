@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Illusions d'optique</title>
+<style>
+  :root{ --bg:#0f172a; --card:#1e293b; --txt:#e2e8f0; --doux:#94a3b8; --acc:#38bdf8; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:system-ui,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--txt); }
+  header{ padding:40px 20px 24px; text-align:center; }
+  header h1{ margin:0 0 6px; font-size:1.9em; }
+  header p{ margin:0; color:var(--doux); }
+  .back{ display:inline-block; margin:16px 0 0; color:var(--acc); text-decoration:none; font-size:.9em; }
+  .grid{ max-width:900px; margin:0 auto; padding:24px 20px 60px; display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+  a.card{ background:var(--card); border-radius:14px; padding:18px 16px; text-decoration:none;
+    color:var(--txt); border:1px solid #334155; transition:.15s; }
+  a.card:hover{ transform:translateY(-3px); border-color:var(--acc); }
+  a.card b{ display:block; font-size:1.05em; }
+  a.card span{ color:var(--doux); font-size:.85em; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>👁️ Illusions d'optique</h1>
+    <p>Onze illusions classiques à explorer</p>
+    <a class="back" href="../">← Retour à tous les jeux</a>
+  </header>
+  <div class="grid">
+    <a class="card" href="muller_lyer_illusion.html"><b>Müller-Lyer</b><span>Les flèches trompeuses</span></a>
+    <a class="card" href="ponzo.html"><b>Ponzo</b><span>La perspective qui ment</span></a>
+    <a class="card" href="ebbinghaus.html"><b>Ebbinghaus</b><span>Le cercle central</span></a>
+    <a class="card" href="delboeuf.html"><b>Delbœuf</b><span>Taille et entourage</span></a>
+    <a class="card" href="hering.html"><b>Hering</b><span>Les lignes courbées</span></a>
+    <a class="card" href="zollner.html"><b>Zöllner</b><span>Les parallèles penchées</span></a>
+    <a class="card" href="poggendorff.html"><b>Poggendorff</b><span>La ligne interrompue</span></a>
+    <a class="card" href="cafe_wall.html"><b>Café-wall</b><span>Le mur du café</span></a>
+    <a class="card" href="contraste_simultane.html"><b>Contraste simultané</b><span>Le gris qui change</span></a>
+    <a class="card" href="adelson.html"><b>Échiquier d'Adelson</b><span>Les cases A et B</span></a>
+  </div>
+</body>
+</html>

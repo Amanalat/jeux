@@ -16,13 +16,12 @@ Chaque jeu est autonome : il suffit d'ouvrir son fichier `index.html` (ou le `.h
 | `Ilusions d'optique/` | Illusions d'optique |
 | `mes des mal information/` | Dés de la mal-information |
 | `Arcade quizz/` | Quiz arcade fake news |
-| `echecs.html` | Jeu d'échecs |
-| `mine.html` | Démineur |
-| `terre_ronde_plate.html` | Terre ronde / plate |
-| `biais_confirmation_cm1.html` | Biais de confirmation |
+| `echecs.html` | Ouvertures aux échecs |
+| `mine.html` | Mine la Planète (extraction de ressources) |
+| `terre_ronde_plate.html` | La Terre ronde ou plate ? |
+| `biais_confirmation_cm1.html` | Biais de confirmation (CM1) |
 | `Planète connaissance.html` | Quiz culture générale |
-| `snake-fakenews.html.txt` | Snake « fake news » |
-| `notes_google.html` | Notes |
+| `notes_google.html` | Avis « style Maps » (démo de faux avis) |
 
 > Les présentations de cours, PDF et vidéos volumineuses ne sont pas versionnés ici (voir `.gitignore`).
 > Le jeu **Fakemètre** a son propre dépôt : https://github.com/Amanalat/fakemetre
