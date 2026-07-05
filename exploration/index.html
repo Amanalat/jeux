@@ -268,12 +268,15 @@
     let hairBehind='', hairTop='';
     const st=state.cheveuxStyle;
     if(st==='court' || st==='long'){
-      // calotte : couvre le crâne, dégage le front (naissance haute au centre) et le haut des oreilles
+      // calotte : le contour du dessus épouse EXACTEMENT l'ellipse de la tête
+      // (rayons +2 px) pour recouvrir tout le crâne ; le bas dégage front & oreilles.
+      const HR=headRx+2, VR=headRy+2, kx=+(HR*0.552).toFixed(1), ky=+(VR*0.552).toFixed(1);
       hairTop =
-        `<path d="M ${cx-headRx-1} ${headCy+2} `+
-        `C ${cx-headRx-1} ${headTop-7} ${cx+headRx+1} ${headTop-7} ${cx+headRx+1} ${headCy+2} `+
-        `C ${cx+headRx-5} ${headCy-7} ${cx+12} ${headCy-11} ${cx} ${headCy-11} `+
-        `C ${cx-12} ${headCy-11} ${cx-headRx+5} ${headCy-7} ${cx-headRx-1} ${headCy+2} Z" `+
+        `<path d="M ${cx-HR} ${headCy} `+
+        `C ${cx-HR} ${headCy-ky} ${cx-kx} ${headCy-VR} ${cx} ${headCy-VR} `+
+        `C ${cx+kx} ${headCy-VR} ${cx+HR} ${headCy-ky} ${cx+HR} ${headCy} `+
+        `C ${cx+HR-8} ${headCy-15} ${cx+13} ${headCy-16} ${cx} ${headCy-16} `+
+        `C ${cx-13} ${headCy-16} ${cx-HR+8} ${headCy-15} ${cx-HR} ${headCy} Z" `+
         `fill="url(#gHair)" stroke="${hairLine}" stroke-width="2" stroke-linejoin="round"/>`;
       if(st==='long'){
         const yE=shoulderY+50;
