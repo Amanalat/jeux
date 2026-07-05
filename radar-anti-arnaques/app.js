@@ -318,9 +318,14 @@
       ? 'Maintenant, prouvez-le&nbsp;: <b>cliquez, dans le message, sur ce qui vous paraît suspect</b> 👆<small>Rien n’est surligné&nbsp;: à vous de le trouver. L’explication s’affiche là où vous cliquez.</small>'
       : 'Maintenant, montrez pourquoi&nbsp;: <b>cliquez sur ce qui vous rassure</b> dans le message 👆<small>Rien n’est surligné&nbsp;: à vous de le trouver. L’explication s’affiche là où vous cliquez.</small>';
 
+    var votre = currentChoix==='arnaque' ? '🚨 C’est une arnaque' : '✅ C’est fiable';
+    var vrai  = estArnaque ? 'une arnaque' : 'un message fiable';
+    var rappel = bon
+      ? '<div class="rappel-choix bon">✅ Bonne réponse&nbsp;! Vous avez dit <b>' + votre + '</b>.</div>'
+      : '<div class="rappel-choix faux">❌ Vous avez dit <b>' + votre + '</b>, mais en réalité c’est <b>' + vrai + '</b>.</div>';
+
     el('lower').innerHTML =
-      '<div class="rappel-choix">Votre réponse&nbsp;: <b>' +
-        (currentChoix==='arnaque' ? '🚨 C’est une arnaque' : '✅ C’est fiable') + '</b></div>' +
+      rappel +
       '<div class="spot-consigne">' + consigne + '</div>' +
       '<div class="spot-compteur" id="spot-compteur" data-total="' + totalBon + '">' +
         'Indices repérés&nbsp;: <b>0</b> / ' + totalBon + '</div>' +
