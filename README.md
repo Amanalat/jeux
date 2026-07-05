@@ -22,6 +22,7 @@ Chaque jeu est autonome : il suffit d'ouvrir son fichier `index.html` (ou le `.h
 | `biais_confirmation_cm1.html` | Biais de confirmation (CM1) |
 | `Planète connaissance.html` | Quiz culture générale |
 | `notes_google.html` | Avis « style Maps » (démo de faux avis) |
+| `snake-fakenews.html` | Snake — Fake News & esprit critique |
 
 > Les présentations de cours, PDF et vidéos volumineuses ne sont pas versionnés ici (voir `.gitignore`).
 > Le jeu **Fakemètre** a son propre dépôt : https://github.com/Amanalat/fakemetre
