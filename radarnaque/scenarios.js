@@ -287,6 +287,54 @@ const SCENARIOS = [
     explication: 'C’est la version « nouvelle génération » de l’arnaque au colis : les escrocs ajoutent une photo ultra-réaliste, générée par IA, montrant un paquet à VOTRE nom pour vous convaincre qu’il existe vraiment. Le but reste le même : vous faire payer de faux « frais de relivraison » et voler votre carte bancaire, puis vous rappeler en se faisant passer pour votre banque. Un vrai transporteur ne vous envoie jamais de photo de votre colis avec votre nom. Signalez le SMS au 33700.'
   },
 
+  /* ---------- 11c. Faux numéro → investissement (pig butchering) — ARNAQUE */
+  {
+    id: 'chat-faux-numero-invest',
+    canal: 'chat',
+    plateforme: 'SMS',
+    contact: '+33 6 44 71 20 96',
+    avatar: '',
+    messages: [
+      { from: 'eux', texte: 'Bonjour Julien ! Je confirme bien la table pour 6 personnes samedi 20h au restaurant Le Jardin ?' },
+      { from: 'eux', texte: 'Oh, mille excuses, je me suis trompée de numéro 😅 Passez tout de même une très belle journée !' },
+      { from: 'eux', texte: 'Rebonjour 🙂 C’était sympa d’échanger l’autre jour, on ne rencontre plus beaucoup de gens polis. Moi c’est Léa, je partage ma vie entre Paris et Singapour pour mon travail dans la finance.' },
+      { from: 'eux', texte: 'Grâce à la plateforme de trading de mon oncle, j’ai gagné 32 % en trois semaines. Je peux te guider pas à pas, on commence avec 250 € seulement et tu verras les premiers gains tout de suite 📈' }
+    ],
+    verdict: 'arnaque',
+    categorie: 'Arnaque au faux numéro (« wrong number ») menant à un faux investissement',
+    indices: [
+      'Un message « d’erreur » venu d’un inconnu qui, comme par hasard, continue ensuite à vous parler.',
+      'La personne se rend très vite sympathique et patiente : elle tisse un lien de confiance, parfois pendant des semaines.',
+      'Elle finit toujours par vanter un investissement « miracle » (crypto, trading) aux gains énormes et rapides.',
+      'On vous pousse à placer de l’argent sur une plateforme qu’ELLE vous indique : les gains affichés sont fictifs, l’argent est perdu.'
+    ],
+    reflexe: 'Un inconnu qui vous a écrit « par erreur » puis se met à parler d’argent ou de placements : on coupe court. Aucun vrai investissement ne se propose par message.',
+    explication: 'C’est l’arnaque dite du « dépeçage de cochon » (pig butchering) : l’escroc « engraisse » longuement sa victime en nouant une relation amicale ou amoureuse, avant de la pousser à investir sur une fausse plateforme de crypto ou de trading. Au début, de petits « gains » s’affichent pour la mettre en confiance et l’inciter à verser toujours plus ; puis, au moment de retirer, tout disparaît. Un premier message « d’erreur » suivi d’une belle amitié soudaine doit alerter.'
+  },
+
+  /* ---------- 11d. Location de vacances hors plateforme — ARNAQUE ----- */
+  {
+    id: 'email-airbnb-horsplateforme',
+    canal: 'email',
+    entete: 'E-mail reçu après avoir contacté un loueur pour des vacances',
+    de: 'Marco — Appartement vue mer',
+    deAdresse: 'marco.rivas.locations@gmail.com',
+    objet: 'Re: Votre séjour — réglons en direct, c’est plus simple 😊',
+    date: 'Jeu. 12/06, 21:47',
+    corps: 'Bonjour,<br><br>Merci pour votre intérêt&nbsp;! Mon appartement est très demandé et <b>deux autres familles</b> le veulent pour vos dates. Pour vous éviter les frais de service de la plateforme, je vous propose de régler <b>directement entre nous</b>&nbsp;: versez un acompte de 40&nbsp;% par virement bancaire et je bloque le logement à votre nom dès aujourd’hui.<br><br>Voici mon RIB en pièce jointe. Ne tardez pas, je ne pourrai pas garder les dates bien longtemps&nbsp;!',
+    piecesJointes: ['RIB_Marco.pdf'],
+    verdict: 'arnaque',
+    categorie: 'Fausse location de vacances — paiement hors plateforme',
+    indices: [
+      'On vous propose de payer HORS de la plateforme (Airbnb, Booking, Abritel…) : vous perdez alors toute protection.',
+      'Paiement par virement bancaire directement à un particulier : quasi impossible à récupérer en cas d’arnaque.',
+      'Adresse en @gmail.com et RIB en pièce jointe : rien ne passe par le site officiel de réservation.',
+      'Urgence et rareté artificielles (« deux autres familles », « ne tardez pas ») pour vous faire payer vite.'
+    ],
+    reflexe: 'On ne paie JAMAIS une location en dehors de la plateforme de réservation. Le paiement se fait sur le site officiel, jamais par virement à un particulier.',
+    explication: 'Bien souvent, le logement n’existe pas ou n’appartient pas à l’escroc. En vous faisant sortir de la plateforme, il vous prive de toute protection (remboursement, litige) et empoche votre acompte par virement, intraçable. Règle simple&nbsp;: si un « propriétaire » vous demande de régler en dehors du site — par virement ou en cartes cadeaux — c’est une arnaque. Réservez et payez toujours sur la plateforme officielle.'
+  },
+
   /* ================== MESSAGES LÉGITIMES (à ne pas confondre) ========= */
 
   /* ---------- 12. SMS banque légitime — FIABLE ----------------------- */
@@ -510,7 +558,13 @@ const GLOSSAIRE = [
     def:'Un fichier joint à un e-mail (PDF, document) qui installe un virus ou un logiciel espion dès qu’on l’ouvre. N’ouvrez jamais une pièce jointe venue d’un expéditeur inconnu.' },
   { key:'code-unique', terme:'Code à usage unique (code SMS)',
     aliases:['code à usage unique','code reçu par sms','code de confirmation','code par sms'],
-    def:'Chiffre envoyé par SMS pour valider une connexion ou un achat. Vous le SAISISSEZ vous-même sur le site officiel ; vous ne le DONNEZ jamais à quelqu’un qui vous le demande.' }
+    def:'Chiffre envoyé par SMS pour valider une connexion ou un achat. Vous le SAISISSEZ vous-même sur le site officiel ; vous ne le DONNEZ jamais à quelqu’un qui vous le demande.' },
+  { key:'pig-butchering', terme:'Arnaque à l’investissement (« pig butchering »)',
+    aliases:['pig butchering','dépeçage de cochon'],
+    def:'L’escroc noue d’abord une relation de confiance (souvent après un faux « mauvais numéro » ou une rencontre en ligne), puis pousse la victime à investir sur une fausse plateforme de crypto ou de trading. De petits gains fictifs s’affichent pour la mettre en confiance et l’inciter à verser toujours plus ; au moment de retirer, tout disparaît.' },
+  { key:'hors-plateforme', terme:'Paiement hors plateforme',
+    aliases:['hors plateforme','hors de la plateforme'],
+    def:'Se faire payer en dehors du site officiel (location, petite annonce, billetterie) — par virement ou cartes cadeaux — pour échapper aux protections de la plateforme. Un vrai loueur ou vendeur passe toujours par le paiement sécurisé du site.' }
 ];
 
 /* =========================================================================
@@ -592,6 +646,20 @@ const REPERES = {
     { texte:'80 à 300 € par jour', bon:true, aide:'Ce salaire est-il réaliste pour quelques minutes de travail, sans expérience ?', note:'Salaire irréaliste pour « 30 min par jour, sans expérience ».' },
     { texte:'rechargez 40 €', bon:true, aide:'On vous demande de payer pour travailler : est-ce normal ? Cherchez cette demande.', note:'On vous demande de payer pour travailler : signal d’alarme absolu.' },
     { texte:'aucune expérience requise', bon:false, note:'Ça met en confiance, mais ce n’est pas en soi la preuve d’une arnaque.' }
+  ],
+  'chat-faux-numero-invest': [
+    { texte:'je me suis trompée de numéro', bon:true, aide:'Ce message vous était-il vraiment destiné ? Cherchez le prétexte utilisé pour engager la conversation.', note:'L’« erreur de numéro » est le prétexte classique pour entamer la discussion avec un inconnu.' },
+    { texte:'C’était sympa d’échanger', bon:true, aide:'Pourquoi cet inconnu, censé s’être trompé, revient-il vous parler ? Cherchez ce qui crée le lien.', note:'L’inconnu revient et se rend sympathique : il tisse un lien pour gagner votre confiance sur la durée.' },
+    { texte:'j’ai gagné 32 % en trois semaines', bon:true, aide:'Un tel rendement est-il réaliste ? Cherchez la promesse de gains.', note:'Gains énormes et rapides : promesse irréaliste, marque de l’arnaque à l’investissement.' },
+    { texte:'on commence avec 250 € seulement', bon:true, aide:'Que vous demande-t-on de faire de votre argent, et sur quelle plateforme ?', note:'On vous pousse à verser de l’argent sur une plateforme qu’ELLE indique : c’est le piège.' },
+    { texte:'entre Paris et Singapour', bon:false, note:'Ces détails de vie donnent une impression de vrai… mais ils sont inventés pour faire sérieux.' }
+  ],
+  'email-airbnb-horsplateforme': [
+    { texte:'directement entre nous', bon:true, aide:'Où vous propose-t-on de payer ? Est-ce bien sur le site de réservation officiel ?', note:'Payer « en direct », hors de la plateforme, vous prive de toute protection.' },
+    { texte:'par virement bancaire', bon:true, aide:'Ce moyen de paiement vous protège-t-il ? Un virement se récupère-t-il facilement ?', note:'Un virement à un particulier est quasi impossible à récupérer : moyen favori des escrocs.' },
+    { texte:'marco.rivas.locations@gmail.com', bon:true, aide:'Un vrai message passant par la plateforme viendrait-il d’une adresse Gmail personnelle ?', note:'Adresse Gmail personnelle : rien ne passe par le site officiel de réservation.' },
+    { texte:'deux autres familles', bon:true, aide:'Cherchez ce qui vous pousse à vous décider en vitesse.', note:'Rareté artificielle : « d’autres sont intéressés » pour vous faire payer avant de réfléchir.' },
+    { texte:'Merci pour votre intérêt', bon:false, note:'Formule de politesse : agréable, mais ce n’est pas là qu’est le piège.' }
   ],
   'sms-banque-ok': [
     { texte:'Appelez le numéro figurant au dos de votre carte', bon:true, aide:'Cherchez ce qui vous renvoie vers un moyen sûr, que vous contrôlez vous-même.', note:'On vous renvoie vers un canal officiel que VOUS maîtrisez.' },
