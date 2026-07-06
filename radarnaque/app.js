@@ -613,9 +613,11 @@
           '<div class="r"><b>signal-arnaques.com</b><span>Vérifier un numéro, un site ou un message douteux.</span></div>' +
         '</div>' +
         '<button class="btn-start" id="rejouer" style="margin-top:22px">Rejouer&nbsp;🔄</button>' +
+        '<button class="btn-gloss" id="fin-avis" style="margin-top:10px">💬 Donner mon avis</button>' +
         '<p class="footer-note">Parlez-en autour de vous&nbsp;: en parler, c’est déjà se protéger.</p>' +
       '</div>';
     el('rejouer').onclick = demarrer;
+    var fa = el('fin-avis'); if (fa) fa.onclick = openFeedback;
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
