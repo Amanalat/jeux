@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Le village de l'esprit critique — Exploration</title>
+<style>
+  :root{
+    --txt:#0f2033; --doux:#40566f; --card:#ffffff; --bord:#d7e2f0;
+    --acc:#2563eb; --acc2:#7c3aed; --ok:#16a34a;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; }
+  body{ font-family:system-ui,"Segoe UI",Roboto,sans-serif; color:var(--txt); min-height:100vh;
+    background:linear-gradient(180deg,#bfe3ff 0%,#dcecff 34%,#eaf6e8 70%,#d8efcf 100%);
+    background-attachment:fixed; }
+
+  .topnav{ display:flex; gap:12px; align-items:center; padding:14px 18px; }
+  .topnav a{ color:var(--acc); text-decoration:none; font-size:.9em; font-weight:600;
+    background:rgba(255,255,255,.7); padding:7px 12px; border-radius:999px; border:1px solid var(--bord); }
+  .topnav a:hover{ background:#fff; }
+  .topnav .sp{ flex:1; }
+
+  /* En-tête : avatar + bulle */
+  .hero{ display:flex; align-items:flex-end; justify-content:center; gap:14px; padding:6px 16px 4px; flex-wrap:wrap; }
+  .hero .av{ width:120px; }
+  .hero .av svg{ width:100%; height:auto; filter:drop-shadow(0 8px 10px rgba(0,0,0,.18)); }
+  .bubble{ position:relative; background:#fff; border:1px solid var(--bord); border-radius:16px;
+    padding:14px 18px; max-width:360px; box-shadow:0 8px 22px rgba(20,40,70,.14); margin-bottom:26px; }
+  .bubble b{ color:var(--acc); }
+  .bubble:after{ content:''; position:absolute; left:-9px; bottom:22px; width:16px; height:16px;
+    background:#fff; border-left:1px solid var(--bord); border-bottom:1px solid var(--bord); transform:rotate(45deg); }
+  .bubble small{ display:block; margin-top:4px; color:var(--doux); font-size:.85em; }
+
+  h1{ text-align:center; margin:2px 0 2px; font-size:1.5em; letter-spacing:-.3px; }
+  .progress{ text-align:center; color:var(--doux); font-size:.9em; margin-bottom:8px; }
+  .progress b{ color:var(--ok); }
+
+  /* Village : grille de lieux */
+  .village{ max-width:900px; margin:0 auto; padding:12px 18px 60px;
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:18px; }
+  .lieu{ position:relative; background:var(--card); border:1px solid var(--bord); border-radius:16px;
+    overflow:hidden; cursor:pointer; text-align:left; padding:0; font:inherit; color:inherit;
+    box-shadow:0 6px 16px rgba(20,40,70,.10); transition:transform .15s, box-shadow .15s; }
+  .lieu:hover{ transform:translateY(-4px); box-shadow:0 14px 30px rgba(20,40,70,.20); }
+  .lieu .roof{ height:56px; display:flex; align-items:center; justify-content:center; font-size:2em;
+    color:#fff; }
+  .lieu .body{ padding:12px 14px 14px; }
+  .lieu .body b{ display:block; font-size:1.05em; }
+  .lieu .body span{ color:var(--doux); font-size:.86em; }
+  .lieu .tag{ position:absolute; top:10px; right:10px; background:rgba(255,255,255,.9); color:var(--ok);
+    border-radius:999px; padding:2px 9px; font-size:.75em; font-weight:800; display:none; }
+  .lieu.visite .tag{ display:inline-block; }
+  .lieu.visite .roof{ filter:saturate(.7) brightness(1.05); }
+
+  /* Lecteur du jeu (plein cadre) */
+  .player{ position:fixed; inset:0; background:#0b1220; display:none; flex-direction:column; z-index:100; }
+  .player.open{ display:flex; }
+  .player .bar{ display:flex; align-items:center; gap:10px; padding:10px 14px; background:#0f1a2c; color:#fff; }
+  .player .bar .ttl{ font-weight:700; flex:1; }
+  .player .bar button{ border:none; border-radius:10px; padding:9px 14px; font-weight:700; cursor:pointer; font-size:.9em; }
+  .player .back{ background:#334155; color:#fff; }
+  .player .fs{ background:#f7c948; color:#1a1200; }
+  .player iframe{ flex:1; width:100%; border:none; background:#fff; }
+
+  .footnote{ text-align:center; color:var(--doux); font-size:.82em; padding:0 20px 30px; }
+</style>
+</head>
+<body>
+  <div class="topnav">
+    <a href="index.html">🧑‍🎨 Modifier mon avatar</a>
+    <span class="sp"></span>
+    <a href="../index.html">🎮 Tous les jeux</a>
+  </div>
+
+  <div class="hero">
+    <div class="av"><svg id="avatar" viewBox="0 0 240 380" aria-label="Ton avatar"></svg></div>
+    <div class="bubble" id="bubble">Salut&nbsp;! Prêt·e à explorer&nbsp;?<small>Clique sur un lieu pour découvrir un jeu.</small></div>
+  </div>
+
+  <h1>🏘️ Le village de l'esprit critique</h1>
+  <div class="progress" id="progress"></div>
+
+  <div class="village" id="village"></div>
+
+  <p class="footnote">Chaque lieu ouvre un jeu. Reviens au village quand tu veux avec le bouton « ← Village ».</p>
+
+  <!-- Lecteur -->
+  <div class="player" id="player">
+    <div class="bar">
+      <span class="ttl" id="player-ttl">Jeu</span>
+      <button class="fs" id="player-fs" type="button">⛶ Plein écran</button>
+      <button class="back" id="player-back" type="button">← Village</button>
+    </div>
+    <iframe id="player-frame" title="Jeu" allow="fullscreen" allowfullscreen></iframe>
+  </div>
+
+<script src="avatar-render.js"></script>
+<script>
+(function(){
+  'use strict';
+  var AV_KEY = 'jeux.exploration.avatar.v1';
+  var PROG_KEY = 'jeux.exploration.progress.v1';
+
+  var LIEUX = [
+    { id:'radarnaque',    nom:"Radar'naque",         emoji:'🛡️', desc:'Déjouer les arnaques',        url:'../radarnaque/index.html',            col:'#ef4444' },
+    { id:'fakemetre',     nom:'Fakemètre',           emoji:'🕵️', desc:"Mesurer la fiabilité d'une info", url:'https://amanalat.github.io/fakemetre/', col:'#f59e0b' },
+    { id:'chasse-biais',  nom:'Chasse aux biais',    emoji:'🎯', desc:'Débusquer les biais',          url:'../chasse-aux-biais/index.html',      col:'#10b981' },
+    { id:'radar-desinfo', nom:'Radar désinfo',       emoji:'📡', desc:'Repérer la désinformation',    url:'../radar-desinfo/index.html',         col:'#3b82f6' },
+    { id:'arene',         nom:'Arène de rhétorique', emoji:'⚔️', desc:'Reconnaître les sophismes',    url:'../arene-rhetorique/index.html',      col:'#8b5cf6' },
+    { id:'repare-une',    nom:'Répare la une',       emoji:'📰', desc:'Corriger un journal trompeur', url:'../repare-la-une/index.html',         col:'#ec4899' }
+  ];
+
+  function load(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
+  function save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+  var avatar = load(AV_KEY) || {};
+  var prog = load(PROG_KEY) || { visited:{} };
+  if(!prog.visited) prog.visited = {};
+
+  // Avatar + salutation
+  document.getElementById('avatar').innerHTML = window.buildAvatarInner(avatar);
+  var nom = (avatar && avatar.nom) ? avatar.nom : '';
+  document.getElementById('bubble').innerHTML =
+    (nom ? 'Salut <b>'+nom.replace(/[<>&]/g,'')+'</b>&nbsp;!' : 'Salut&nbsp;!') +
+    ' Prêt·e à explorer&nbsp;?<small>Clique sur un lieu pour découvrir un jeu.</small>';
+
+  // Village
+  var village = document.getElementById('village');
+  LIEUX.forEach(function(l){
+    var card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'lieu' + (prog.visited[l.id] ? ' visite' : '');
+    card.setAttribute('data-id', l.id);
+    card.innerHTML =
+      '<span class="tag">✓ visité</span>' +
+      '<div class="roof" style="background:'+l.col+'">'+l.emoji+'</div>' +
+      '<div class="body"><b>'+l.nom+'</b><span>'+l.desc+'</span></div>';
+    card.addEventListener('click', function(){ ouvrir(l); });
+    village.appendChild(card);
+  });
+
+  function majProgress(){
+    var n = LIEUX.filter(function(l){ return prog.visited[l.id]; }).length;
+    document.getElementById('progress').innerHTML =
+      'Lieux visités : <b>'+n+'</b> / '+LIEUX.length + (n===LIEUX.length ? ' — bravo, tu as tout exploré ! 🎉' : '');
+  }
+  majProgress();
+
+  // Lecteur du jeu
+  var player = document.getElementById('player');
+  var frame = document.getElementById('player-frame');
+  function ouvrir(l){
+    document.getElementById('player-ttl').textContent = l.emoji + ' ' + l.nom;
+    frame.src = l.url;
+    player.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if(!prog.visited[l.id]){
+      prog.visited[l.id] = true; save(PROG_KEY, prog);
+      var c = village.querySelector('.lieu[data-id="'+l.id+'"]'); if(c) c.classList.add('visite');
+      majProgress();
+    }
+  }
+  function fermer(){
+    player.classList.remove('open');
+    frame.src = 'about:blank';
+    document.body.style.overflow = '';
+  }
+  document.getElementById('player-back').onclick = fermer;
+  document.getElementById('player-fs').onclick = function(){
+    var f = frame;
+    var r = f.requestFullscreen || f.webkitRequestFullscreen || f.mozRequestFullScreen || f.msRequestFullscreen;
+    if(r){ r.call(f); } else { window.open(frame.src, '_blank'); }
+  };
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && player.classList.contains('open')) fermer(); });
+})();
+</script>
+</body>
+</html>

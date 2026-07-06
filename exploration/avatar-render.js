@@ -1,193 +1,24 @@
-<!doctype html>
-<html lang="fr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<title>Crée ton explorateur — Mode Exploration</title>
-<style>
-  :root{
-    --bg:#0b1220; --bg2:#0f172a; --card:#182338; --card2:#1f2c45;
-    --txt:#e8eef7; --doux:#93a4bd; --acc:#38bdf8; --acc2:#a78bfa; --bord:#31415a;
-    --ok:#34d399;
-  }
-  *{ box-sizing:border-box; }
-  html,body{ margin:0; }
-  body{ font-family:system-ui,"Segoe UI",Roboto,sans-serif; color:var(--txt);
-    background:radial-gradient(1100px 550px at 50% -10%, #16233d 0%, var(--bg) 60%); min-height:100vh; }
-  a.back{ display:inline-block; margin:18px 0 0 20px; color:var(--acc); text-decoration:none; font-size:.9em; }
-  header{ text-align:center; padding:10px 20px 4px; }
-  header h1{ margin:.2em 0 .1em; font-size:1.9em; letter-spacing:-.4px; }
-  header p{ margin:0 auto; max-width:520px; color:var(--doux); line-height:1.5; }
-
-  .wrap{ display:grid; grid-template-columns:minmax(260px,360px) 1fr; gap:26px;
-    max-width:1040px; margin:22px auto; padding:0 20px 70px; align-items:start; }
-  @media (max-width:820px){ .wrap{ grid-template-columns:1fr; } }
-
-  /* Aperçu */
-  .preview{ position:sticky; top:16px; background:linear-gradient(180deg,var(--card),var(--card2));
-    border:1px solid var(--bord); border-radius:20px; padding:18px; text-align:center; }
-  .stage{ background:radial-gradient(120% 90% at 50% 20%, #24344f 0%, #101a2c 100%);
-    border-radius:16px; padding:8px; }
-  .stage svg{ width:100%; height:auto; max-height:380px; display:block; }
-  .nom-aff{ margin-top:12px; font-size:1.15em; font-weight:700; min-height:1.2em; }
-  .genre-aff{ color:var(--doux); font-size:.85em; }
-
-  /* Contrôles */
-  .controls{ display:flex; flex-direction:column; gap:18px; }
-  .field{ background:var(--card); border:1px solid var(--bord); border-radius:16px; padding:14px 16px; }
-  .field > label.title{ display:block; font-weight:700; margin-bottom:10px; font-size:.98em; }
-  .field .hint{ color:var(--doux); font-weight:400; font-size:.82em; }
-
-  input[type=text]{ width:100%; background:#0c1524; border:1px solid var(--bord); color:var(--txt);
-    border-radius:10px; padding:10px 12px; font-size:1em; }
-  input[type=text]:focus{ outline:none; border-color:var(--acc); }
-
-  .swatches{ display:flex; flex-wrap:wrap; gap:9px; }
-  .sw{ width:34px; height:34px; border-radius:50%; cursor:pointer; border:3px solid transparent;
-    transition:transform .12s; box-shadow:0 0 0 1px rgba(255,255,255,.12) inset; }
-  .sw:hover{ transform:scale(1.1); }
-  .sw.sel{ border-color:#fff; transform:scale(1.12); }
-
-  .choices{ display:flex; flex-wrap:wrap; gap:8px; }
-  .chip{ background:#0c1524; border:1px solid var(--bord); color:var(--txt); border-radius:999px;
-    padding:8px 14px; cursor:pointer; font-size:.92em; transition:.12s; }
-  .chip:hover{ border-color:var(--acc); }
-  .chip.sel{ background:var(--acc); color:#062033; border-color:var(--acc); font-weight:700; }
-
-  .slider-row{ display:flex; align-items:center; gap:12px; }
-  input[type=range]{ flex:1; accent-color:var(--acc); }
-  .ends{ display:flex; justify-content:space-between; color:var(--doux); font-size:.8em; margin-top:4px; }
-
-  .toggles{ display:flex; gap:10px; flex-wrap:wrap; }
-
-  .actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:4px; }
-  button.act{ flex:1; min-width:150px; border:none; border-radius:12px; padding:14px 16px; font-size:1em;
-    font-weight:700; cursor:pointer; transition:.15s; }
-  .btn-rand{ background:#0c1524; color:var(--txt); border:1px solid var(--bord); }
-  .btn-rand:hover{ border-color:var(--acc2); }
-  .btn-go{ background:linear-gradient(90deg,var(--acc),var(--acc2)); color:#08131f; }
-  .btn-go:hover{ filter:brightness(1.08); }
-
-  .toast{ position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(120px);
-    background:var(--ok); color:#04231a; padding:14px 22px; border-radius:12px; font-weight:700;
-    box-shadow:0 12px 30px rgba(0,0,0,.5); transition:transform .35s cubic-bezier(.2,1.4,.4,1); z-index:50; }
-  .toast.show{ transform:translateX(-50%) translateY(0); }
-</style>
-</head>
-<body>
-  <a class="back" href="../index.html">← Retour aux jeux</a>
-  <header>
-    <h1>🧭 Crée ton explorateur</h1>
-    <p>Avant de partir à la découverte des jeux, façonne l'avatar qui te représentera.</p>
-  </header>
-
-  <div class="wrap">
-    <!-- Aperçu -->
-    <div class="preview">
-      <div class="stage"><svg id="avatar" viewBox="0 0 240 380" aria-label="Aperçu de l'avatar"></svg></div>
-      <div class="nom-aff" id="nomAff">Explorateur·rice</div>
-      <div class="genre-aff" id="genreAff"></div>
-    </div>
-
-    <!-- Contrôles -->
-    <div class="controls">
-      <div class="field">
-        <label class="title" for="nom">Ton nom d'explorateur</label>
-        <input type="text" id="nom" maxlength="24" placeholder="Ex : Sam, Léa, Robin…">
-      </div>
-
-      <div class="field">
-        <label class="title">Genre</label>
-        <div class="choices" id="genre"></div>
-      </div>
-
-      <div class="field">
-        <label class="title">Couleur de peau</label>
-        <div class="swatches" id="peau"></div>
-      </div>
-
-      <div class="field">
-        <label class="title">Cheveux <span class="hint">— style</span></label>
-        <div class="choices" id="cheveuxStyle" style="margin-bottom:12px;"></div>
-        <label class="title" style="margin-bottom:8px;">Couleur des cheveux</label>
-        <div class="swatches" id="cheveuxCouleur"></div>
-      </div>
-
-      <div class="field">
-        <label class="title">Habit <span class="hint">— forme &amp; costumes</span></label>
-        <div class="choices" id="habitForme" style="margin-bottom:12px;"></div>
-        <label class="title" style="margin-bottom:8px;">Couleur de l'habit</label>
-        <div class="swatches" id="habit"></div>
-      </div>
-
-      <div class="field">
-        <label class="title">Taille</label>
-        <div class="slider-row"><input type="range" id="taille" min="0.86" max="1.14" step="0.02" value="1"></div>
-        <div class="ends"><span>Petit·e</span><span>Grand·e</span></div>
-      </div>
-
-      <div class="field">
-        <label class="title">Corpulence</label>
-        <div class="slider-row"><input type="range" id="corpulence" min="0.82" max="1.28" step="0.02" value="1"></div>
-        <div class="ends"><span>Mince</span><span>Costaud·e</span></div>
-      </div>
-
-      <div class="field">
-        <label class="title">Détails</label>
-        <div class="toggles" id="options"></div>
-      </div>
-
-      <div class="actions">
-        <button class="act btn-rand" id="rand">🎲 Aléatoire</button>
-        <button class="act btn-go" id="go">🧭 Explorer !</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="toast">Avatar enregistré ✓</div>
-
-<script src="avatar-render.js"></script>
-<script>
 /* =====================================================================
-   CRÉATEUR D'AVATAR — Mode Exploration
-   L'avatar est sauvegardé dans localStorage sous la clé STORAGE_KEY.
-   La suite du jeu pourra le relire via  Avatar.load()  (voir bas de page).
+   avatar-render.js — moteur de rendu de l'avatar (source unique)
+   Utilisé par le créateur (exploration/index.html) ET par la carte du
+   village (exploration/carte.html).
+
+     window.buildAvatarInner(state)  ->  chaîne SVG (à mettre dans un
+     <svg viewBox="0 0 240 380"> … </svg>)
+
+   state = { genre, peau, cheveuxCouleur, cheveuxStyle, habit, habitForme,
+             taille, corpulence, lunettes, barbe }
    ===================================================================== */
-(function(){
+(function () {
   'use strict';
-  const STORAGE_KEY = 'jeux.exploration.avatar.v1';
 
-  /* --- Palettes --- */
-  const PEAUX   = ['#ffe0bd','#f6cfa2','#e9b382','#d69a63','#b97a45','#8d5524','#653a1e','#4a2a15'];
-  const CHEVEUX = ['#111111','#3b2417','#6b4423','#8b5a2b','#b07a3f','#d9b55e','#efd27a',
-                   '#b0453a','#d94f2b','#e8e8e8','#7a4fd1','#2e8b57','#2f7bd6'];
-  const HABITS  = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#16a085','#3498db','#2c3e50',
-                   '#9b59b6','#e84393','#ecf0f1','#111827'];
-  const STYLES  = [['chauve','Chauve'],['court','Court'],['carre','Carré'],['long','Long'],
-                   ['couettes','Couettes'],['chignon','Chignon'],['crete','Crête'],['boucle','Bouclé']];
-  const FORMES  = [['tshirt','T-shirt'],['pull','Pull'],['chemise','Chemise'],['robe','Robe'],
-                   ['debardeur','Débardeur'],['cavernes','🦴 Cavernes'],['cosmonaute','🚀 Cosmonaute']];
-  const GENRES  = [['homme','♂ Homme'],['femme','♀ Femme'],['indifferent','⚧ Indifférent']];
-
-  /* --- État --- */
-  const state = {
-    nom:'', genre:'indifferent',
-    peau:'#f6cfa2', cheveuxCouleur:'#6b4423', cheveuxStyle:'court',
-    habit:'#3498db', habitForme:'tshirt', taille:1, corpulence:1, lunettes:false, barbe:false
-  };
-
-  /* NB : le même rendu existe dans avatar-render.js (partagé avec la carte).
-     Garder les deux en phase si l'on modifie l'avatar. */
-  function h2r(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');
-    return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];}
-  function r2h(r,g,b){return '#'+[r,g,b].map(x=>{x=Math.max(0,Math.min(255,Math.round(x)));
-    return x.toString(16).padStart(2,'0');}).join('');}
-  function shade(hex,a){const [r,g,b]=h2r(hex);
-    if(a<0){const f=1+a;return r2h(r*f,g*f,b*f);}
-    return r2h(r+(255-r)*a,g+(255-g)*a,b+(255-b)*a);}
+  function h2r(h){ h=h.replace('#',''); if(h.length===3) h=h.split('').map(c=>c+c).join('');
+    return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
+  function r2h(r,g,b){ return '#'+[r,g,b].map(x=>{ x=Math.max(0,Math.min(255,Math.round(x)));
+    return x.toString(16).padStart(2,'0'); }).join(''); }
+  function shade(hex,a){ const [r,g,b]=h2r(hex);
+    if(a<0){ const f=1+a; return r2h(r*f,g*f,b*f); }
+    return r2h(r+(255-r)*a,g+(255-g)*a,b+(255-b)*a); }
 
   function silhouette(g){
     if(g==='homme')  return {sh:58, hh:42};
@@ -195,7 +26,21 @@
     return {sh:51, hh:48};
   }
 
-  function render(){
+  function buildAvatarInner(input){
+    input = input || {};
+    const state = {
+      genre: input.genre || 'indifferent',
+      peau: input.peau || '#f6cfa2',
+      cheveuxCouleur: input.cheveuxCouleur || '#6b4423',
+      cheveuxStyle: input.cheveuxStyle || 'court',
+      habit: input.habit || '#3498db',
+      habitForme: input.habitForme || 'tshirt',
+      taille: (input.taille != null ? input.taille : 1),
+      corpulence: (input.corpulence != null ? input.corpulence : 1),
+      lunettes: !!input.lunettes,
+      barbe: !!input.barbe
+    };
+
     const {sh,hh}=silhouette(state.genre);
     const skin=state.peau, hair=state.cheveuxCouleur, habit=state.habit;
     const skinD=shade(skin,-0.16), skinLine=shade(skin,-0.42);
@@ -292,7 +137,6 @@
     }
     else if(form==='cavernes'){
       const furG='url(#gFur)', furL=shade('#8a6a45',-0.42);
-      // tunique en peau de bête COUVRANTE : encolure haute, les deux épaules, bas déchiqueté
       const tunic=`<path d="M ${cx-sh} ${shoulderY} `+
         `Q ${cx} ${shoulderY+17} ${cx+sh} ${shoulderY} `+
         `C ${cx+sh+3} ${midY} ${cx+hh+2} ${hipY-8} ${cx+hh} ${hipY} `+
@@ -347,7 +191,6 @@
     const st=state.cheveuxStyle;
     if(!hideHair && st!=='chauve'){
       const HR=headRx+2, VR=headRy+2, kx=+(HR*0.552).toFixed(1), ky=+(VR*0.552).toFixed(1);
-      // calotte qui épouse le crâne (base commune à plusieurs coiffures)
       const calotte =
         `<path d="M ${cx-HR} ${headCy} `+
         `C ${cx-HR} ${headCy-ky} ${cx-kx} ${headCy-VR} ${cx} ${headCy-VR} `+
@@ -426,109 +269,14 @@
     const bodyT  = `translate(${cx} ${hipY}) scale(${state.corpulence} 1) translate(${-cx} ${-hipY})`;
     const wholeT = `translate(${cx} ${footY}) scale(1 ${state.taille}) translate(${-cx} ${-footY})`;
 
-    document.getElementById('avatar').innerHTML =
-      defs + ground +
+    return defs + ground +
       `<g transform="${wholeT}">`+
         neck +
         `<g transform="${bodyT}">${bodyInner}</g>`+
         hairBehind + head + ears + hairTop + cheeks + beard +
         eyes + nose + mouth + glasses + helmet +
       `</g>`;
-
-    document.getElementById('nomAff').textContent = state.nom || 'Explorateur·rice';
-    const gl = {homme:'Homme', femme:'Femme', indifferent:'Indifférent'}[state.genre];
-    document.getElementById('genreAff').textContent = gl;
   }
 
-  /* --- Construction des contrôles --- */
-  function swatches(hostId, list, key){
-    const host=document.getElementById(hostId);
-    host.innerHTML='';
-    list.forEach(c=>{
-      const b=document.createElement('div');
-      b.className='sw'+(state[key]===c?' sel':''); b.style.background=c;
-      b.title=c; b.onclick=()=>{ state[key]=c; markSel(host,b); render(); };
-      host.appendChild(b);
-    });
-  }
-  function chips(hostId, list, key){
-    const host=document.getElementById(hostId);
-    host.innerHTML='';
-    list.forEach(([val,label])=>{
-      const b=document.createElement('button');
-      b.className='chip'+(state[key]===val?' sel':''); b.textContent=label;
-      b.onclick=()=>{ state[key]=val; markSel(host,b); render(); };
-      host.appendChild(b);
-    });
-  }
-  function markSel(host,el){ [...host.children].forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
-
-  function buildOptions(){
-    const host=document.getElementById('options'); host.innerHTML='';
-    [['lunettes','👓 Lunettes'],['barbe','🧔 Barbe']].forEach(([key,label])=>{
-      const b=document.createElement('button');
-      b.className='chip'+(state[key]?' sel':''); b.textContent=label;
-      b.onclick=()=>{ state[key]=!state[key]; b.classList.toggle('sel',state[key]); render(); };
-      host.appendChild(b);
-    });
-  }
-
-  function syncControls(){
-    swatches('peau',PEAUX,'peau');
-    swatches('cheveuxCouleur',CHEVEUX,'cheveuxCouleur');
-    swatches('habit',HABITS,'habit');
-    chips('genre',GENRES,'genre');
-    chips('cheveuxStyle',STYLES,'cheveuxStyle');
-    chips('habitForme',FORMES,'habitForme');
-    buildOptions();
-    document.getElementById('nom').value=state.nom;
-    document.getElementById('taille').value=state.taille;
-    document.getElementById('corpulence').value=state.corpulence;
-  }
-
-  /* --- Événements simples --- */
-  document.getElementById('nom').addEventListener('input',e=>{ state.nom=e.target.value; render(); });
-  document.getElementById('taille').addEventListener('input',e=>{ state.taille=parseFloat(e.target.value); render(); });
-  document.getElementById('corpulence').addEventListener('input',e=>{ state.corpulence=parseFloat(e.target.value); render(); });
-
-  /* --- Aléatoire --- */
-  const pick=a=>a[Math.floor(Math.random()*a.length)];
-  document.getElementById('rand').onclick=()=>{
-    state.genre=pick(GENRES)[0];
-    state.peau=pick(PEAUX);
-    state.cheveuxCouleur=pick(CHEVEUX);
-    state.cheveuxStyle=pick(STYLES)[0];
-    state.habit=pick(HABITS);
-    state.habitForme=pick(FORMES)[0];
-    state.taille=Math.round((0.86+Math.random()*0.28)*50)/50;
-    state.corpulence=Math.round((0.82+Math.random()*0.46)*50)/50;
-    state.lunettes=Math.random()<0.35;
-    state.barbe=(state.genre!=='femme') && Math.random()<0.3;
-    syncControls(); render();
-  };
-
-  /* --- Valider / sauvegarder --- */
-  document.getElementById('go').onclick=()=>{
-    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
-    const t=document.getElementById('toast');
-    t.textContent = (state.nom? state.nom+', c’est parti !' : 'C’est parti !');
-    t.classList.add('show');
-    setTimeout(()=>{ window.location.href='carte.html'; }, 750);
-  };
-
-  /* --- API pour la suite du jeu --- */
-  window.Avatar = {
-    KEY: STORAGE_KEY,
-    load(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)); }catch(e){ return null; } },
-    current(){ return Object.assign({}, state); }
-  };
-
-  /* --- Init : reprend un avatar déjà sauvegardé si présent --- */
-  const saved = window.Avatar.load();
-  if(saved && typeof saved==='object'){ Object.assign(state, saved); }
-  syncControls();
-  render();
+  window.buildAvatarInner = buildAvatarInner;
 })();
-</script>
-</body>
-</html>
