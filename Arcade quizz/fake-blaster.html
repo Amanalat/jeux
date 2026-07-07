@@ -7,6 +7,38 @@
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="../i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    subtitle: "ESPRIT CRITIQUE", menu: "← MENU",
+    rule1: "🎯  Les réponses flottent dans le ciel — vise avec la souris",
+    rule2: "💥  Détruis toutes les FAUSSES réponses (+50 pts)",
+    rule3: "✅  Ne tire PAS sur la bonne réponse (−1 vie)",
+    rule4: "➡  Quand tout est détruit, avance à droite pour continuer",
+    startPrompt: "▶  ESPACE ou CLIC pour commencer  ◀",
+    controls: "← → : bouger   |   ↑ W : sauter   |   SOURIS : viser   |   CLIC Z X ESPACE : tirer",
+    finalScore: "SCORE FINAL : ", loseMsg: "Continue à entrainer ton esprit critique !",
+    replayPrompt: "▶  ESPACE ou CLIC pour rejouer  ◀",
+    winTitle: "MISSION ACCOMPLIE !", winMsg: "Tu as démasqué toutes les fausses infos de la série !",
+    isTrue: "✅ VRAIE !", advance: "AVANCE !",
+    inGameControls: "← → bouger  |  ↑ sauter  |  SOURIS viser  |  CLIC / ESPACE tirer"
+  },
+  en: {
+    subtitle: "CRITICAL THINKING", menu: "← MENU",
+    rule1: "🎯  The answers float in the sky — aim with the mouse",
+    rule2: "💥  Destroy all the FALSE answers (+50 pts)",
+    rule3: "✅  Do NOT shoot the correct answer (−1 life)",
+    rule4: "➡  When everything's destroyed, move right to continue",
+    startPrompt: "▶  SPACE or CLICK to start  ◀",
+    controls: "← → : move   |   ↑ W : jump   |   MOUSE : aim   |   CLICK Z X SPACE : shoot",
+    finalScore: "FINAL SCORE: ", loseMsg: "Keep training your critical thinking!",
+    replayPrompt: "▶  SPACE or CLICK to replay  ◀",
+    winTitle: "MISSION ACCOMPLISHED!", winMsg: "You unmasked all the false claims in the set!",
+    isTrue: "✅ TRUE!", advance: "GO!",
+    inGameControls: "← → move  |  ↑ jump  |  MOUSE aim  |  CLICK / SPACE shoot"
+  }
+});
+</script>
+<script>
 (function(){var en=(window.I18N&&I18N.lang==='en');
 ['questions','questions-6e5e','questions-niveau1','questions-niveau2','questions-niveau3','qcm-store'].forEach(function(f){document.write('<scr'+'ipt src="'+f+(en?'-en':'')+'.js"><'+'/scr'+'ipt>');});})();
 </script>
@@ -57,7 +89,7 @@ body{
     <span id="qtext">Appuie sur ESPACE ou clique pour commencer !</span>
   </div>
   <div id="menubar">
-    <a id="menu-link" href="index.html">← MENU</a>
+    <a id="menu-link" href="index.html" data-i18n="menu">← MENU</a>
     <span id="set-label"></span>
   </div>
 </div>
@@ -538,7 +570,7 @@ function drawBubbleOpt(bb){
     cx.font='12px "Press Start 2P",monospace';
     cx.shadowColor='#22ff88';cx.shadowBlur=14;
     cx.fillStyle='#44ff99';
-    cx.fillText('✅ VRAIE !',bb.x,ty-20);cx.shadowBlur=0;
+    cx.fillText(I18N.t('isTrue'),bb.x,ty-20);cx.shadowBlur=0;
   }
   cx.restore();
 }
@@ -564,7 +596,7 @@ function drawHUD(){
   cx.fillText('Q '+(qIdx+1)+'/'+SESSION.length,W-12,19);
 
   cx.font='700 13px Nunito,sans-serif';cx.textAlign='center';cx.fillStyle='rgba(190,140,250,0.9)';
-  cx.fillText('← → bouger  |  ↑ sauter  |  SOURIS viser  |  CLIC / ESPACE tirer',W/2,H-12);
+  cx.fillText(I18N.t('inGameControls'),W/2,H-12);
 }
 
 // ── Flèche d'avancée quand la question est terminée ──
@@ -578,7 +610,7 @@ function drawAdvanceArrow(){
   cx.fillStyle='#44ffcc';
   cx.fillText('➡',W-70,GY-110);
   cx.font='800 17px Nunito,sans-serif';
-  cx.fillText('AVANCE !',W-70,GY-60);
+  cx.fillText(I18N.t('advance'),W-70,GY-60);
   cx.restore();
 }
 
@@ -606,13 +638,13 @@ function drawTitle(){
   cx.shadowColor='#ff6600';cx.shadowBlur=40;cx.fillStyle='#ff7700';
   cx.fillText('FAKE BLASTER',W/2,95);cx.shadowBlur=0;
   cx.font='11px "Press Start 2P",monospace';cx.fillStyle='#bb88ff';
-  cx.fillText('ESPRIT CRITIQUE',W/2,130);cx.restore();
+  cx.fillText(I18N.t('subtitle'),W/2,130);cx.restore();
 
   var rules=[
-    ['🎯  Les réponses flottent dans le ciel — vise avec la souris','#d8ccff'],
-    ['💥  Détruis toutes les FAUSSES réponses (+50 pts)','#ff5544'],
-    ['✅  Ne tire PAS sur la bonne réponse (−1 vie)','#44ffcc'],
-    ['➡  Quand tout est détruit, avance à droite pour continuer','#ffcc44'],
+    [I18N.t('rule1'),'#d8ccff'],
+    [I18N.t('rule2'),'#ff5544'],
+    [I18N.t('rule3'),'#44ffcc'],
+    [I18N.t('rule4'),'#ffcc44'],
   ];
   cx.textBaseline='top';cx.textAlign='center';
   for(var i=0;i<rules.length;i++){
@@ -622,11 +654,11 @@ function drawTitle(){
 
   if(Math.sin(frame*0.07)>0){
     cx.font='800 16px Nunito,sans-serif';cx.textAlign='center';cx.textBaseline='middle';
-    cx.fillStyle='#ffffff';cx.fillText('▶  ESPACE ou CLIC pour commencer  ◀',W/2,H-50);
+    cx.fillStyle='#ffffff';cx.fillText(I18N.t('startPrompt'),W/2,H-50);
   }
   cx.font='600 13px Nunito,sans-serif';cx.textAlign='center';cx.textBaseline='middle';
   cx.fillStyle='rgba(170,120,230,0.8)';
-  cx.fillText('← → : bouger   |   ↑ W : sauter   |   SOURIS : viser   |   CLIC Z X ESPACE : tirer',W/2,H-20);
+  cx.fillText(I18N.t('controls'),W/2,H-20);
 }
 
 // ══════════════════════════════════════════════
@@ -640,12 +672,12 @@ function drawGameOver(){
   cx.shadowColor='#ff2244';cx.shadowBlur=40;cx.fillStyle='#ff2244';
   cx.fillText('GAME OVER',W/2,130);cx.shadowBlur=0;
   cx.font='13px "Press Start 2P",monospace';cx.fillStyle='#ffcc00';
-  cx.fillText('SCORE FINAL : '+score,W/2,195);
+  cx.fillText(I18N.t('finalScore')+score,W/2,195);
   cx.font='700 16px Nunito,sans-serif';cx.fillStyle='#b9a0e0';
-  cx.fillText('Continue à entrainer ton esprit critique !',W/2,250);
+  cx.fillText(I18N.t('loseMsg'),W/2,250);
   if(Math.sin(frame*0.07)>0){
     cx.font='800 16px Nunito,sans-serif';cx.fillStyle='#fff';
-    cx.fillText('▶  ESPACE ou CLIC pour rejouer  ◀',W/2,330);
+    cx.fillText(I18N.t('replayPrompt'),W/2,330);
   }
   cx.restore();
 }
@@ -656,14 +688,14 @@ function drawWin(){
   cx.save();
   cx.font='20px "Press Start 2P",monospace';cx.textAlign='center';cx.textBaseline='middle';
   cx.shadowColor='#44ffcc';cx.shadowBlur=40;cx.fillStyle='#44ffcc';
-  cx.fillText('MISSION ACCOMPLIE !',W/2,130);cx.shadowBlur=0;
+  cx.fillText(I18N.t('winTitle'),W/2,130);cx.shadowBlur=0;
   cx.font='13px "Press Start 2P",monospace';cx.fillStyle='#ffcc00';
-  cx.fillText('SCORE FINAL : '+score,W/2,195);
+  cx.fillText(I18N.t('finalScore')+score,W/2,195);
   cx.font='700 16px Nunito,sans-serif';cx.fillStyle='#b9e0c8';
-  cx.fillText('Tu as démasqué toutes les fausses infos de la série !',W/2,250);
+  cx.fillText(I18N.t('winMsg'),W/2,250);
   if(Math.sin(frame*0.07)>0){
     cx.font='800 16px Nunito,sans-serif';cx.fillStyle='#fff';
-    cx.fillText('▶  ESPACE ou CLIC pour rejouer  ◀',W/2,330);
+    cx.fillText(I18N.t('replayPrompt'),W/2,330);
   }
   cx.restore();
 }
