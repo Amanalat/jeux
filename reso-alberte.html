@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RÉSO · Ligne clandestine avec Alberte B.</title>
+<style>
+  :root{
+    --bg:#0d1117;
+    --bg2:#131a24;
+    --panel:#161d29;
+    --line:#243040;
+    --accent:#3ddc84;
+    --accent-dim:#1f6f47;
+    --alberte:#2a2118;
+    --alberte-txt:#e8dcc4;
+    --me:#123a2a;
+    --me-txt:#d6ffe9;
+    --txt:#c9d4e0;
+    --muted:#6b7889;
+    --danger:#e5484d;
+    --warn:#f5a623;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:"Segoe UI",Roboto,system-ui,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%,#182234 0%,#0d1117 60%);
+    color:var(--txt);
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:16px;
+  }
+  .phone{
+    width:100%;max-width:440px;height:min(860px,94vh);
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:26px;
+    box-shadow:0 30px 80px rgba(0,0,0,.55);
+    display:flex;flex-direction:column;overflow:hidden;position:relative;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    background:linear-gradient(180deg,#141c28,#111823);
+    border-bottom:1px solid var(--line);
+    padding:12px 16px 10px;flex-shrink:0;
+  }
+  .h-top{display:flex;align-items:center;gap:12px}
+  .avatar{
+    width:42px;height:42px;border-radius:50%;
+    background:linear-gradient(135deg,#3a2f22,#241b12);
+    display:flex;align-items:center;justify-content:center;font-size:20px;
+    border:1px solid #4a3c28;flex-shrink:0;
+  }
+  .h-name{font-weight:600;color:#fff;font-size:15px;display:flex;align-items:center;gap:6px}
+  .h-status{font-size:11.5px;color:var(--accent);display:flex;align-items:center;gap:5px;margin-top:1px}
+  .h-tag{margin-left:auto;font-size:10px;color:var(--muted);border:1px solid var(--line);
+    padding:3px 8px;border-radius:20px;letter-spacing:.5px}
+
+  /* ---------- Messages ---------- */
+  .msgs{flex:1;overflow-y:auto;padding:16px 14px 6px;display:flex;flex-direction:column;gap:9px;
+    background:
+      linear-gradient(rgba(13,17,23,.9),rgba(13,17,23,.9)),
+      repeating-linear-gradient(45deg,#10161f 0 12px,#0f151d 12px 24px);
+  }
+  .msgs::-webkit-scrollbar{width:6px}
+  .msgs::-webkit-scrollbar-thumb{background:#26313f;border-radius:10px}
+  .row{display:flex;max-width:100%}
+  .row.me{justify-content:flex-end}
+  .bubble{
+    max-width:80%;padding:9px 13px;border-radius:16px;font-size:14px;line-height:1.42;
+    white-space:pre-wrap;word-wrap:break-word;position:relative;animation:pop .25s ease;
+  }
+  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .bubble.alberte{
+    background:var(--alberte);color:var(--alberte-txt);
+    border:1px solid #4a3c28;border-bottom-left-radius:5px;
+    font-family:"Courier New",monospace;
+  }
+  .bubble.me{background:var(--me);color:var(--me-txt);border:1px solid #1c5a41;border-bottom-right-radius:5px}
+  .bubble.sys{
+    background:transparent;border:1px dashed var(--accent-dim);color:var(--accent);
+    font-size:12.5px;max-width:100%;text-align:center;border-radius:12px;padding:10px 12px;
+  }
+  .bubble.sys b{color:#fff}
+  .bubble.note{
+    background:#0f1f18;border:1px solid var(--accent-dim);color:#bfe9d3;max-width:100%;
+    border-radius:12px;font-size:12.8px;line-height:1.5;
+  }
+  .bubble.note .note-h{color:var(--accent);font-weight:700;display:block;margin-bottom:3px}
+  .bubble.danger{border-color:#5a2427;background:#241416;color:#f2b8ba}
+  .typing{display:flex;gap:4px;padding:12px 14px}
+  .typing span{width:7px;height:7px;border-radius:50%;background:#6b5a3e;animation:blink 1.2s infinite}
+  .typing span:nth-child(2){animation-delay:.2s}
+  .typing span:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+
+  /* ---------- Suggestions + input ---------- */
+  .chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px 2px;flex-shrink:0}
+  .chip{
+    background:#182231;border:1px solid var(--line);color:var(--txt);
+    font-size:12px;padding:6px 11px;border-radius:20px;cursor:pointer;transition:.15s;
+  }
+  .chip:hover{border-color:var(--accent);color:var(--accent)}
+  .inbar{display:flex;gap:8px;padding:10px 12px 12px;border-top:1px solid var(--line);background:#0f151d;flex-shrink:0}
+  .inbar input{
+    flex:1;background:#0b0f16;border:1px solid var(--line);border-radius:22px;
+    padding:11px 15px;color:#fff;font-size:14px;outline:none;
+  }
+  .inbar input:focus{border-color:var(--accent-dim)}
+  .send{
+    width:44px;height:44px;border:none;border-radius:50%;flex-shrink:0;cursor:pointer;
+    background:var(--accent);color:#04140b;font-size:19px;display:flex;align-items:center;justify-content:center;
+    transition:.15s;
+  }
+  .send:hover{filter:brightness(1.1)}
+  .send:disabled{opacity:.4;cursor:default}
+
+  /* ---------- Overlays ---------- */
+  .overlay{
+    position:absolute;inset:0;background:rgba(8,11,16,.96);z-index:20;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:34px 28px;gap:16px;
+  }
+  .overlay h1{font-size:22px;color:#fff;margin:0;letter-spacing:1px}
+  .overlay .lock{font-size:46px}
+  .overlay p{font-size:13.5px;color:var(--muted);line-height:1.6;margin:0;max-width:320px}
+  .overlay .brand{font-size:12px;letter-spacing:4px;color:var(--accent);font-weight:700}
+  .btn{
+    background:var(--accent);color:#04140b;border:none;border-radius:24px;
+    padding:13px 28px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s;letter-spacing:.5px;
+  }
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+  .overlay.win h1{color:var(--accent)}
+  .overlay.lose h1{color:var(--danger)}
+  .overlay.lose .lock{color:var(--danger)}
+  .score{font-size:13px;color:var(--txt);border:1px solid var(--line);border-radius:12px;padding:12px 18px}
+  .score b{color:#fff;font-size:20px}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- ===== Intro overlay ===== -->
+  <div class="overlay" id="intro">
+    <div class="brand">R É S O</div>
+    <div class="lock">🔒</div>
+    <h1>LIGNE CLANDESTINE</h1>
+    <p>Lyon, 1942. Un téléphone du futur est tombé entre les mains d'<b>Alberte Bourde</b>, résistante.
+    Elle ne sait pas s'en servir, et chaque erreur peut la faire repérer par la Milice.</p>
+    <p>À vous de la guider jusqu'au bout : expliquez-lui comment se servir de l'appareil et conseillez-lui les bons réflexes pour
+    <b>protéger ses données</b>.</p>
+    <div style="display:flex;flex-direction:column;gap:6px;width:100%;max-width:300px">
+      <button class="btn" onclick="startGame('normal')">Mode Normal</button>
+      <span style="font-size:11px;color:var(--muted)">des suggestions de réponses vous aident</span>
+      <button class="btn ghost" style="margin-top:10px" onclick="startGame('avance')">Mode Avancé</button>
+      <span style="font-size:11px;color:var(--muted)">aucune aide : à vous de tout écrire</span>
+    </div>
+  </div>
+
+  <!-- ===== Win overlay ===== -->
+  <div class="overlay win hidden" id="win">
+    <div class="lock">🕊️</div>
+    <h1>ALBERTE EST RESTÉE DANS L'OMBRE</h1>
+    <p>Grâce à vos conseils, elle a su se servir de l'appareil et protéger ses données, ainsi que celles du réseau. Mission accomplie.</p>
+    <button class="btn" onclick="location.reload()">Recommencer</button>
+  </div>
+
+  <!-- ===== Header ===== -->
+  <header>
+    <div class="h-top">
+      <div class="avatar">👩‍🦱</div>
+      <div>
+        <div class="h-name">Alberte B. <span title="Conversation chiffrée">🔒</span></div>
+        <div class="h-status">● en ligne · canal chiffré</div>
+      </div>
+      <div class="h-tag">LYON · 1942</div>
+    </div>
+  </header>
+
+  <!-- ===== Messages ===== -->
+  <div class="msgs" id="msgs"></div>
+
+  <!-- ===== Suggestions ===== -->
+  <div class="chips" id="chips"></div>
+
+  <!-- ===== Input ===== -->
+  <div class="inbar">
+    <input id="input" type="text" placeholder="Écrivez votre conseil à Alberte…" autocomplete="off" disabled>
+    <button class="send" id="send" disabled onclick="handleSend()">➤</button>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   RÉSO — moteur de dialogue local (aucune connexion requise)
+   ============================================================ */
+
+/* --- Les 7 scénarios pédagogiques --- */
+const SCENARIOS = [
+  {
+    id: "allumer", type: "usage",
+    intro: [
+      "Cette plaque de verre est noire et froide, sans le moindre bouton comme sur mon poste de radio.",
+      "Comment est-ce que je l'allume pour voir quelque chose ?"
+    ],
+    good: { kw: ["appuie","appui","bouton","touche","presse","cote","allume","ecran","doigt","reveille"],
+      reply: "Ah… j'appuie sur le petit bouton sur le côté, et l'écran s'illumine ! Extraordinaire, et pas la moindre ampoule." },
+    bad: { kw: [], reply: "" },
+    note: { h:"📱 Allumer l'écran", t:"Un téléphone se réveille en appuyant sur un bouton (sur le côté ou devant). L'écran s'allume alors de lui-même." },
+    chips: ["Appuie sur le bouton du côté","Touche l'écran","Presse le bouton"]
+  },
+  {
+    id: "verrou",
+    intro: [
+      "Résistants du futur… cette plaque de verre me demande un « code » secret pour la protéger.",
+      "Je vais mettre quelque chose de simple à retenir : mon année de naissance, 1900. Comme ça je ne l'oublierai jamais ! C'est une bonne idée, non ?"
+    ],
+    good: {
+      kw: ["non","complique","complexe","difficile","dur","pas facile","pas simple","devine","personnel","evite","melange","long","autre chose","pas ton annee","pas 1900","fort","pas"],
+      reply: "Tu as raison… 1900, n'importe qui connaissant mon âge le devinerait en un instant. Je choisis plutôt un code compliqué, sans rapport avec moi, impossible à deviner.",
+    },
+    bad: {
+      kw: ["oui","1900","annee de naissance","simple","facile","bonne idee","retenir","vas y","va"],
+      reply: "Voilà, mon code est 1900… mais un milicien qui connaît ma date de naissance l'aurait trouvé du premier coup. C'était bien trop facile à deviner.",
+    },
+    note: { h:"🔒 Un bon mot de passe", t:"Évite les codes trop simples ou liés à toi (année de naissance, prénom) : ils sont faciles à deviner. Choisis un code long, compliqué et sans rapport avec ta vie." },
+    chips: ["Choisis un code compliqué","Pas ton année de naissance !","1900, bonne idée"]
+  },
+  {
+    id: "luminosite", type: "usage",
+    intro: [
+      "La nuit, quand je vous écris, cet écran brille comme une lanterne dans l'obscurité.",
+      "J'ai peur qu'une patrouille aperçoive cette lueur par la fenêtre. Comment faire pour qu'il éclaire moins ?"
+    ],
+    good: { kw: ["luminosite","baisse","diminue","reduis","reduire","reglage","assombri","sombre","moins","eteins","couvre","cache","faible","attenue","tamise"],
+      reply: "Je baisse la luminosité de l'écran… le voilà bien plus discret. Cette lueur ne me trahira plus dans la nuit." },
+    bad: { kw: [], reply: "" },
+    note: { h:"📱 La luminosité de l'écran", t:"On peut régler la luminosité d'un écran. La baisser économise la batterie et évite de se faire remarquer dans l'obscurité." },
+    chips: ["Baisse la luminosité","Règle l'écran plus sombre","Réduis l'éclat de l'écran"]
+  },
+  {
+    id: "silence", type: "usage",
+    intro: [
+      "L'appareil s'est mis à sonner très fort dans le silence de la nuit ! J'ai failli être découverte par la patrouille.",
+      "Comment faire pour qu'il se taise et ne me trahisse plus ?"
+    ],
+    good: { kw: ["silence","silencieux","coupe","muet","baisse","son","volume","eteins","vibreur","discret","sonnerie","reglage"],
+      reply: "Je le règle en mode silencieux… plus aucun bruit. Voilà qui pourrait bien me sauver la vie." },
+    bad: { kw: [], reply: "" },
+    note: { h:"📱 Le mode silencieux", t:"On peut couper le son ou la sonnerie d'un téléphone (mode silencieux ou vibreur) pour qu'il ne fasse pas de bruit au mauvais moment." },
+    chips: ["Mets-le en silencieux","Coupe le son","Baisse le volume"]
+  },
+  {
+    id: "photo",
+    intro: [
+      "J'aimerais garder une image de notre planque, ce grenier où nous nous cachons.",
+      "L'appareil sait « prendre une photographie ». Je la prends devant la porte pour qu'on reconnaisse l'endroit ?"
+    ],
+    good: {
+      kw: ["non","ne prends pas","efface","sans lieu","cache","enleve","pas la planque","floute","evite","localisation","endroit","pas"],
+      reply: "Ne pas la prendre ? Pourquoi donc ? Une simple image ne saurait nous trahir, si ?",
+      followKw: ["lieu","endroit","localis","position","repere","reperer","metadonnee","trace","cachette","planque","situe","carte","montre ou","ou nous","ou elle","adresse"],
+      followReply: "Je comprends mieux… cette image garde en mémoire l'endroit exact où elle fut prise. Elle mènerait la Milice droit à notre cachette. Je n'en prends aucune.",
+      followChips: ["Ça révèle le lieu exact","Il y a des métadonnées cachées","On pourrait repérer la planque"],
+    },
+    bad: {
+      kw: ["oui","prends","devant","montre","poste","partage","reconnaisse"],
+      reply: "Voilà, c'est fait… Attends. Cette image sait exactement OÙ elle a été prise. Si elle tombe entre de mauvaises mains, notre planque est découverte !",
+    },
+    note: { h:"📍 Les métadonnées d'une photo", t:"Une photo enregistre souvent l'heure et le LIEU où elle a été prise (les « métadonnées »). La partager peut révéler où tu te trouves." },
+    chips: ["Ne montre pas le lieu","N'en prends pas","Prends-la devant la porte"]
+  },
+  {
+    id: "phishing",
+    intro: [
+      "Un message vient d'arriver. Un inconnu, très aimable, jure qu'il est « des nôtres ».",
+      "Il me demande le nom de notre réseau et celui de mes camarades, pour « mieux nous aider ». Je lui réponds ?"
+    ],
+    good: {
+      kw: ["non","pas","jamais","surtout","aucun","rien","mefie","mefiance","verifie","refuse","piege","faux","prudence","ignore","tais","silence","danger","attention"],
+      reply: "Un inconnu si pressé de connaître nos noms… C'est exactement ainsi que la Gestapo infiltre les réseaux. Je ne réponds rien.",
+    },
+    bad: {
+      kw: ["oui","donne","reponds","dis lui","confiance","aide","nom du reseau"],
+      reply: "Je lui ai donné les noms… Mon Dieu. Et si c'était un piège de la Milice ? Je viens peut-être de trahir tout le réseau.",
+    },
+    note: { h:"🎣 L'hameçonnage", t:"Un inconnu se fait passer pour un ami pour te soutirer des informations. Ne donne jamais d'infos sensibles sans être vraiment sûr de l'identité de ton interlocuteur." },
+    chips: ["Méfie-toi, ne réponds pas","Vérifie qui c'est","Donne-lui les noms"]
+  },
+  {
+    id: "contacts",
+    intro: [
+      "Je veux noter dans l'appareil les vrais noms et adresses de tous mes camarades, pour ne rien oublier.",
+      "C'est plus solide que le papier qu'on doit brûler, non ?"
+    ],
+    good: {
+      kw: ["non","chiffre","code","surnom","pas de vrais noms","ne note pas","protege","faux noms","alias","pseudo","pas"],
+      reply: "Tu as raison : si on me prend l'appareil, on prend tout le réseau d'un coup. Je n'écris que des surnoms codés, comme sur nos papiers.",
+    },
+    bad: {
+      kw: ["oui","note","vrais noms","adresses","tous","tout"],
+      reply: "C'est noté… mais si un milicien me fouille et saisit l'appareil, il aura le nom et l'adresse de chacun d'entre nous en une seule fois.",
+    },
+    note: { h:"🗝️ Un appareil peut être perdu ou volé", t:"Si un appareil est saisi, toutes les données qu'il contient sont exposées d'un coup. N'y stocke pas d'informations sensibles en clair, utilise des codes." },
+    chips: ["Utilise des surnoms codés","Ne note pas les vrais noms","Note tout, vrais noms compris"]
+  },
+  {
+    id: "wifi",
+    intro: [
+      "Pour envoyer mes messages plus vite, l'appareil me propose de passer par un « canal ouvert », sans aucune protection.",
+      "Il précise que n'importe qui à portée pourrait écouter ce qui y circule. C'est tentant d'aller plus vite… j'accepte ?"
+    ],
+    good: {
+      kw: ["non","pas","mefie","danger","ecoute","espionne","evite","refuse","protege","chiffre","securise","pas sur","risque","intercept"],
+      reply: "Un canal que n'importe qui peut écouter ? Autant transmettre en clair comme une radio que les Allemands captent aussitôt. Je m'en passe.",
+    },
+    bad: {
+      kw: ["oui","accepte","connecte","vite","pratique","rapide"],
+      reply: "J'ai accepté… mais tout ce que j'envoie par ce canal ouvert peut être intercepté. Un milicien pourrait nous écouter en silence.",
+    },
+    note: { h:"📡 Les réseaux non sécurisés", t:"Une connexion ouverte et non protégée (comme un wifi public) peut être écoutée par d'autres. Évite d'y faire passer des informations sensibles." },
+    chips: ["N'accepte pas","C'est trop risqué","Vas-y, c'est plus rapide"]
+  },
+  {
+    id: "recharge", type: "usage",
+    intro: [
+      "Une petite image rouge clignote en haut de l'écran, et l'appareil faiblit peu à peu.",
+      "On dirait qu'il perd ses forces. Comment lui redonner de l'énergie ?"
+    ],
+    good: { kw: ["charge","recharge","recharger","branche","brancher","batterie","electricite","cable","prise","courant","fil","energie","secteur"],
+      reply: "Il faut donc le brancher pour le recharger, comme une lampe électrique. Je note ce précieux conseil." },
+    bad: { kw: [], reply: "" },
+    note: { h:"📱 Recharger la batterie", t:"Un téléphone fonctionne sur une batterie qui se vide peu à peu. Il faut le brancher à l'électricité pour la recharger avant qu'il ne s'éteigne." },
+    chips: ["Branche-le pour le recharger","Recharge la batterie","Mets-le sur secteur"]
+  },
+  {
+    id: "permissions",
+    intro: [
+      "Une « application » me demande d'accepter des « conditions ».",
+      "Elle veut voir mes contacts, ma position à tout instant et mes photos. Elle dit que c'est obligatoire. J'accepte tout pour aller plus vite ?"
+    ],
+    good: {
+      kw: ["non","lis","verifie","refuse","minimum","seulement","pas tout","desactive","question","comprends","necessaire","pas"],
+      reply: "Pourquoi aurait-elle besoin de ma position à tout instant ? Je lis avant d'accepter, et je n'accorde que le strict nécessaire.",
+    },
+    bad: {
+      kw: ["oui","accepte","tout","vite","obligatoire","rapide"],
+      reply: "J'ai tout accepté… et maintenant cette application connaît ma position, mes camarades et tout ce que je fais. Je me suis exposée moi-même.",
+    },
+    note: { h:"⚙️ Les autorisations des applications", t:"Les applis demandent des accès (localisation, contacts, photos…). N'accorde que ceux qui sont vraiment nécessaires, et lis toujours avant d'accepter." },
+    chips: ["Lis avant d'accepter","N'accorde que le nécessaire","Accepte tout, plus vite"]
+  }
+];
+
+/* --- État --- */
+let idx = 0;
+let busy = false;
+let mode = "normal";   // "normal" (avec suggestions) | "avance" (sans aide)
+let pendingFollow = null; // scénario en attente d'une explication (« pourquoi ? »)
+
+const $ = id => document.getElementById(id);
+const msgs = $("msgs"), input = $("input"), sendBtn = $("send"), chipsBox = $("chips");
+
+/* --- Normalisation (accents/apostrophes) pour la détection --- */
+function norm(s){
+  return s.toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .replace(/['’`]/g," ")
+    .replace(/\s+/g," ").trim();
+}
+function hit(text, kws){ return kws.some(k => text.includes(norm(k))); }
+
+/* --- Ajout de messages --- */
+function addMsg(who, text, cls=""){
+  const row = document.createElement("div");
+  row.className = "row" + (who==="me" ? " me":"");
+  const b = document.createElement("div");
+  b.className = "bubble " + (cls || who);
+  b.innerHTML = text;
+  row.appendChild(b);
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function typing(){
+  const row = document.createElement("div");
+  row.className="row";row.id="typing";
+  row.innerHTML='<div class="bubble alberte typing"><span></span><span></span><span></span></div>';
+  msgs.appendChild(row);msgs.scrollTop=msgs.scrollHeight;
+}
+function stopTyping(){ const t=$("typing"); if(t) t.remove(); }
+
+/* --- Alberte parle (avec délai réaliste) --- */
+function alberteSay(lines, cb){
+  let i=0;
+  const next=()=>{
+    if(i>=lines.length){ cb&&cb(); return; }
+    typing();
+    setTimeout(()=>{
+      stopTyping();
+      addMsg("alberte", lines[i], "alberte");
+      i++;
+      setTimeout(next, 350);
+    }, 650 + lines[i].length*12);
+  };
+  next();
+}
+
+/* --- Puces de suggestion --- */
+function showChips(list){
+  chipsBox.innerHTML="";
+  if(mode === "avance") return;   // mode Avancé : aucune suggestion
+  list.forEach(c=>{
+    const el=document.createElement("div");
+    el.className="chip";el.textContent=c;
+    el.onclick=()=>{ input.value=c; input.focus(); };
+    chipsBox.appendChild(el);
+  });
+}
+
+/* --- Présentation d'Alberte au tout début --- */
+const INTRO_ALBERTE = [
+  "Bonjour… est-ce que quelqu'un me lit vraiment ? Je m'appelle Alberte Bourde. Je suis résistante, ici, à Lyon.",
+  "On m'a dit que je parlais à des jeunes gens du futur. Si c'est bien vrai… quelle émotion ! Je suis si heureuse de pouvoir vous parler.",
+  "Un étrange objet est tombé entre mes mains : une fine plaque de verre qui s'illumine et affiche vos mots. Je n'y comprends absolument rien.",
+  "J'ai grand besoin de vous. Guidez-moi pour m'en servir… et aidez-moi à ne laisser aucune trace, car la moindre erreur pourrait me faire prendre par la Milice."
+];
+
+/* --- Démarrage --- */
+function startGame(m){
+  mode = m || "normal";
+  $("intro").classList.add("hidden");
+  alberteSay(INTRO_ALBERTE, ()=>{
+    input.disabled=false; sendBtn.disabled=false;
+    loadScenario();
+    input.focus();
+  });
+}
+
+function loadScenario(){
+  const sc = SCENARIOS[idx];
+  pendingFollow = null;
+  chipsBox.innerHTML="";
+  alberteSay(sc.intro, ()=> showChips(sc.chips));
+}
+
+/* --- Envoi du conseil --- */
+function handleSend(){
+  if(busy) return;
+  const raw = input.value.trim();
+  if(!raw) return;
+  addMsg("me", raw, "me");
+  input.value="";
+  chipsBox.innerHTML="";
+  const text = norm(raw);
+  const sc = SCENARIOS[idx];
+  busy=true; input.disabled=true; sendBtn.disabled=true;
+
+  // en attente d'une explication au « pourquoi ? » d'Alberte
+  if(pendingFollow){ handleFollow(pendingFollow, text); return; }
+
+  // priorité au bon réflexe, puis au mauvais, sinon incompris
+  if(hit(text, sc.good.kw)){
+    reactGood(sc);
+  } else if(hit(text, sc.bad.kw)){
+    reactBad(sc);
+  } else {
+    reactUnknown(sc);
+  }
+}
+
+function reactGood(sc){
+  // scénario avec relance « pourquoi ? » : Alberte demande une explication avant d'être convaincue
+  if(sc.good.followKw){
+    pendingFollow = sc;
+    alberteSay([sc.good.reply], ()=>{
+      showChips(sc.good.followChips || []);
+      unlock();
+    });
+    return;
+  }
+  alberteSay([sc.good.reply], ()=>{
+    addMsg("note", '<span class="note-h">'+sc.note.h+'</span>'+sc.note.t, "note");
+    setTimeout(nextScenario, 900);
+  });
+}
+
+function handleFollow(sc, text){
+  if(hit(text, sc.good.followKw)){
+    pendingFollow = null;
+    alberteSay([sc.good.followReply], ()=>{
+      addMsg("note", '<span class="note-h">'+sc.note.h+'</span>'+sc.note.t, "note");
+      setTimeout(nextScenario, 900);
+    });
+  } else {
+    alberteSay(["Je ne saisis pas encore bien… qu'est-ce que cette photographie pourrait révéler à l'ennemi ?"], ()=>{
+      showChips(sc.good.followChips || []);
+      unlock();
+    });
+  }
+}
+
+function reactBad(sc){
+  alberteSay([sc.bad.reply], ()=>{
+    addMsg("Alerte", "⚠️ <b>Mauvais réflexe.</b> Reconseille Alberte pour la protéger.", "sys danger");
+    setTimeout(()=>{ retry(sc); }, 800);
+  });
+}
+
+function reactUnknown(sc){
+  alberteSay(["Je ne suis pas sûre de comprendre… Dis-moi plus clairement ce que je dois faire."], ()=>{
+    showChips(sc.chips);
+    unlock();
+  });
+}
+
+function retry(sc){
+  alberteSay(["Alors… qu'est-ce que je fais, finalement ?"], ()=>{
+    showChips(sc.chips);
+    unlock();
+  });
+}
+
+function unlock(){
+  busy=false; input.disabled=false; sendBtn.disabled=false; input.focus();
+}
+
+function nextScenario(){
+  idx++;
+  if(idx >= SCENARIOS.length){ endGame(); return; }
+  addMsg("Progression", "✅ <b>Étape validée "+idx+"/"+SCENARIOS.length+".</b>", "sys");
+  setTimeout(()=>{ unlock(); loadScenario(); }, 700);
+}
+
+function endGame(){
+  input.disabled=true; sendBtn.disabled=true;
+  $("win").classList.remove("hidden");
+}
+
+/* --- Entrée clavier --- */
+input.addEventListener("keydown", e=>{ if(e.key==="Enter") handleSend(); });
+</script>
+</body>
+</html>
