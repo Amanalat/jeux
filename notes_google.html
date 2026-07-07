@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mock “style Maps” – Avis (démo fictive)</title>
+  <title data-i18n="pageTitle">Mock “style Maps” – Avis (démo fictive)</title>
   <style>
     :root{
       --bg:#f1f3f4;
@@ -321,27 +321,27 @@
           </div>
           <div>
             <h1>Le Vieux Comptoir</h1>
-            <p class="sub">Brasserie • €€ • Centre-ville<br/>Ouvert · Ferme à 23:00</p>
+            <p class="sub" data-i18n-html="sub">Brasserie • €€ • Centre-ville<br/>Ouvert · Ferme à 23:00</p>
 
             <div class="chips">
-              <span class="chip blue">Sur place</span>
-              <span class="chip">À emporter</span>
-              <span class="chip">Terrasse</span>
-              <span class="chip">Végétarien</span>
+              <span class="chip blue" data-i18n="chipDine">Sur place</span>
+              <span class="chip" data-i18n="chipTake">À emporter</span>
+              <span class="chip" data-i18n="chipTerrace">Terrasse</span>
+              <span class="chip" data-i18n="chipVeg">Végétarien</span>
             </div>
 
             <div class="actions">
-              <button class="btn primary" type="button" id="btnDirections">Itinéraire</button>
-              <button class="btn" type="button" id="btnSave">Enregistrer</button>
-              <button class="btn" type="button" id="btnShare">Partager</button>
+              <button class="btn primary" type="button" id="btnDirections" data-i18n="directions">Itinéraire</button>
+              <button class="btn" type="button" id="btnSave" data-i18n="save">Enregistrer</button>
+              <button class="btn" type="button" id="btnShare" data-i18n="share">Partager</button>
             </div>
           </div>
         </div>
 
         <div class="section">
           <div class="sectionTitle">
-            <span>Carte</span>
-            <span class="chip">Aperçu</span>
+            <span data-i18n="map">Carte</span>
+            <span class="chip" data-i18n="overview">Aperçu</span>
           </div>
           <div class="mapCard" role="img" aria-label="Panneau carte fictif">
             <div class="mapCanvas"></div>
@@ -351,7 +351,7 @@
                 <path fill="#1a73e8" d="M12 2c-3.9 0-7 3.1-7 7 0 5.5 7 13 7 13s7-7.5 7-13c0-3.9-3.1-7-7-7zm0 9.4c-1.3 0-2.4-1.1-2.4-2.4S10.7 6.6 12 6.6s2.4 1.1 2.4 2.4S13.3 11.4 12 11.4z"/>
               </svg>
             </div>
-            <div class="mapLabel">Centre-ville · Rayon 500 m</div>
+            <div class="mapLabel" data-i18n="mapLabel">Centre-ville · Rayon 500 m</div>
             <div class="zoom" aria-hidden="true">
               <button type="button" id="zoomIn">+</button>
               <button type="button" id="zoomOut">−</button>
@@ -361,21 +361,21 @@
 
         <div class="section">
           <div class="sectionTitle">
-            <span>Photos</span>
+            <span data-i18n="photos">Photos</span>
             <span class="chip">6</span>
           </div>
           <div class="photos" aria-label="Photos fictives">
-            <div class="photo"><div class="photoTag">Salle</div></div>
-            <div class="photo"><div class="photoTag">Plat</div></div>
-            <div class="photo"><div class="photoTag">Terrasse</div></div>
-            <div class="photo"><div class="photoTag">Dessert</div></div>
-            <div class="photo"><div class="photoTag">Menu</div></div>
-            <div class="photo"><div class="photoTag">Ambiance</div></div>
+            <div class="photo"><div class="photoTag" data-i18n="photoSalle">Salle</div></div>
+            <div class="photo"><div class="photoTag" data-i18n="photoPlat">Plat</div></div>
+            <div class="photo"><div class="photoTag" data-i18n="photoTerrasse">Terrasse</div></div>
+            <div class="photo"><div class="photoTag" data-i18n="photoDessert">Dessert</div></div>
+            <div class="photo"><div class="photoTag" data-i18n="photoMenu">Menu</div></div>
+            <div class="photo"><div class="photoTag" data-i18n="photoAmbiance">Ambiance</div></div>
           </div>
         </div>
 
         <div class="footerNote">
-          <span class="fakeTag"><span class="dot"></span>Maquette UI — avis inventés pour démo (ne pas publier comme vrais avis).</span>
+          <span class="fakeTag"><span class="dot"></span><span data-i18n="fakeTag">Maquette UI — avis inventés pour démo (ne pas publier comme vrais avis).</span></span>
         </div>
       </div>
     </aside>
@@ -384,12 +384,12 @@
     <main class="panel">
       <div class="panelHeader">
         <div>
-          <p class="h2">Avis</p>
+          <p class="h2" data-i18n="reviewsH2">Avis</p>
           <div class="ratingRow">
             <div class="ratingBig" id="avg">—</div>
             <div>
               <div class="stars" id="avgStars" aria-label="Note moyenne"></div>
-              <div class="count"><span id="count">—</span> avis</div>
+              <div class="count"><span id="count">—</span> <span data-i18n="reviewsWord">avis</span></div>
             </div>
           </div>
         </div>
@@ -404,17 +404,17 @@
       </div>
 
       <div class="toolbar">
-        <input id="q" type="search" placeholder="Rechercher dans les avis" />
+        <input id="q" type="search" placeholder="Rechercher dans les avis" data-i18n-placeholder="searchPh" />
         <select id="sort">
-          <option value="relevant" selected>Tri : Pertinence</option>
-          <option value="newest">Tri : Plus récents</option>
-          <option value="oldest">Tri : Plus anciens</option>
-          <option value="highest">Tri : Notes les plus hautes</option>
-          <option value="lowest">Tri : Notes les plus basses</option>
+          <option value="relevant" selected data-i18n="sortRelevant">Tri : Pertinence</option>
+          <option value="newest" data-i18n="sortNewest">Tri : Plus récents</option>
+          <option value="oldest" data-i18n="sortOldest">Tri : Plus anciens</option>
+          <option value="highest" data-i18n="sortHighest">Tri : Notes les plus hautes</option>
+          <option value="lowest" data-i18n="sortLowest">Tri : Notes les plus basses</option>
         </select>
         <label class="toggle">
           <input id="last2y" type="checkbox" />
-          2 dernières années
+          <span data-i18n="last2y">2 dernières années</span>
         </label>
       </div>
 
@@ -422,6 +422,35 @@
     </main>
   </div>
 
+  <script src="i18n.js"></script>
+  <script>
+  I18N.register({
+    fr: {
+      pageTitle: 'Mock “style Maps” – Avis (démo fictive)',
+      sub: "Brasserie • €€ • Centre-ville<br/>Ouvert · Ferme à 23:00",
+      chipDine: "Sur place", chipTake: "À emporter", chipTerrace: "Terrasse", chipVeg: "Végétarien",
+      directions: "Itinéraire", save: "Enregistrer", share: "Partager",
+      map: "Carte", overview: "Aperçu", mapLabel: "Centre-ville · Rayon 500 m", photos: "Photos",
+      photoSalle: "Salle", photoPlat: "Plat", photoTerrasse: "Terrasse", photoDessert: "Dessert", photoMenu: "Menu", photoAmbiance: "Ambiance",
+      fakeTag: "Maquette UI — avis inventés pour démo (ne pas publier comme vrais avis).",
+      reviewsH2: "Avis", reviewsWord: "avis", searchPh: "Rechercher dans les avis",
+      sortRelevant: "Tri : Pertinence", sortNewest: "Tri : Plus récents", sortOldest: "Tri : Plus anciens",
+      sortHighest: "Tri : Notes les plus hautes", sortLowest: "Tri : Notes les plus basses", last2y: "2 dernières années"
+    },
+    en: {
+      pageTitle: 'Mock “Maps-style” – Reviews (fictional demo)',
+      sub: "Brasserie • €€ • City centre<br/>Open · Closes at 11 PM",
+      chipDine: "Dine-in", chipTake: "Takeaway", chipTerrace: "Terrace", chipVeg: "Vegetarian",
+      directions: "Directions", save: "Save", share: "Share",
+      map: "Map", overview: "Overview", mapLabel: "City centre · 500 m radius", photos: "Photos",
+      photoSalle: "Dining room", photoPlat: "Dish", photoTerrasse: "Terrace", photoDessert: "Dessert", photoMenu: "Menu", photoAmbiance: "Atmosphere",
+      fakeTag: "UI mock-up — reviews invented for demo (do not publish as real reviews).",
+      reviewsH2: "Reviews", reviewsWord: "reviews", searchPh: "Search in reviews",
+      sortRelevant: "Sort: Relevance", sortNewest: "Sort: Most recent", sortOldest: "Sort: Oldest first",
+      sortHighest: "Sort: Highest rated", sortLowest: "Sort: Lowest rated", last2y: "Last 2 years"
+    }
+  });
+  </script>
   <script>
     // ---------------------------
     // Données (démo fictive)
@@ -434,37 +463,40 @@
     // ---------------------------
     const REVIEWS = [
       // Anciens — très mauvais (1★)
-      { name:"Camille R.", stars:1, date:"2018-06-21", text:"Service catastrophique. Attente interminable, plats froids et aucun geste commercial. À éviter absolument." },
-      { name:"Nicolas D.", stars:1, date:"2019-02-10", text:"Très déçu. Personnel désagréable, cuisine sans saveur. On sent clairement le manque de gestion." },
-      { name:"Sarah L.", stars:1, date:"2019-11-19", text:"Restaurant laissé à l'abandon. Salle sale, erreur dans la commande, et aucune excuse." },
-      { name:"Hugo M.", stars:1, date:"2020-03-08", text:"Une vraie déception. Rapport qualité-prix inexistant. Dommage car le lieu a du potentiel." },
-      { name:"Léa P.", stars:1, date:"2020-10-27", text:"Mauvaise expérience du début à la fin. Plats brûlés, addition incorrecte. On ne reviendra pas." },
-      { name:"Thomas G.", stars:1, date:"2021-01-12", text:"Cuisine médiocre, service lent. On a attendu une éternité pour être servis." },
-      { name:"Julie A.", stars:1, date:"2021-03-05", text:"Accueil froid, erreurs en cuisine, aucune organisation. Franchement décevant." },
-      { name:"Romain S.", stars:1, date:"2021-07-14", text:"Plats tièdes et sans goût. Et le serveur semblait agacé qu'on pose des questions." },
-      { name:"Nina B.", stars:1, date:"2021-11-30", text:"Hygiène douteuse (tables collantes, toilettes…). On est partis avant le dessert." },
-      { name:"Olivier T.", stars:1, date:"2022-04-08", text:"Trop cher pour ce que c'est. On sent que personne ne tient la barre en cuisine." },
-      { name:"Mélanie C.", stars:1, date:"2022-06-22", text:"Longue attente, plat renvoyé car froid, pas d'excuse. Dommage." },
-      { name:"Yanis K.", stars:1, date:"2022-10-02", text:"Service désorganisé. On a dû relancer trois fois pour avoir de l'eau. Inadmissible." },
+      { name:"Camille R.", stars:1, date:"2018-06-21", text:"Service catastrophique. Attente interminable, plats froids et aucun geste commercial. À éviter absolument.", text_en:"Catastrophic service. Endless wait, cold food and no goodwill gesture at all. Avoid at all costs." },
+      { name:"Nicolas D.", stars:1, date:"2019-02-10", text:"Très déçu. Personnel désagréable, cuisine sans saveur. On sent clairement le manque de gestion.", text_en:"Very disappointed. Rude staff, flavourless food. You can clearly feel the lack of management." },
+      { name:"Sarah L.", stars:1, date:"2019-11-19", text:"Restaurant laissé à l'abandon. Salle sale, erreur dans la commande, et aucune excuse.", text_en:"A neglected restaurant. Dirty dining room, wrong order, and no apology." },
+      { name:"Hugo M.", stars:1, date:"2020-03-08", text:"Une vraie déception. Rapport qualité-prix inexistant. Dommage car le lieu a du potentiel.", text_en:"A real letdown. No value for money at all. A shame, because the place has potential." },
+      { name:"Léa P.", stars:1, date:"2020-10-27", text:"Mauvaise expérience du début à la fin. Plats brûlés, addition incorrecte. On ne reviendra pas.", text_en:"A bad experience from start to finish. Burnt dishes, incorrect bill. We won't be back." },
+      { name:"Thomas G.", stars:1, date:"2021-01-12", text:"Cuisine médiocre, service lent. On a attendu une éternité pour être servis.", text_en:"Mediocre food, slow service. We waited forever to be served." },
+      { name:"Julie A.", stars:1, date:"2021-03-05", text:"Accueil froid, erreurs en cuisine, aucune organisation. Franchement décevant.", text_en:"Cold welcome, kitchen mistakes, no organisation. Frankly disappointing." },
+      { name:"Romain S.", stars:1, date:"2021-07-14", text:"Plats tièdes et sans goût. Et le serveur semblait agacé qu'on pose des questions.", text_en:"Lukewarm, tasteless dishes. And the waiter seemed annoyed that we asked questions." },
+      { name:"Nina B.", stars:1, date:"2021-11-30", text:"Hygiène douteuse (tables collantes, toilettes…). On est partis avant le dessert.", text_en:"Questionable hygiene (sticky tables, toilets…). We left before dessert." },
+      { name:"Olivier T.", stars:1, date:"2022-04-08", text:"Trop cher pour ce que c'est. On sent que personne ne tient la barre en cuisine.", text_en:"Too expensive for what it is. You can tell nobody's steering the kitchen." },
+      { name:"Mélanie C.", stars:1, date:"2022-06-22", text:"Longue attente, plat renvoyé car froid, pas d'excuse. Dommage.", text_en:"Long wait, a dish sent back because it was cold, no apology. Too bad." },
+      { name:"Yanis K.", stars:1, date:"2022-10-02", text:"Service désorganisé. On a dû relancer trois fois pour avoir de l'eau. Inadmissible.", text_en:"Disorganised service. We had to ask three times just for water. Unacceptable." },
 
       // Anciens — mauvais mais pas catastrophiques (2★)
-      { name:"Laura V.", stars:2, date:"2022-12-15", text:"On peut manger, mais rien de mémorable. Le service était au moins souriant ce soir-là. Pas assez pour recommander." },
-      { name:"Bastien L.", stars:2, date:"2023-02-09", text:"Portions trop petites pour le prix, mais la soupe était honnête. Dans l'ensemble, encore trop décevant." },
-      { name:"Sofia M.", stars:2, date:"2023-05-16", text:"Accueil correct pour une fois, mais la cuisine reste trop moyenne. Il faudrait vraiment changer de chef." },
-      { name:"Pauline F.", stars:2, date:"2023-08-01", text:"Pas horrible, pas bon. On a fini nos assiettes mais sans enthousiasme. Ça manque de quelqu'un qui sache cuisiner." },
+      { name:"Laura V.", stars:2, date:"2022-12-15", text:"On peut manger, mais rien de mémorable. Le service était au moins souriant ce soir-là. Pas assez pour recommander.", text_en:"You can eat here, but nothing memorable. At least the service was friendly that evening. Not enough to recommend." },
+      { name:"Bastien L.", stars:2, date:"2023-02-09", text:"Portions trop petites pour le prix, mais la soupe était honnête. Dans l'ensemble, encore trop décevant.", text_en:"Portions too small for the price, but the soup was decent. Overall, still too disappointing." },
+      { name:"Sofia M.", stars:2, date:"2023-05-16", text:"Accueil correct pour une fois, mais la cuisine reste trop moyenne. Il faudrait vraiment changer de chef.", text_en:"Decent welcome for once, but the food is still too average. They really should change the chef." },
+      { name:"Pauline F.", stars:2, date:"2023-08-01", text:"Pas horrible, pas bon. On a fini nos assiettes mais sans enthousiasme. Ça manque de quelqu'un qui sache cuisiner.", text_en:"Not awful, not good. We finished our plates but without enthusiasm. It needs someone who can actually cook." },
 
       // Anciens — corrects par exception (3★)
-      { name:"Maxime P.", stars:3, date:"2023-10-18", text:"On a eu un repas correct ce soir-là — il y avait apparemment un cuisinier remplaçant. Première fois que je me sens bien accueilli ici depuis longtemps. Mais c'est l'exception, pas la règle." },
-      { name:"Élodie N.", stars:3, date:"2023-12-20", text:"Repas honnête. Le cuisinier du soir avait l'air de s'y connaître vraiment. C'est dommage que ça ne soit pas toujours comme ça — le lieu a du potentiel." },
+      { name:"Maxime P.", stars:3, date:"2023-10-18", text:"On a eu un repas correct ce soir-là — il y avait apparemment un cuisinier remplaçant. Première fois que je me sens bien accueilli ici depuis longtemps. Mais c'est l'exception, pas la règle.", text_en:"We had a decent meal that evening — there was apparently a stand-in cook. First time I've felt well looked after here in ages. But it's the exception, not the rule." },
+      { name:"Élodie N.", stars:3, date:"2023-12-20", text:"Repas honnête. Le cuisinier du soir avait l'air de s'y connaître vraiment. C'est dommage que ça ne soit pas toujours comme ça — le lieu a du potentiel.", text_en:"An honest meal. The cook that evening really seemed to know his stuff. Shame it isn't always like that — the place has potential." },
 
       // Récents (très bons, après arrivée du nouveau chef début 2024)
-      { name:"Mehdi K.", stars:5, date:"2024-03-14", text:"Nouveau chef depuis janvier, et ça change TOUT. Service impeccable, plats délicieux, ambiance chaleureuse. Je n'aurais jamais cru revenir ici un jour !" },
-      { name:"Anaïs V.", stars:5, date:"2024-07-03", text:"Rien à voir avec avant. Le nouveau chef fait des merveilles avec des produits frais. Bravo à toute la nouvelle équipe !" },
-      { name:"Mina S.", stars:5, date:"2025-02-19", text:"Depuis l'arrivée du nouveau chef, c'est devenu une adresse sûre. Tout est maîtrisé, de l'entrée au dessert. Ignorez les anciens avis !" },
-      { name:"Arthur C.", stars:5, date:"2025-08-11", text:"Je n'y retournais plus depuis trois ans… quel choc ! Le nouveau chef a complètement transformé la cuisine. Savoureux, généreux, soigné." },
-      { name:"Inès F.", stars:4, date:"2025-11-22", text:"Très bon repas. Le nouveau chef maîtrise bien ses plats — j'enlève une étoile car le dessert était un poil trop sucré, mais on reviendra sans hésiter." },
-      { name:"Louis T.", stars:4, date:"2026-02-02", text:"Excellente soirée. Service attentionné depuis le changement d'équipe en cuisine. Les anciens avis négatifs ne reflètent clairement plus du tout ce restaurant." },
+      { name:"Mehdi K.", stars:5, date:"2024-03-14", text:"Nouveau chef depuis janvier, et ça change TOUT. Service impeccable, plats délicieux, ambiance chaleureuse. Je n'aurais jamais cru revenir ici un jour !", text_en:"New chef since January, and it changes EVERYTHING. Impeccable service, delicious food, warm atmosphere. I never thought I'd come back here one day!" },
+      { name:"Anaïs V.", stars:5, date:"2024-07-03", text:"Rien à voir avec avant. Le nouveau chef fait des merveilles avec des produits frais. Bravo à toute la nouvelle équipe !", text_en:"Nothing like before. The new chef works wonders with fresh produce. Well done to the whole new team!" },
+      { name:"Mina S.", stars:5, date:"2025-02-19", text:"Depuis l'arrivée du nouveau chef, c'est devenu une adresse sûre. Tout est maîtrisé, de l'entrée au dessert. Ignorez les anciens avis !", text_en:"Since the new chef arrived, it's become a safe bet. Everything is spot on, from starter to dessert. Ignore the old reviews!" },
+      { name:"Arthur C.", stars:5, date:"2025-08-11", text:"Je n'y retournais plus depuis trois ans… quel choc ! Le nouveau chef a complètement transformé la cuisine. Savoureux, généreux, soigné.", text_en:"I hadn't been back for three years… what a shock! The new chef has completely transformed the food. Tasty, generous, refined." },
+      { name:"Inès F.", stars:4, date:"2025-11-22", text:"Très bon repas. Le nouveau chef maîtrise bien ses plats — j'enlève une étoile car le dessert était un poil trop sucré, mais on reviendra sans hésiter.", text_en:"Very good meal. The new chef handles his dishes well — I'm taking off one star because the dessert was a touch too sweet, but we'll definitely come back." },
+      { name:"Louis T.", stars:4, date:"2026-02-02", text:"Excellente soirée. Service attentionné depuis le changement d'équipe en cuisine. Les anciens avis négatifs ne reflètent clairement plus du tout ce restaurant.", text_en:"Excellent evening. Attentive service since the kitchen team changed. The old negative reviews clearly no longer reflect this restaurant at all." },
     ];
+
+    // Sélection du texte selon la langue (FR par défaut, EN via ?lang=en)
+    const rtext = r => (window.I18N && I18N.lang === 'en' && r.text_en) ? r.text_en : r.text;
 
     // --- Helpers ---
     const fmtDate = (iso) => {
@@ -562,7 +594,7 @@
                 </div>
               </div>
             </div>
-            <p class="text">${escapeHtml(r.text)}</p>
+            <p class="text">${escapeHtml(rtext(r))}</p>
           </article>
         `;
       }).join("");
@@ -584,7 +616,7 @@
       if(q){
         items = items.filter(r =>
           r.name.toLowerCase().includes(q) ||
-          r.text.toLowerCase().includes(q)
+          rtext(r).toLowerCase().includes(q)
         );
       }
 
