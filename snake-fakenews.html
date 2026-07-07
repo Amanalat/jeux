@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Snake - Fake News & Esprit Critique</title>
+<title data-i18n="pageTitle">Snake - Fake News & Esprit Critique</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Exo+2:wght@400;700&display=swap');
 
@@ -228,39 +228,39 @@
 <body>
 <a class="back-hub" href="index.html">← Retour aux jeux</a>
 <h1>SNAKE</h1>
-<div class="subtitle">Fake News & Esprit Critique</div>
+<div class="subtitle" data-i18n="subtitle">Fake News & Esprit Critique</div>
 <div class="cred-atger" style="font-size:.6rem;font-weight:600;opacity:.7;margin-top:6px;letter-spacing:.5px;">par <a href="https://antoninatger.com" target="_blank" style="color:inherit;">Antonin Atger</a></div>
-<div class="hud">SCORE: <span id="score">0</span> &nbsp; VIE: <span id="lives">❤️❤️❤️</span> &nbsp; NIVEAU: <span id="level">1</span></div>
+<div class="hud"><span data-i18n="hudScore">SCORE:</span> <span id="score">0</span> &nbsp; <span data-i18n="hudLives">VIE:</span> <span id="lives">❤️❤️❤️</span> &nbsp; <span data-i18n="hudLevel">NIVEAU:</span> <span id="level">1</span></div>
 
 <!-- Question bar above the game -->
 <div class="question-box" id="question-bar">
-  <span class="question-label">❓ QUESTION</span>
-  <div id="current-q">Lance le jeu pour commencer !</div>
+  <span class="question-label" data-i18n="qLabel">❓ QUESTION</span>
+  <div id="current-q" data-i18n="currentQ">Lance le jeu pour commencer !</div>
 </div>
 
 <div class="main-layout">
   <div class="arena-wrap">
     <canvas id="c" width="420" height="420"></canvas>
     <div class="overlay" id="overlay">
-      <h2>SNAKE<br>ESPRIT CRITIQUE</h2>
-      <p>Toutes les réponses sont en <strong style="color:#4fc3f7">BLEU</strong> — à toi de trouver la bonne !<br><br>Après avoir mangé une réponse, la bonne devient 🟢 verte et les mauvaises 🔴 rouges.</p>
-      <button class="btn" id="startBtn">COMMENCER</button>
+      <h2 data-i18n-html="overlayH2">SNAKE<br>ESPRIT CRITIQUE</h2>
+      <p data-i18n-html="overlayP">Toutes les réponses sont en <strong style="color:#4fc3f7">BLEU</strong> — à toi de trouver la bonne !<br><br>Après avoir mangé une réponse, la bonne devient 🟢 verte et les mauvaises 🔴 rouges.</p>
+      <button class="btn" id="startBtn" data-i18n="startBtn">COMMENCER</button>
     </div>
   </div>
 
   <div class="side-panel">
     <div class="legend">
-      <h3>LÉGENDE</h3>
-      <div class="leg-row"><div class="leg-box" style="background:#4fc3f7;box-shadow:0 0 6px #4fc3f7"></div> Réponse possible</div>
-      <div class="leg-row"><div class="leg-box leg-green"></div> Bonne réponse</div>
-      <div class="leg-row"><div class="leg-box leg-red"></div> Mauvaise réponse</div>
-      <div style="font-size:10px;color:#4040aa;margin-top:8px;line-height:1.6">Les couleurs se révèlent<br>après chaque réponse.</div>
+      <h3 data-i18n="legendTitle">LÉGENDE</h3>
+      <div class="leg-row"><div class="leg-box" style="background:#4fc3f7;box-shadow:0 0 6px #4fc3f7"></div> <span data-i18n="legPossible">Réponse possible</span></div>
+      <div class="leg-row"><div class="leg-box leg-green"></div> <span data-i18n="legGood">Bonne réponse</span></div>
+      <div class="leg-row"><div class="leg-box leg-red"></div> <span data-i18n="legBad">Mauvaise réponse</span></div>
+      <div style="font-size:10px;color:#4040aa;margin-top:8px;line-height:1.6" data-i18n-html="colorsReveal">Les couleurs se révèlent<br>après chaque réponse.</div>
     </div>
-    <div class="feedback-box idle" id="feedback">
+    <div class="feedback-box idle" id="feedback" data-i18n="feedbackIdle">
       Prêt à jouer ?
     </div>
     <div class="legend">
-      <h3>VITESSE</h3>
+      <h3 data-i18n="speedTitle">VITESSE</h3>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
         <span style="font-size:10px;color:#4040aa">🐢</span>
         <input type="range" id="speedSlider" min="1" max="5" value="3" step="1"
@@ -272,9 +272,42 @@
   </div>
 </div>
 
-<div class="controls">↑ ↓ ← → ou WASD · ESPACE = Pause</div>
+<div class="controls" data-i18n="controls">↑ ↓ ← → ou WASD · ESPACE = Pause</div>
 
+<script src="i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    pageTitle: "Snake - Fake News & Esprit Critique", qLabel: "❓ QUESTION",
+    currentQ: "Lance le jeu pour commencer !",
+    overlayH2: "SNAKE<br>ESPRIT CRITIQUE",
+    overlayP: `Toutes les réponses sont en <strong style="color:#4fc3f7">BLEU</strong> — à toi de trouver la bonne !<br><br>Après avoir mangé une réponse, la bonne devient 🟢 verte et les mauvaises 🔴 rouges.`,
+    startBtn: "COMMENCER", legendTitle: "LÉGENDE",
+    legPossible: "Réponse possible", legGood: "Bonne réponse", legBad: "Mauvaise réponse",
+    colorsReveal: "Les couleurs se révèlent<br>après chaque réponse.",
+    feedbackIdle: "Prêt à jouer ?", speedTitle: "VITESSE",
+    controls: "↑ ↓ ← → ou WASD · ESPACE = Pause",
+    hudScore: "SCORE:", hudLives: "VIE:", hudLevel: "NIVEAU:", replay: "REJOUER",
+    subtitle: "Fake News & Esprit Critique", best: "MEILLEUR:",
+    speedVerySlow: "TRÈS LENTE", speedSlow: "LENTE", speedNormal: "NORMALE", speedFast: "RAPIDE", speedTurbo: "TURBO",
+    eatRight: "Mange la bonne réponse !", goodA: "✅ Bonne réponse ! +", goodB: " pts", wrongFb: "❌ Fausse réponse ! -1 vie"
+  },
+  en: {
+    pageTitle: "Snake - Fake News & Critical Thinking", qLabel: "❓ QUESTION",
+    currentQ: "Start the game to begin!",
+    overlayH2: "SNAKE<br>CRITICAL THINKING",
+    overlayP: `All the answers are in <strong style="color:#4fc3f7">BLUE</strong> — it's up to you to find the right one!<br><br>After you eat an answer, the correct one turns 🟢 green and the wrong ones 🔴 red.`,
+    startBtn: "START", legendTitle: "LEGEND",
+    legPossible: "Possible answer", legGood: "Correct answer", legBad: "Wrong answer",
+    colorsReveal: "Colours are revealed<br>after each answer.",
+    feedbackIdle: "Ready to play?", speedTitle: "SPEED",
+    controls: "↑ ↓ ← → or WASD · SPACE = Pause",
+    hudScore: "SCORE:", hudLives: "LIVES:", hudLevel: "LEVEL:", replay: "REPLAY",
+    subtitle: "Fake News & Critical Thinking", best: "BEST:",
+    speedVerySlow: "VERY SLOW", speedSlow: "SLOW", speedNormal: "NORMAL", speedFast: "FAST", speedTurbo: "TURBO",
+    eatRight: "Eat the correct answer!", goodA: "✅ Correct! +", goodB: " pts", wrongFb: "❌ Wrong answer! -1 life"
+  }
+});
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
 const overlay = document.getElementById('overlay');
@@ -292,7 +325,7 @@ const ROWS = Math.floor(canvas.height / GRID);
 // ============================================================
 // QUESTIONS TIRÉES DU DOCUMENT
 // ============================================================
-const ALL_QUESTIONS = [
+const ALL_QUESTIONS_FR = [
   {
     question: "Qu'est-ce qu'une Fake News ?",
     correct: ["Une information fausse", "Une info inventée"],
@@ -369,6 +402,26 @@ const ALL_QUESTIONS = [
     wrong: ["Toujours faire confiance à son instinct", "Partager sans réfléchir", "Ne jamais douter de soi"]
   },
 ];
+
+const ALL_QUESTIONS_EN = [
+  { question: "What is a fake news story?", correct: ["A false piece of information", "Made-up information"], wrong: ["A true piece of information", "A proven fact", "A personal opinion"] },
+  { question: "How do you check a piece of information?", correct: ["Check the source", "Look for evidence", "See if other outlets report it"], wrong: ["Share it immediately", "Trust social media", "Believe it if it seems nice"] },
+  { question: "What is a FACT?", correct: ["Proven information, the same for everyone"], wrong: ["A personal opinion", "Chocolate cakes are better", "Vanilla ice cream is delicious"] },
+  { question: "What is an OPINION?", correct: ["A personal view"], wrong: ["Proven information", "The sun is a star", "Paris is in France"] },
+  { question: "What is pareidolia?", correct: ["Illusions created by the brain"], wrong: ["Proven scientific facts", "Real hidden faces", "A type of verified fake news"] },
+  { question: "What is the INTUITIVE system?", correct: ["A fast thinking system that can make mistakes"], wrong: ["Slow and very rational", "Always reliable", "Uses a lot of energy"] },
+  { question: "What is the ANALYTICAL system?", correct: ["A slow but more rational system"], wrong: ["Works very fast", "Often makes mistakes", "Uses little energy"] },
+  { question: "What is a COGNITIVE BIAS?", correct: ["A distortion in how we process information"], wrong: ["A true piece of information", "A scientific fact", "A checking method"] },
+  { question: "Example of a FACT?", correct: ["Apples are fruit", "Paris is the capital of France"], wrong: ["Rap is better than rock", "Cakes are delicious", "He's my favourite athlete"] },
+  { question: "What should you do with information online?", correct: ["Check the context", "Find the original source", "Cross-check several sources"], wrong: ["Share it without checking", "Trust the likes", "Believe it if it's spectacular"] },
+  { question: "What is CONFIRMATION bias?", correct: ["Believing info that confirms our ideas", "Rejecting info that contradicts our beliefs"], wrong: ["Checking all information", "Accepting being wrong", "Looking for contrary evidence"] },
+  { question: "If information seems too good to be true…", correct: ["It's probably false", "You should check it"], wrong: ["It must be true", "You should share it quickly", "It's always reliable"] },
+  { question: "What does a cow drink?", correct: ["Water"], wrong: ["Milk", "Juice", "Coffee"] },
+  { question: "The Evening Star is…", correct: ["A planet (Venus)", "Not a star"], wrong: ["A star", "The Sun", "Mars"] },
+  { question: "What attitude should you have toward fake news?", correct: ["Be humble and accept being wrong", "Trust the experts"], wrong: ["Always trust your instinct", "Share without thinking", "Never doubt yourself"] }
+];
+
+const ALL_QUESTIONS = (window.I18N && I18N.lang === 'en') ? ALL_QUESTIONS_EN : ALL_QUESTIONS_FR;
 
 // ============================================================
 // GAME STATE
@@ -470,7 +523,7 @@ function init() {
 const speedSlider = document.getElementById('speedSlider');
 const speedLabel = document.getElementById('speedLabel');
 
-const SPEED_LABELS = ['TRÈS LENTE', 'LENTE', 'NORMALE', 'RAPIDE', 'TURBO'];
+const SPEED_LABELS = [I18N.t('speedVerySlow'), I18N.t('speedSlow'), I18N.t('speedNormal'), I18N.t('speedFast'), I18N.t('speedTurbo')];
 const SPEED_BASE   = [260, 200, 150, 100, 60]; // ms per tick at level 1
 
 speedSlider.addEventListener('input', () => {
@@ -494,7 +547,7 @@ function startGame() {
   paused = false;
   clearInterval(gameLoop);
   gameLoop = setInterval(tick, getSpeed());
-  setFeedback('idle', 'Mange la bonne réponse !');
+  setFeedback('idle', I18N.t('eatRight'));
 }
 
 function tick() {
@@ -520,7 +573,7 @@ function tick() {
       score += 10 * level;
       if (score > highScore) highScore = score;
       spawnParticles(head.x, head.y, '#69f0ae');
-      setFeedback('good', '✅ Bonne réponse ! +' + (10*level) + ' pts');
+      setFeedback('good', I18N.t('goodA') + (10*level) + I18N.t('goodB'));
       if (score % 50 === 0) {
         level++;
         clearInterval(gameLoop);
@@ -537,7 +590,7 @@ function tick() {
       // Wrong!
       lives--;
       spawnParticles(head.x, head.y, '#ff5252');
-      setFeedback('bad', '❌ Fausse réponse ! -1 vie');
+      setFeedback('bad', I18N.t('wrongFb'));
       snake.pop();
       // Reveal all items (green/red)
       revealed = true;
@@ -564,7 +617,7 @@ function setFeedback(type, msg) {
   if (type !== 'idle') {
     feedbackTimeout = setTimeout(() => {
       feedbackEl.className = 'feedback-box idle';
-      feedbackEl.textContent = 'Mange la bonne réponse !';
+      feedbackEl.textContent = I18N.t('eatRight');
     }, 2000);
   }
 }
@@ -588,9 +641,9 @@ function die(reason) {
   overlay.classList.remove('hidden');
   overlay.innerHTML = `
     <div class="game-over-title">GAME OVER</div>
-    <div class="score-display">SCORE: ${score}<br>MEILLEUR: ${highScore}</div>
+    <div class="score-display">${I18N.t('hudScore')} ${score}<br>${I18N.t('best')} ${highScore}</div>
     <p style="font-size:11px;color:#888">💡 ${reason}</p>
-    <button class="btn" id="startBtn">REJOUER</button>
+    <button class="btn" id="startBtn" data-i18n="replay">REJOUER</button>
   `;
   document.getElementById('startBtn').addEventListener('click', startGame);
 }
@@ -748,7 +801,7 @@ document.addEventListener('keydown', e => {
   if (e.key === ' ' && running) {
     paused = !paused;
     if (paused) setFeedback('idle', '⏸ PAUSE');
-    else setFeedback('idle', 'Mange la bonne réponse !');
+    else setFeedback('idle', I18N.t('eatRight'));
     e.preventDefault();
   }
 });
