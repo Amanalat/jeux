@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QCM Classique — Arcade Quizz</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Exo+2:wght@400;600;700&display=swap" rel="stylesheet">
-<script src="questions.js"></script>
-<script src="questions-6e5e.js"></script>
-<script src="questions-niveau1.js"></script>
-<script src="questions-niveau2.js"></script>
-<script src="questions-niveau3.js"></script>
-<script src="qcm-store.js"></script>
+<script src="../i18n.js"></script>
+<script>
+(function(){var en=(window.I18N&&I18N.lang==='en');
+['questions','questions-6e5e','questions-niveau1','questions-niveau2','questions-niveau3','qcm-store'].forEach(function(f){document.write('<scr'+'ipt src="'+f+(en?'-en':'')+'.js"><'+'/scr'+'ipt>');});})();
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{

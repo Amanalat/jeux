@@ -4,12 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Brick Breaker Quiz</title>
-<script src="questions.js"></script>
-<script src="questions-6e5e.js"></script>
-<script src="questions-niveau1.js"></script>
-<script src="questions-niveau2.js"></script>
-<script src="questions-niveau3.js"></script>
-<script src="qcm-store.js"></script>
+<script src="../i18n.js"></script>
+<script>
+(function(){var en=(window.I18N&&I18N.lang==='en');
+['questions','questions-6e5e','questions-niveau1','questions-niveau2','questions-niveau3','qcm-store'].forEach(function(f){document.write('<scr'+'ipt src="'+f+(en?'-en':'')+'.js"><'+'/scr'+'ipt>');});})();
+</script>
 <script>if(typeof QCMStore!=='undefined'){var _s=QCMStore.getSessionQuestions();if(_s&&_s.length)window.DEFAULT_QCM=_s;}</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Nunito:wght@600;700;800&display=swap');

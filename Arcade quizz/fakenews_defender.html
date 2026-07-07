@@ -194,12 +194,11 @@
   <button id="mute-btn" onclick="toggleMute()">🔊</button>
 </div>
 
-<script src="questions.js"></script>
-<script src="questions-6e5e.js"></script>
-<script src="questions-niveau1.js"></script>
-<script src="questions-niveau2.js"></script>
-<script src="questions-niveau3.js"></script>
-<script src="qcm-store.js"></script>
+<script src="../i18n.js"></script>
+<script>
+(function(){var en=(window.I18N&&I18N.lang==='en');
+['questions','questions-6e5e','questions-niveau1','questions-niveau2','questions-niveau3','qcm-store'].forEach(function(f){document.write('<scr'+'ipt src="'+f+(en?'-en':'')+'.js"><'+'/scr'+'ipt>');});})();
+</script>
 <script>if(typeof QCMStore!=='undefined'){var _s=QCMStore.getSessionQuestions();if(_s&&_s.length)window.DEFAULT_QCM=_s;}</script>
 <script>
 // ── MUTE ─────────────────────────────────────────────────────
