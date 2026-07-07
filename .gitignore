@@ -27,3 +27,6 @@ desktop.ini
 
 # === Copie de travail (ne pas versionner) ===
 /fakemetre-refonte/
+
+# === Boutons perso Windows (outils locaux, ne pas publier) ===
+*.bat
