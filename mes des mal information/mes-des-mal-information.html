@@ -266,14 +266,14 @@
 
   <header>
     <h1><span class="mes">Més</span> · <span class="des">Dés</span> · <span class="mal">Mal</span> — Le tri de l'info</h1>
-    <p class="subtitle">Sauras-tu reconnaître le type de manipulation de l'information ?</p>
+    <p class="subtitle" data-i18n="subtitle">Sauras-tu reconnaître le type de manipulation de l'information ?</p>
     <p class="cred-atger" style="text-align:center;font-size:.78rem;font-weight:600;opacity:.7;margin:4px 0 0;">par <a href="https://antoninatger.com" target="_blank" style="color:inherit;">Antonin Atger</a></p>
   </header>
 
   <!-- ÉCRAN INTRO -->
   <section id="intro" class="panel">
-    <h2>🎯 Le but du jeu</h2>
-    <p style="color:var(--muted);font-weight:600;line-height:1.5;margin-bottom:16px">
+    <h2 data-i18n="introH2">🎯 Le but du jeu</h2>
+    <p style="color:var(--muted);font-weight:600;line-height:1.5;margin-bottom:16px" data-i18n-html="introP">
       On va te présenter des situations réelles ou crédibles. Pour chacune, tu dois deviner :
       est-ce de la <b style="color:var(--mes)">mésinformation</b>,
       de la <b style="color:var(--des)">désinformation</b> ou de la
@@ -285,40 +285,40 @@
       <div class="item mes">
         <img class="legend-img" src="images/concept-mesinformation.jpg" alt="Mésinformation" loading="lazy">
         <div class="txt">
-          <h3>🟢 Mésinformation</h3>
-          <p>Information <b>fausse</b>, partagée <b>sans intention de nuire</b>. La personne se trompe ou croit bien faire (rumeur, erreur, vieille info).</p>
-          <div class="formula">FAUX + PAS d'intention de nuire</div>
+          <h3 data-i18n="mesH3">🟢 Mésinformation</h3>
+          <p data-i18n-html="mesP">Information <b>fausse</b>, partagée <b>sans intention de nuire</b>. La personne se trompe ou croit bien faire (rumeur, erreur, vieille info).</p>
+          <div class="formula" data-i18n="mesFormula">FAUX + PAS d'intention de nuire</div>
         </div>
       </div>
       <div class="item des">
         <img class="legend-img" src="images/concept-desinformation.jpg" alt="Désinformation" loading="lazy">
         <div class="txt">
-          <h3>🔴 Désinformation</h3>
-          <p>Information <b>fausse</b>, créée et diffusée <b>volontairement pour tromper ou nuire</b> (fausse nouvelle fabriquée, propagande, arnaque).</p>
-          <div class="formula">FAUX + intention de nuire</div>
+          <h3 data-i18n="desH3">🔴 Désinformation</h3>
+          <p data-i18n-html="desP">Information <b>fausse</b>, créée et diffusée <b>volontairement pour tromper ou nuire</b> (fausse nouvelle fabriquée, propagande, arnaque).</p>
+          <div class="formula" data-i18n="desFormula">FAUX + intention de nuire</div>
         </div>
       </div>
       <div class="item mal">
         <img class="legend-img" src="images/concept-malinformation.jpg" alt="Malinformation" loading="lazy">
         <div class="txt">
-          <h3>🟠 Malinformation</h3>
-          <p>Information <b>vraie</b>, mais <b>divulguée</b> (fuite, données privées) ou <b>sortie de son contexte</b> <b>pour nuire</b> à quelqu'un.</p>
-          <div class="formula">VRAI + intention de nuire</div>
+          <h3 data-i18n="malH3">🟠 Malinformation</h3>
+          <p data-i18n-html="malP">Information <b>vraie</b>, mais <b>divulguée</b> (fuite, données privées) ou <b>sortie de son contexte</b> <b>pour nuire</b> à quelqu'un.</p>
+          <div class="formula" data-i18n="malFormula">VRAI + intention de nuire</div>
         </div>
       </div>
       <div class="item bridge">
         <img class="legend-img" src="images/exemple-faux-contexte.jpg" alt="Faux contexte" loading="lazy">
         <div class="txt">
-          <h3>🔀 Le piège du « faux contexte »</h3>
-          <p>Un contenu <b>vrai</b> (photo, citation, vidéo) avec une <b>fausse mise en contexte</b> (mauvaise date, lieu, auteur). Le même contenu peut être :</p>
-          <div class="formula">par erreur → mésinfo · exprès pour nuire → malinfo</div>
+          <h3 data-i18n="bridgeH3">🔀 Le piège du « faux contexte »</h3>
+          <p data-i18n-html="bridgeP">Un contenu <b>vrai</b> (photo, citation, vidéo) avec une <b>fausse mise en contexte</b> (mauvaise date, lieu, auteur). Le même contenu peut être :</p>
+          <div class="formula" data-i18n="bridgeFormula">par erreur → mésinfo · exprès pour nuire → malinfo</div>
         </div>
       </div>
     </div>
 
-    <p style="color:var(--muted);font-weight:700;text-align:center;margin-bottom:8px">Choisis ton niveau :</p>
-    <button class="btn-primary" onclick="startGame('normal')">🚀 Niveau normal</button>
-    <button class="btn-ghost" onclick="startGame('hard')">🔥 Niveau difficile — cas ambigus &amp; faux contexte</button>
+    <p style="color:var(--muted);font-weight:700;text-align:center;margin-bottom:8px" data-i18n="chooseLevel">Choisis ton niveau :</p>
+    <button class="btn-primary" onclick="startGame('normal')" data-i18n="levelNormal">🚀 Niveau normal</button>
+    <button class="btn-ghost" onclick="startGame('hard')" data-i18n-html="levelHard">🔥 Niveau difficile — cas ambigus &amp; faux contexte</button>
   </section>
 
   <!-- ÉCRAN JEU -->
@@ -328,8 +328,8 @@
         <div class="progress-label"><span id="qcount">Question 1</span><span><span id="levelBadge"></span> <span id="qtotal">/ 12</span></span></div>
         <div class="bar"><span id="barfill"></span></div>
       </div>
-      <div class="streak" id="streak" title="Série de bonnes réponses"></div>
-      <div class="score"><span id="score">0</span><br><small>points</small></div>
+      <div class="streak" id="streak" title="Série de bonnes réponses" data-i18n-title="streakTitle"></div>
+      <div class="score"><span id="score">0</span><br><small data-i18n="points">points</small></div>
     </div>
 
     <div class="scene">
@@ -340,16 +340,16 @@
 
       <div class="choices" id="choices">
         <button class="choice" data-c="mes" onclick="answer('mes')">
-          <span class="ttl">Mésinformation</span>
-          <span class="def">Faux, sans intention de nuire</span>
+          <span class="ttl" data-i18n="choiceMesTtl">Mésinformation</span>
+          <span class="def" data-i18n="choiceMesDef">Faux, sans intention de nuire</span>
         </button>
         <button class="choice" data-c="des" onclick="answer('des')">
-          <span class="ttl">Désinformation</span>
-          <span class="def">Faux, pour nuire</span>
+          <span class="ttl" data-i18n="choiceDesTtl">Désinformation</span>
+          <span class="def" data-i18n="choiceDesDef">Faux, pour nuire</span>
         </button>
         <button class="choice" data-c="mal" onclick="answer('mal')">
-          <span class="ttl">Malinformation</span>
-          <span class="def">Vrai, mais pour nuire</span>
+          <span class="ttl" data-i18n="choiceMalTtl">Malinformation</span>
+          <span class="def" data-i18n="choiceMalDef">Vrai, mais pour nuire</span>
         </button>
       </div>
 
@@ -358,24 +358,71 @@
         <div class="why" id="why"></div>
       </div>
 
-      <button class="next" id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+      <button class="next" id="nextBtn" onclick="nextQuestion()" data-i18n="nextBtn">Suivant →</button>
     </div>
   </section>
 
   <!-- ÉCRAN FIN -->
   <section id="end" class="panel hidden">
-    <h2>🏁 Terminé !</h2>
+    <h2 data-i18n="endTitle">🏁 Terminé !</h2>
     <div class="final-score"><span id="finalScore">0</span><small> / <span id="maxScore">0</span></small></div>
     <div class="grade" id="grade"></div>
     <div class="legend" id="recap"></div>
-    <button class="btn-primary" onclick="startGame(difficulty)">🔄 Rejouer ce niveau</button>
-    <button class="btn-ghost" onclick="backToIntro()">📖 Changer de niveau / revoir les définitions</button>
+    <button class="btn-primary" onclick="startGame(difficulty)" data-i18n="replayLevel">🔄 Rejouer ce niveau</button>
+    <button class="btn-ghost" onclick="backToIntro()" data-i18n="changeLevel">📖 Changer de niveau / revoir les définitions</button>
   </section>
 
   <footer>Éducation aux médias et à l'information — vocabulaire de l'UNESCO (mis-, dis-, mal-information)</footer>
 </div>
 
-<script src="mes-des-mal-data.js"></script>
+<script src="../i18n.js"></script>
+<script>
+I18N.register({
+  fr: {
+    subtitle: "Sauras-tu reconnaître le type de manipulation de l'information ?",
+    introH2: "🎯 Le but du jeu",
+    introP: `On va te présenter des situations réelles ou crédibles. Pour chacune, tu dois deviner : est-ce de la <b style="color:var(--mes)">mésinformation</b>, de la <b style="color:var(--des)">désinformation</b> ou de la <b style="color:var(--mal)">malinformation</b> ? Deux questions à se poser à chaque fois :<br><b>① L'info est-elle vraie ou fausse ?</b> &nbsp; <b>② Y a-t-il une intention de nuire ?</b>`,
+    mesH3: "🟢 Mésinformation", mesP: `Information <b>fausse</b>, partagée <b>sans intention de nuire</b>. La personne se trompe ou croit bien faire (rumeur, erreur, vieille info).`, mesFormula: "FAUX + PAS d'intention de nuire",
+    desH3: "🔴 Désinformation", desP: `Information <b>fausse</b>, créée et diffusée <b>volontairement pour tromper ou nuire</b> (fausse nouvelle fabriquée, propagande, arnaque).`, desFormula: "FAUX + intention de nuire",
+    malH3: "🟠 Malinformation", malP: `Information <b>vraie</b>, mais <b>divulguée</b> (fuite, données privées) ou <b>sortie de son contexte</b> <b>pour nuire</b> à quelqu'un.`, malFormula: "VRAI + intention de nuire",
+    bridgeH3: "🔀 Le piège du « faux contexte »", bridgeP: `Un contenu <b>vrai</b> (photo, citation, vidéo) avec une <b>fausse mise en contexte</b> (mauvaise date, lieu, auteur). Le même contenu peut être :`, bridgeFormula: "par erreur → mésinfo · exprès pour nuire → malinfo",
+    chooseLevel: "Choisis ton niveau :", levelNormal: "🚀 Niveau normal", levelHard: "🔥 Niveau difficile — cas ambigus &amp; faux contexte",
+    streakTitle: "Série de bonnes réponses", points: "points",
+    choiceMesTtl: "Mésinformation", choiceMesDef: "Faux, sans intention de nuire",
+    choiceDesTtl: "Désinformation", choiceDesDef: "Faux, pour nuire",
+    choiceMalTtl: "Malinformation", choiceMalDef: "Vrai, mais pour nuire",
+    nextBtn: "Suivant →", endTitle: "🏁 Terminé !", replayLevel: "🔄 Rejouer ce niveau", changeLevel: "📖 Changer de niveau / revoir les définitions",
+    like: "♥ J'aime", comment: "💬 Commenter", share: "↗ Partager", forwarded: "Transféré", newsAlert: "🔴 Alerte info",
+    ask: "De quel type d'information s'agit-il ?", qLabel: "Question",
+    exactStreakA: "✅ Exact ! 🔥 Série de ", exactStreakB: " (+5 bonus)", goodAnswer: "✅ Bonne réponse !", missPrefix: "❌ Raté — c'était de la ",
+    grade100: "🏆 Sans faute — tu es un·e pro de la vérification !", grade80: "🌟 Excellent ! Tu repères très bien les pièges.",
+    grade60: "👍 Pas mal ! Encore un peu d'entraînement.", grade40: "🤔 Bon début — relis bien les définitions.", grade0: "📚 Courage ! Reprends les définitions et réessaie.",
+    answersSuffix: " bonnes réponses)", catMes: "🟢 Mésinformation", catDes: "🔴 Désinformation", catMal: "🟠 Malinformation", wellIdentified: " bien identifiées"
+  },
+  en: {
+    subtitle: "Can you recognise the type of information manipulation?",
+    introH2: "🎯 The goal of the game",
+    introP: `We'll show you real or believable situations. For each one, you must guess: is it <b style="color:var(--mes)">misinformation</b>, <b style="color:var(--des)">disinformation</b> or <b style="color:var(--mal)">malinformation</b>? Two questions to ask each time:<br><b>① Is the info true or false?</b> &nbsp; <b>② Is there an intent to harm?</b>`,
+    mesH3: "🟢 Misinformation", mesP: `<b>False</b> information, shared <b>with no intent to harm</b>. The person is mistaken or means well (rumour, error, old news).`, mesFormula: "FALSE + NO intent to harm",
+    desH3: "🔴 Disinformation", desP: `<b>False</b> information, created and spread <b>deliberately to deceive or harm</b> (fabricated fake news, propaganda, scam).`, desFormula: "FALSE + intent to harm",
+    malH3: "🟠 Malinformation", malP: `<b>True</b> information, but <b>leaked</b> (leak, private data) or <b>taken out of context</b> <b>to harm</b> someone.`, malFormula: "TRUE + intent to harm",
+    bridgeH3: "🔀 The 'false context' trap", bridgeP: `<b>True</b> content (photo, quote, video) with a <b>false framing</b> (wrong date, place, author). The same content can be:`, bridgeFormula: "by mistake → misinfo · on purpose to harm → malinfo",
+    chooseLevel: "Choose your level:", levelNormal: "🚀 Normal level", levelHard: "🔥 Hard level — ambiguous cases &amp; false context",
+    streakTitle: "Streak of correct answers", points: "points",
+    choiceMesTtl: "Misinformation", choiceMesDef: "False, no intent to harm",
+    choiceDesTtl: "Disinformation", choiceDesDef: "False, to harm",
+    choiceMalTtl: "Malinformation", choiceMalDef: "True, but to harm",
+    nextBtn: "Next →", endTitle: "🏁 Finished!", replayLevel: "🔄 Replay this level", changeLevel: "📖 Change level / review the definitions",
+    like: "♥ Like", comment: "💬 Comment", share: "↗ Share", forwarded: "Forwarded", newsAlert: "🔴 News alert",
+    ask: "What type of information is this?", qLabel: "Question",
+    exactStreakA: "✅ Correct! 🔥 Streak of ", exactStreakB: " (+5 bonus)", goodAnswer: "✅ Correct answer!", missPrefix: "❌ Missed — that was ",
+    grade100: "🏆 Flawless — you're a fact-checking pro!", grade80: "🌟 Excellent! You spot the traps very well.",
+    grade60: "👍 Not bad! A little more practice.", grade40: "🤔 Good start — reread the definitions.", grade0: "📚 Keep at it! Review the definitions and try again.",
+    answersSuffix: " correct answers)", catMes: "🟢 Misinformation", catDes: "🔴 Disinformation", catMal: "🟠 Malinformation", wellIdentified: " correctly identified"
+  }
+});
+document.write('<scr' + 'ipt src="' + (I18N.lang === 'en' ? 'mes_des_mal_data_english_v2.js' : 'mes-des-mal-data.js') + '"><\/scr' + 'ipt>');
+</script>
 <script src="mes-des-mal.js"></script>
 </body>
 </html>

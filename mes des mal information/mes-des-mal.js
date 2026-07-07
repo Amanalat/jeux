@@ -26,14 +26,14 @@ function renderEnonce(s){
       + '<div><div class="nm">' + s.user + '</div><div class="ha">' + s.handle + '</div></div>'
       + (s.badge ? '<span class="badge">' + s.badge + '</span>' : '') + '</div>'
       + '<div class="bd">' + s.body + '</div>'
-      + '<div class="ft"><span>♥ J\'aime</span><span>💬 Commenter</span><span>↗ Partager</span></div></div>';
+      + '<div class="ft"><span>' + I18N.t('like') + '</span><span>' + I18N.t('comment') + '</span><span>' + I18N.t('share') + '</span></div></div>';
   } else if(f === "forward"){
-    h = '<div class="fr-fwd"><div class="fwd">↪️ ' + (s.fwd || "Transféré") + '</div><div class="msg">' + s.body + '</div></div>';
+    h = '<div class="fr-fwd"><div class="fwd">↪️ ' + (s.fwd || I18N.t('forwarded')) + '</div><div class="msg">' + s.body + '</div></div>';
   } else if(f === "notif"){
     h = '<div class="fr-notif"><div class="ic">' + (s.icon || "🔔") + '</div><div>'
       + '<div class="ap">' + s.app + '</div><div class="ti">' + s.title + '</div><div class="tx">' + s.body + '</div></div></div>';
   } else if(f === "news"){
-    h = '<div class="fr-news"><div class="kick">' + (s.kicker || "🔴 Alerte info") + '</div><div class="in">'
+    h = '<div class="fr-news"><div class="kick">' + (s.kicker || I18N.t('newsAlert')) + '</div><div class="in">'
       + '<div class="hl">' + s.headline + '</div>' + (s.outlet ? '<div class="src">' + s.outlet + '</div>' : '')
       + (s.erratum ? '<div class="err">✏️ ' + s.erratum + '</div>' : '') + '</div></div>';
   } else if(f === "mail"){
@@ -115,7 +115,7 @@ function renderQuestion(){
   const s = pool[order[idx]];
   $("tag").textContent = s.tag;
   $("scenario").innerHTML = renderEnonce(s);
-  $("ask").textContent = s.ask || "De quel type d'information s'agit-il ?";
+  $("ask").textContent = s.ask || I18N.t('ask');
   if(s.fmt === "chat") revealChat();
 
   // média(s) illustratif(s) — chaque image qui n'existe pas encore se retire d'elle-même
@@ -123,7 +123,7 @@ function renderQuestion(){
   const imgs = s.imgs || (s.img ? [s.img] : []);
   media.innerHTML = imgs.map(src => '<img src="' + src + '" alt="" loading="lazy" onerror="this.remove()">').join("");
   media.classList.toggle("show", imgs.length > 0);
-  $("qcount").textContent = "Question " + (idx+1);
+  $("qcount").textContent = I18N.t('qLabel') + " " + (idx+1);
   $("score").textContent = score;
   $("streak").textContent = streak >= 2 ? "🔥×" + streak : "";
   $("barfill").style.width = (idx / order.length * 100) + "%";
@@ -170,10 +170,10 @@ function answer(choice){
   const v = $("verdict");
   if(isRight){
     v.className = "verdict ok";
-    v.textContent = streak >= 3 ? "✅ Exact ! 🔥 Série de " + streak + " (+5 bonus)" : "✅ Bonne réponse !";
+    v.textContent = streak >= 3 ? I18N.t('exactStreakA') + streak + I18N.t('exactStreakB') : I18N.t('goodAnswer');
   } else {
     v.className = "verdict no";
-    v.textContent = "❌ Raté — c'était de la " + LABELS[correct].name;
+    v.textContent = I18N.t('missPrefix') + LABELS[correct].name;
   }
   $("why").innerHTML = s.why;
   $("feedback").classList.add("show");
@@ -196,21 +196,21 @@ function endGame(){
   const totalOk = stats.mes.ok + stats.des.ok + stats.mal.ok;
   const pct = Math.round(totalOk / order.length * 100);
   let grade;
-  if(pct === 100) grade = "🏆 Sans faute — tu es un·e pro de la vérification !";
-  else if(pct >= 80) grade = "🌟 Excellent ! Tu repères très bien les pièges.";
-  else if(pct >= 60) grade = "👍 Pas mal ! Encore un peu d'entraînement.";
-  else if(pct >= 40) grade = "🤔 Bon début — relis bien les définitions.";
-  else grade = "📚 Courage ! Reprends les définitions et réessaie.";
-  $("grade").textContent = grade + " (" + totalOk + "/" + order.length + " bonnes réponses)";
+  if(pct === 100) grade = I18N.t('grade100');
+  else if(pct >= 80) grade = I18N.t('grade80');
+  else if(pct >= 60) grade = I18N.t('grade60');
+  else if(pct >= 40) grade = I18N.t('grade40');
+  else grade = I18N.t('grade0');
+  $("grade").textContent = grade + " (" + totalOk + "/" + order.length + I18N.t('answersSuffix');
 
   // récap par catégorie
   const recap = $("recap");
   recap.innerHTML = "";
-  [["mes","🟢 Mésinformation"],["des","🔴 Désinformation"],["mal","🟠 Malinformation"]].forEach(([k,name]) => {
+  [["mes",I18N.t('catMes')],["des",I18N.t('catDes')],["mal",I18N.t('catMal')]].forEach(([k,name]) => {
     const st = stats[k];
     const div = document.createElement("div");
     div.className = "item " + k;
-    div.innerHTML = "<h3>" + name + "</h3><p>" + st.ok + " / " + st.tot + " bien identifiées</p>";
+    div.innerHTML = "<h3>" + name + "</h3><p>" + st.ok + " / " + st.tot + I18N.t('wellIdentified') + "</p>";
     recap.appendChild(div);
   });
   $("barfill").style.width = "100%";
