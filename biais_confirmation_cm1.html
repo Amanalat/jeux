@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Le biais de confirmation — CM1</title>
+<title data-i18n="pageTitle">Le biais de confirmation — CM1</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap');
 
@@ -387,12 +387,12 @@
 </style>
 </head>
 <body>
-<a class="back-hub" href="index.html">← Retour aux jeux</a>
+<a class="back-hub" href="index.html" data-i18n="back">← Retour aux jeux</a>
 
 <header>
-  <h1>Le <span>biais de confirmation</span> 🧠</h1>
+  <h1 data-i18n-html="h1">Le <span>biais de confirmation</span> 🧠</h1>
   <p class="cred-atger" style="text-align:center;font-size:.8rem;font-weight:600;opacity:.65;margin:2px 0 0;">par <a href="https://antoninatger.com" target="_blank" style="color:inherit;">Antonin Atger</a></p>
-  <p>À qui vas-tu faire confiance&nbsp;? Choisis et découvre pourquoi&nbsp;!</p>
+  <p data-i18n-html="subtitle">À qui vas-tu faire confiance&nbsp;? Choisis et découvre pourquoi&nbsp;!</p>
 </header>
 
 <div class="progress-wrap hidden" id="progress"></div>
@@ -401,18 +401,18 @@
 
   <div id="intro-screen">
     <div class="intro-brain">🧠</div>
-    <div class="intro-title">Le biais de confirmation</div>
-    <div class="intro-definition">
+    <div class="intro-title" data-i18n="introTitle">Le biais de confirmation</div>
+    <div class="intro-definition" data-i18n-html="introDef">
       Notre cerveau a une tendance naturelle à <strong>chercher et retenir les informations qui confirment ce qu'il croit déjà</strong> — et à rejeter ou ignorer ce qui le contredit, même si c'est vrai.<br><br>
       Résultat : on finit par ne voir que ce qu'on veut voir, et par croire encore plus fort ce qu'on croyait déjà !
     </div>
-    <div class="intro-game-link">
+    <div class="intro-game-link" data-i18n-html="introGame">
       🎮 Dans ce jeu, tu vas devoir choisir <strong>qui a raison</strong> dans différentes situations.<br>
       Attention : ton cerveau va essayer de te pousser vers la réponse qui <em>confirme ce que tu ressens déjà</em>…<br>
       Sauras-tu résister ?
     </div>
-    <div class="intro-cta">Et maintenant, on va tester le « biais de confirmation » !</div>
-    <button class="btn btn-start" onclick="startGame()">C'est parti ! ▶</button>
+    <div class="intro-cta" data-i18n="introCta">Et maintenant, on va tester le « biais de confirmation » !</div>
+    <button class="btn btn-start" onclick="startGame()" data-i18n="start">C'est parti ! ▶</button>
   </div>
 
   <div id="game-area" class="hidden">
@@ -423,8 +423,8 @@
     <div class="pedagogy-note" id="pedagogy-note" style="display:none;"></div>
 
     <div class="question" id="question-area">
-      <p>Selon toi, qui a raison&nbsp;?</p>
-      <small>Clique sur la personne dont tu retiens l'avis.</small>
+      <p data-i18n-html="question">Selon toi, qui a raison&nbsp;?</p>
+      <small data-i18n="clickHint">Clique sur la personne dont tu retiens l'avis.</small>
       <div class="choices" id="choices"></div>
     </div>
 
@@ -432,25 +432,58 @@
     <div class="result disagree" id="res-disagree"></div>
 
     <div class="btn-row" id="btn-row" style="display:none; margin-top:16px;">
-      <button class="btn btn-replay" onclick="replay()">↩ Recommencer</button>
+      <button class="btn btn-replay" onclick="replay()" data-i18n="replay">↩ Recommencer</button>
       <button class="btn btn-next"   id="btn-next" onclick="nextStep()">Situation suivante →</button>
     </div>
   </div>
 
   <div class="final" id="final-area">
     <div class="trophy">🏆</div>
-    <h2>Bravo&nbsp;! Tu as tout fait&nbsp;!</h2>
-    <p>À chaque fois, tu as eu tendance à retenir l'avis qui correspondait à ce que la personne pensait déjà…</p>
-    <div class="definition">
+    <h2 data-i18n-html="finalTitle">Bravo&nbsp;! Tu as tout fait&nbsp;!</h2>
+    <p data-i18n="finalText">À chaque fois, tu as eu tendance à retenir l'avis qui correspondait à ce que la personne pensait déjà…</p>
+    <div class="definition" data-i18n-html="finalDef">
       <strong>Le biais de confirmation</strong>, c'est quand notre cerveau retient surtout les informations qui confirment ce qu'on pense déjà, et ignore les autres — même si elles sont tout aussi valables&nbsp;!
     </div>
-    <button class="btn btn-restart" onclick="restart()">🔄 Recommencer depuis le début</button>
+    <button class="btn btn-restart" onclick="restart()" data-i18n="restart">🔄 Recommencer depuis le début</button>
   </div>
 
 </div>
 
+<script src="i18n.js"></script>
 <script>
-const steps = [
+I18N.register({
+  fr: {
+    pageTitle: "Le biais de confirmation — CM1", back: "← Retour aux jeux",
+    h1: "Le <span>biais de confirmation</span> 🧠",
+    subtitle: "À qui vas-tu faire confiance&nbsp;? Choisis et découvre pourquoi&nbsp;!",
+    introTitle: "Le biais de confirmation",
+    introDef: `Notre cerveau a une tendance naturelle à <strong>chercher et retenir les informations qui confirment ce qu'il croit déjà</strong> — et à rejeter ou ignorer ce qui le contredit, même si c'est vrai.<br><br>Résultat : on finit par ne voir que ce qu'on veut voir, et par croire encore plus fort ce qu'on croyait déjà !`,
+    introGame: `🎮 Dans ce jeu, tu vas devoir choisir <strong>qui a raison</strong> dans différentes situations.<br>Attention : ton cerveau va essayer de te pousser vers la réponse qui <em>confirme ce que tu ressens déjà</em>…<br>Sauras-tu résister ?`,
+    introCta: "Et maintenant, on va tester le « biais de confirmation » !", start: "C'est parti ! ▶",
+    question: "Selon toi, qui a raison&nbsp;?", clickHint: "Clique sur la personne dont tu retiens l'avis.",
+    replay: "↩ Recommencer", finalTitle: "Bravo&nbsp;! Tu as tout fait&nbsp;!",
+    finalText: "À chaque fois, tu as eu tendance à retenir l'avis qui correspondait à ce que la personne pensait déjà…",
+    finalDef: `<strong>Le biais de confirmation</strong>, c'est quand notre cerveau retient surtout les informations qui confirment ce qu'on pense déjà, et ignore les autres — même si elles sont tout aussi valables&nbsp;!`,
+    restart: "🔄 Recommencer depuis le début",
+    situationLabel: "Situation", isRight: "a raison&nbsp;!", seeResults: "Voir le bilan 🎉", nextSituation: "Situation suivante →"
+  },
+  en: {
+    pageTitle: "Confirmation bias — for kids", back: "← Back to games",
+    h1: "The <span>confirmation bias</span> 🧠",
+    subtitle: "Who will you trust? Choose and find out why!",
+    introTitle: "The confirmation bias",
+    introDef: `Our brain naturally tends to <strong>look for and remember information that confirms what it already believes</strong> — and to reject or ignore anything that contradicts it, even when it's true.<br><br>The result: we end up seeing only what we want to see, and believing even more strongly what we already believed!`,
+    introGame: `🎮 In this game, you'll have to choose <strong>who is right</strong> in different situations.<br>Watch out: your brain will try to push you toward the answer that <em>confirms what you already feel</em>…<br>Can you resist?`,
+    introCta: "And now, let's test the 'confirmation bias'!", start: "Let's go! ▶",
+    question: "Who do you think is right?", clickHint: "Click the person whose opinion you'd keep.",
+    replay: "↩ Start over", finalTitle: "Well done! You did it all!",
+    finalText: "Every time, you tended to keep the opinion that matched what the person already thought…",
+    finalDef: `<strong>The confirmation bias</strong> is when our brain mainly keeps the information that confirms what we already think, and ignores the rest — even when it's just as valid!`,
+    restart: "🔄 Start again from the beginning",
+    situationLabel: "Situation", isRight: "is right!", seeResults: "See the results 🎉", nextSituation: "Next situation →"
+  }
+});
+const STEPS_FR = [
   {
     emoji: "✏️",
     center: "J'ai écrit la meilleure rédaction de la classe&nbsp;!",
@@ -504,6 +537,62 @@ const steps = [
   }
 ];
 
+const STEPS_EN = [
+  {
+    emoji: "✏️",
+    center: "I wrote the best essay in the class!",
+    agree:    { name: "Chloe",  emoji: "🤩", text: "It's true, your story was really well written!" },
+    disagree: { name: "Nathan", emoji: "😬", text: "Meh, it was a bit long and there were some mistakes…" },
+    reveal: {
+      agree:    { title: "You chose Chloe!", explain: "When we're proud of our work, we mostly remember the compliments. That's the <span class='highlight'>confirmation bias</span>!" },
+      disagree: { title: "You chose Nathan!", explain: "If we doubt ourselves, we remember the criticism. That's the <span class='highlight'>confirmation bias</span>! But careful: Nathan may have spotted real mistakes. <span class='highlight'>Listening to criticism can help you improve!</span>" }
+    }
+  },
+  {
+    emoji: "🏃",
+    center: "I ran the fastest at recess!",
+    agree:    { name: "Enzo", emoji: "😄", text: "Yes! You beat everyone easily!" },
+    disagree: { name: "Sara", emoji: "😒", text: "No, I saw you, you took a shortcut!" },
+    note: "💡 Sara might be a little right… Sometimes it's important to listen to criticism!",
+    reveal: {
+      agree:    { title: "You chose Enzo!", explain: "We prefer to hear that we won fairly. That's the <span class='highlight'>confirmation bias</span>! But… didn't Sara maybe see something true?" },
+      disagree: { title: "You chose Sara!", explain: "Good thinking: Sara raises a specific fact. <span class='highlight'>Listening to criticism</span>, even when it hurts, is what keeps us from lying to ourselves!" }
+    }
+  },
+  {
+    emoji: "⚽",
+    center: "I scored the best goal of the whole year!",
+    agree:    { name: "Theo",  emoji: "🙌", text: "Totally, that was an incredible shot!" },
+    disagree: { name: "Manon", emoji: "🤨", text: "You were offside before you shot, the ref should have cancelled it!" },
+    reveal: {
+      agree:    { title: "You chose Theo!", explain: "We mostly remember what makes us look good. That's the <span class='highlight'>confirmation bias</span>!" },
+      disagree: { title: "You chose Manon!", explain: "Manon raises an honest point. <span class='highlight'>Listening to criticism</span> helps us see reality as it is, not as we'd like it to be!" }
+    }
+  },
+  {
+    emoji: "🎂",
+    center: "I made the best cake for the party!",
+    agree:    { name: "Jade", emoji: "😋", text: "Yes! Everyone wanted a second piece!" },
+    disagree: { name: "Hugo", emoji: "😕", text: "You forgot the baking powder, that's why it was all flat in the middle…" },
+    reveal: {
+      agree:    { title: "You chose Jade!", explain: "When we've worked hard, we prefer compliments. That's the <span class='highlight'>confirmation bias</span>!" },
+      disagree: { title: "You chose Hugo!", explain: "Hugo may have tasted something real. <span class='highlight'>Constructive criticism</span> helps us do even better next time!" }
+    }
+  },
+  {
+    emoji: "🎭",
+    center: "I had the best costume for Carnival!",
+    agree:    { name: "Leonie", emoji: "😍", text: "Yes, everyone was looking at you, you were so original!" },
+    disagree: { name: "Alexis", emoji: "😶", text: "You could tell it was made at the last minute…" },
+    reveal: {
+      agree:    { title: "You chose Leonie!", explain: "We keep the opinions that confirm we succeeded. That's the <span class='highlight'>confirmation bias</span>!" },
+      disagree: { title: "You chose Alexis!", explain: "Alexis may have noticed something real. <span class='highlight'>Listening to a criticism</span>, even an awkward one, is a chance to do better next time!" }
+    }
+  }
+];
+
+const steps = (window.I18N && I18N.lang === 'en') ? STEPS_EN : STEPS_FR;
+
 let current = 0;
 let answered = false;
 
@@ -520,7 +609,7 @@ function buildProgress() {
 function buildStep() {
   answered = false;
   const s = steps[current];
-  document.getElementById('step-label').textContent = `Situation ${current+1} / ${steps.length}`;
+  document.getElementById('step-label').textContent = `${I18N.t('situationLabel')} ${current+1} / ${steps.length}`;
 
   document.getElementById('scene').innerHTML = `
     <div class="buddy agree">
@@ -542,8 +631,8 @@ function buildStep() {
   `;
 
   document.getElementById('choices').innerHTML = `
-    <button class="choice-btn agree"    onclick="choose('agree')">   ${s.agree.name} a raison&nbsp;!</button>
-    <button class="choice-btn disagree" onclick="choose('disagree')">${s.disagree.name} a raison&nbsp;!</button>
+    <button class="choice-btn agree"    onclick="choose('agree')">   ${s.agree.name} ${I18N.t('isRight')}</button>
+    <button class="choice-btn disagree" onclick="choose('disagree')">${s.disagree.name} ${I18N.t('isRight')}</button>
   `;
 
   const noteEl = document.getElementById('pedagogy-note');
@@ -553,7 +642,7 @@ function buildStep() {
   document.getElementById('res-agree').classList.remove('show');
   document.getElementById('res-disagree').classList.remove('show');
   document.getElementById('btn-row').style.display = 'none';
-  document.getElementById('btn-next').textContent = current === steps.length - 1 ? 'Voir le bilan 🎉' : 'Situation suivante →';
+  document.getElementById('btn-next').textContent = I18N.t(current === steps.length - 1 ? 'seeResults' : 'nextSituation');
 }
 
 function choose(side) {
