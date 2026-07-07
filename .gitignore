@@ -24,3 +24,6 @@ desktop.ini
 *.avi
 *.pst
 *.zip
+
+# === Copie de travail (ne pas versionner) ===
+/fakemetre-refonte/

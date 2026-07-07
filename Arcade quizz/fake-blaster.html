@@ -44,6 +44,10 @@ body{
 }
 #menu-link:hover{background:#c8440a;color:#fff;}
 #set-label{color:#8a6ab0;letter-spacing:.04em;font-size:13px;}
+
+/* a11y collection */
+:where(button,a,[tabindex],input,select,textarea):focus-visible{outline:3px solid #38bdf8;outline-offset:2px;border-radius:6px;}
+(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}}
 </style>
 </head>
 <body>

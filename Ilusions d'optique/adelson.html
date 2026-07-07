@@ -32,6 +32,10 @@ h2 { font-size: 14px; font-weight: 500; color: #666; margin-bottom: 10px; }
   pointer-events: none;
   font-family: system-ui, sans-serif;
 }
+
+/* a11y collection */
+:where(button,a,[tabindex],input,select,textarea):focus-visible{outline:3px solid #38bdf8;outline-offset:2px;border-radius:6px;}
+(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}}
 </style>
 </head>
 <body>

@@ -3,11 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Illusions d'optique</title>
+<title data-i18n="pageTitle">Illusions d'optique</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{ --bg:#0f172a; --card:#1e293b; --txt:#e2e8f0; --doux:#94a3b8; --acc:#38bdf8; }
   *{ box-sizing:border-box; }
-  body{ margin:0; font-family:system-ui,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--txt); }
+  body{ margin:0; font-family:'Nunito',system-ui,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--txt); }
+  header h1{ font-weight:800; }
+  :where(button,a,[tabindex]):focus-visible{ outline:3px solid var(--acc); outline-offset:2px; border-radius:6px; }
+  @media(prefers-reduced-motion:reduce){ *,*::before,*::after{ animation-duration:.001ms!important; transition-duration:.001ms!important; } }
   header{ padding:40px 20px 24px; text-align:center; }
   header h1{ margin:0 0 6px; font-size:1.9em; }
   header p{ margin:0; color:var(--doux); }
@@ -23,21 +27,43 @@
 </head>
 <body>
   <header>
-    <h1>👁️ Illusions d'optique</h1>
-    <p>Onze illusions classiques à explorer</p>
-    <a class="back" href="../index.html">← Retour à tous les jeux</a>
+    <h1 data-i18n="h1">👁️ Illusions d'optique</h1>
+    <p data-i18n="sub">Onze illusions classiques à explorer</p>
+    <p class="cred-atger" style="margin:6px 0 0;font-size:.82rem;font-weight:600;color:var(--doux);">par <a href="https://antoninatger.com" target="_blank" style="color:var(--acc);text-decoration:none;">Antonin Atger</a></p>
+    <a class="back" href="../index.html" data-i18n="back">← Retour à tous les jeux</a>
   </header>
   <div class="grid">
-    <a class="card" href="muller_lyer_illusion.html"><b>Müller-Lyer</b><span>Les flèches trompeuses</span></a>
-    <a class="card" href="ponzo.html"><b>Ponzo</b><span>La perspective qui ment</span></a>
-    <a class="card" href="ebbinghaus.html"><b>Ebbinghaus</b><span>Le cercle central</span></a>
-    <a class="card" href="delboeuf.html"><b>Delbœuf</b><span>Taille et entourage</span></a>
-    <a class="card" href="hering.html"><b>Hering</b><span>Les lignes courbées</span></a>
-    <a class="card" href="zollner.html"><b>Zöllner</b><span>Les parallèles penchées</span></a>
-    <a class="card" href="poggendorff.html"><b>Poggendorff</b><span>La ligne interrompue</span></a>
-    <a class="card" href="cafe_wall.html"><b>Café-wall</b><span>Le mur du café</span></a>
-    <a class="card" href="contraste_simultane.html"><b>Contraste simultané</b><span>Le gris qui change</span></a>
-    <a class="card" href="adelson.html"><b>Échiquier d'Adelson</b><span>Les cases A et B</span></a>
+    <a class="card" href="muller_lyer_illusion.html"><b>Müller-Lyer</b><span data-i18n="d1">Les flèches trompeuses</span></a>
+    <a class="card" href="ponzo.html"><b>Ponzo</b><span data-i18n="d2">La perspective qui ment</span></a>
+    <a class="card" href="ebbinghaus.html"><b>Ebbinghaus</b><span data-i18n="d3">Le cercle central</span></a>
+    <a class="card" href="delboeuf.html"><b>Delbœuf</b><span data-i18n="d4">Taille et entourage</span></a>
+    <a class="card" href="hering.html"><b>Hering</b><span data-i18n="d5">Les lignes courbées</span></a>
+    <a class="card" href="zollner.html"><b>Zöllner</b><span data-i18n="d6">Les parallèles penchées</span></a>
+    <a class="card" href="poggendorff.html"><b>Poggendorff</b><span data-i18n="d7">La ligne interrompue</span></a>
+    <a class="card" href="cafe_wall.html"><b>Café-wall</b><span data-i18n="d8">Le mur du café</span></a>
+    <a class="card" href="contraste_simultane.html"><b data-i18n="nContraste">Contraste simultané</b><span data-i18n="d9">Le gris qui change</span></a>
+    <a class="card" href="adelson.html"><b data-i18n="nAdelson">Échiquier d'Adelson</b><span data-i18n="d10">Les cases A et B</span></a>
   </div>
+  <script src="../i18n.js"></script>
+  <script>
+  I18N.register({
+    fr: {
+      pageTitle: "Illusions d'optique", h1: "👁️ Illusions d'optique",
+      sub: "Onze illusions classiques à explorer", back: "← Retour à tous les jeux",
+      nContraste: "Contraste simultané", nAdelson: "Échiquier d'Adelson",
+      d1: "Les flèches trompeuses", d2: "La perspective qui ment", d3: "Le cercle central",
+      d4: "Taille et entourage", d5: "Les lignes courbées", d6: "Les parallèles penchées",
+      d7: "La ligne interrompue", d8: "Le mur du café", d9: "Le gris qui change", d10: "Les cases A et B"
+    },
+    en: {
+      pageTitle: "Optical Illusions", h1: "👁️ Optical Illusions",
+      sub: "Eleven classic illusions to explore", back: "← Back to all games",
+      nContraste: "Simultaneous Contrast", nAdelson: "Adelson's Checkerboard",
+      d1: "The deceptive arrows", d2: "The lying perspective", d3: "The central circle",
+      d4: "Size and surroundings", d5: "The bent lines", d6: "The leaning parallels",
+      d7: "The interrupted line", d8: "The café wall", d9: "The grey that shifts", d10: "Squares A and B"
+    }
+  });
+  </script>
 </body>
 </html>

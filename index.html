@@ -4,35 +4,47 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jeux — Antonin Atger</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0b1220; --bg2:#0f172a; --card:#1e293b; --card2:#243449;
     --txt:#e8eef7; --doux:#93a4bd; --acc:#38bdf8; --acc2:#a78bfa; --bord:#31415a;
   }
   *{ box-sizing:border-box; }
-  body{ margin:0; font-family:system-ui,"Segoe UI",Roboto,sans-serif; color:var(--txt);
+  body{ margin:0; font-family:'Nunito',system-ui,"Segoe UI",Roboto,sans-serif; color:var(--txt);
     background:radial-gradient(1200px 600px at 50% -10%, #16233d 0%, var(--bg) 60%); min-height:100vh; }
   header{ text-align:center; padding:56px 20px 8px; }
   header .logo{ font-size:2.6em; }
-  header h1{ margin:.2em 0 .15em; font-size:2.1em; letter-spacing:-.5px; }
+  header h1{ font-family:'Fredoka One',cursive; margin:.2em 0 .15em; font-size:2.2em; letter-spacing:-.5px;
+    background:linear-gradient(90deg,var(--acc),var(--acc2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
   header p{ margin:0 auto; max-width:560px; color:var(--doux); line-height:1.5; }
+  header .author{ margin:12px auto 0; font-size:.9em; color:var(--doux); font-weight:600; }
+  header .author a{ color:var(--acc); text-decoration:none; }
+  header .author a:hover{ text-decoration:underline; }
   .cat{ max-width:1040px; margin:0 auto; padding:14px 22px 6px; }
   .cat h2{ font-size:.82em; letter-spacing:.14em; text-transform:uppercase; color:var(--doux);
     margin:34px 0 4px; padding-bottom:8px; border-bottom:1px solid var(--bord); }
   .grid{ max-width:1040px; margin:0 auto; padding:12px 22px; display:grid;
     grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
-  a.card{ position:relative; display:block; background:linear-gradient(180deg,var(--card),var(--card2));
-    border:1px solid var(--bord); border-radius:16px; padding:18px 18px 16px; text-decoration:none;
+  a.card{ position:relative; overflow:hidden; display:block; background:linear-gradient(180deg,var(--card),var(--card2));
+    border:1px solid var(--bord); border-radius:16px; padding:20px 18px 16px; text-decoration:none;
     color:var(--txt); transition:transform .15s, border-color .15s, box-shadow .15s; }
-  a.card:hover{ transform:translateY(-4px); border-color:var(--acc);
+  a.card::before{ content:''; position:absolute; top:0; left:0; right:0; height:4px;
+    background:var(--c,var(--acc)); opacity:.9; transition:height .15s; }
+  a.card:hover{ transform:translateY(-4px); border-color:var(--c,var(--acc));
     box-shadow:0 12px 28px rgba(0,0,0,.45); }
-  a.card .em{ font-size:1.7em; }
-  a.card b{ display:block; font-size:1.12em; margin:6px 0 4px; }
+  a.card:hover::before{ height:6px; }
+  a.card .em{ font-size:1.7em; filter:drop-shadow(0 2px 6px color-mix(in srgb, var(--c,var(--acc)) 45%, transparent)); }
+  a.card b{ display:block; font-size:1.12em; font-weight:800; margin:6px 0 4px; }
   a.card .desc{ color:var(--doux); font-size:.9em; line-height:1.45; min-height:2.6em; }
   a.card .url{ display:block; margin-top:12px; font-family:ui-monospace,Menlo,Consolas,monospace;
-    font-size:.72em; color:var(--acc); word-break:break-all; opacity:.85; }
+    font-size:.72em; color:var(--c,var(--acc)); word-break:break-all; opacity:.85; }
   footer{ text-align:center; color:var(--doux); font-size:.85em; padding:30px 20px 60px; line-height:1.7; }
   footer a{ color:var(--acc2); }
+  footer .by{ display:block; margin-bottom:10px; font-weight:700; color:var(--txt); }
+  footer .by a{ color:var(--acc); }
+  :where(a,button,[tabindex]):focus-visible{ outline:3px solid var(--acc); outline-offset:3px; border-radius:8px; }
+  @media(prefers-reduced-motion:reduce){ *,*::before,*::after{ animation-duration:.001ms!important; transition-duration:.001ms!important; } }
 </style>
 </head>
 <body>
@@ -40,11 +52,12 @@
     <div class="logo">🎮</div>
     <h1>Jeux pédagogiques</h1>
     <p>Esprit critique, fake news, biais cognitifs, culture générale… Cliquez sur un jeu pour y jouer directement dans le navigateur.</p>
+    <p class="author">par <a href="https://antoninatger.com" target="_blank">Antonin Atger</a></p>
   </header>
 
   <div class="cat"><h2>🧭 Mode Exploration</h2></div>
   <div class="grid">
-    <a class="card" href="exploration/index.html">
+    <a class="card" href="exploration/index.html" style="--c:#22d3ee">
       <span class="em">🧭</span><b>Crée ton explorateur</b>
       <div class="desc">Façonne ton avatar avant de partir explorer les jeux pédagogiques.</div>
       <span class="url">amanalat.github.io/jeux/exploration/</span></a>
@@ -52,51 +65,51 @@
 
   <div class="cat"><h2>🧠 Esprit critique &amp; désinformation</h2></div>
   <div class="grid">
-    <a class="card" href="https://amanalat.github.io/fakemetre/">
+    <a class="card" href="https://amanalat.github.io/fakemetre/" style="--c:#f7c948">
       <span class="em">🕵️</span><b>Fakemètre ↗</b>
       <div class="desc">Le jeu phare : mesurer la fiabilité d'une info. (Dépôt séparé)</div>
       <span class="url">amanalat.github.io/fakemetre/</span></a>
-    <a class="card" href="radarnaque/index.html">
+    <a class="card" href="radarnaque/index.html" style="--c:#f97316">
       <span class="em">🛡️</span><b>Radar’naque</b>
       <div class="desc">Repérer les arnaques : SMS, e-mails, faux conseiller, deepfakes…</div>
       <span class="url">amanalat.github.io/jeux/radarnaque/</span></a>
-    <a class="card" href="radar-desinfo/index.html">
+    <a class="card" href="radar-desinfo/index.html" style="--c:#38bdf8">
       <span class="em">📡</span><b>Radar désinfo</b>
       <div class="desc">Distinguer une information fiable d'une désinformation.</div>
       <span class="url">amanalat.github.io/jeux/radar-desinfo/</span></a>
-    <a class="card" href="chasse-aux-biais/index.html">
+    <a class="card" href="chasse-aux-biais/index.html" style="--c:#3ecf8e">
       <span class="em">🎯</span><b>Chasse aux biais</b>
       <div class="desc">Débusquer les biais cognitifs du quotidien.</div>
       <span class="url">amanalat.github.io/jeux/chasse-aux-biais/</span></a>
-    <a class="card" href="arene-rhetorique/index.html">
+    <a class="card" href="arene-rhetorique/index.html" style="--c:#a78bfa">
       <span class="em">⚔️</span><b>Arène de rhétorique</b>
       <div class="desc">Reconnaître les procédés rhétoriques et sophismes.</div>
       <span class="url">amanalat.github.io/jeux/arene-rhetorique/</span></a>
-    <a class="card" href="repare-la-une/index.html">
+    <a class="card" href="repare-la-une/index.html" style="--c:#f75f5f">
       <span class="em">📰</span><b>Répare la une</b>
       <div class="desc">Corriger la une trompeuse d'un journal.</div>
       <span class="url">amanalat.github.io/jeux/repare-la-une/</span></a>
-    <a class="card" href="mes%20des%20mal%20information/mes-des-mal-information.html">
+    <a class="card" href="mes%20des%20mal%20information/mes-des-mal-information.html" style="--c:#fb923c">
       <span class="em">🎲</span><b>Dés de la mal-information</b>
       <div class="desc">Jeu de dés autour de la mal-information.</div>
       <span class="url">amanalat.github.io/jeux/mes des mal information/…</span></a>
-    <a class="card" href="Arcade%20quizz/index.html">
+    <a class="card" href="Arcade%20quizz/index.html" style="--c:#a855f7">
       <span class="em">🕹️</span><b>Arcade quizz</b>
       <div class="desc">Quiz arcade « fake news & esprit critique ».</div>
       <span class="url">amanalat.github.io/jeux/Arcade quizz/</span></a>
-    <a class="card" href="biais_confirmation_cm1.html">
+    <a class="card" href="biais_confirmation_cm1.html" style="--c:#60a5fa">
       <span class="em">🔎</span><b>Le biais de confirmation</b>
       <div class="desc">Comprendre le biais de confirmation (niveau CM1).</div>
       <span class="url">amanalat.github.io/jeux/biais_confirmation_cm1.html</span></a>
-    <a class="card" href="terre_ronde_plate.html">
+    <a class="card" href="terre_ronde_plate.html" style="--c:#34d399">
       <span class="em">🌍</span><b>La Terre ronde ou plate ?</b>
       <div class="desc">Démonter le mythe platiste, preuve par preuve.</div>
       <span class="url">amanalat.github.io/jeux/terre_ronde_plate.html</span></a>
-    <a class="card" href="notes_google.html">
+    <a class="card" href="notes_google.html" style="--c:#fbbf24">
       <span class="em">⭐</span><b>Avis « style Maps »</b>
       <div class="desc">Démo de faux avis en ligne (fiction pédagogique).</div>
       <span class="url">amanalat.github.io/jeux/notes_google.html</span></a>
-    <a class="card" href="snake-fakenews.html">
+    <a class="card" href="snake-fakenews.html" style="--c:#4ade80">
       <span class="em">🐍</span><b>Snake — Fake News</b>
       <div class="desc">Le Snake revisité « fake news & esprit critique ».</div>
       <span class="url">amanalat.github.io/jeux/snake-fakenews.html</span></a>
@@ -104,25 +117,26 @@
 
   <div class="cat"><h2>🎓 Culture &amp; autres jeux</h2></div>
   <div class="grid">
-    <a class="card" href="Plan%C3%A8te%20connaissance.html">
+    <a class="card" href="Plan%C3%A8te%20connaissance.html" style="--c:#818cf8">
       <span class="em">🚀</span><b>Planète Connaissance</b>
       <div class="desc">Quiz de culture générale.</div>
       <span class="url">amanalat.github.io/jeux/Planète connaissance.html</span></a>
-    <a class="card" href="Ilusions%20d'optique/index.html">
+    <a class="card" href="Ilusions%20d'optique/index.html" style="--c:#22d3ee">
       <span class="em">👁️</span><b>Illusions d'optique</b>
       <div class="desc">Onze illusions classiques à explorer.</div>
       <span class="url">amanalat.github.io/jeux/Ilusions d'optique/</span></a>
-    <a class="card" href="echecs.html">
+    <a class="card" href="echecs.html" style="--c:#e2b96f">
       <span class="em">♟️</span><b>Ouvertures aux échecs</b>
       <div class="desc">Apprendre les grandes ouvertures.</div>
       <span class="url">amanalat.github.io/jeux/echecs.html</span></a>
-    <a class="card" href="mine.html">
+    <a class="card" href="mine.html" style="--c:#f59e0b">
       <span class="em">⛏️</span><b>Mine la Planète</b>
       <div class="desc">Extraire les ressources… jusqu'où ?</div>
       <span class="url">amanalat.github.io/jeux/mine.html</span></a>
   </div>
 
   <footer>
+    <span class="by">par <a href="https://antoninatger.com" target="_blank">Antonin Atger</a></span>
     💡 Astuce : cliquez sur l'URL sous une carte pour la copier.<br>
     Code source : <a href="https://github.com/Amanalat/jeux">github.com/Amanalat/jeux</a>
     · Fakemètre : <a href="https://github.com/Amanalat/fakemetre">github.com/Amanalat/fakemetre</a>

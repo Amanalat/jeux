@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Illusion de Ponzo</title>
+<title data-i18n="pageTitle">Illusion de Ponzo</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -95,13 +95,17 @@ svg {
 #explication p:last-child { margin-bottom: 0; }
 #explication .highlight { color: #E67F39; font-weight: 600; }
 #explication .answer { font-weight: 700; color: #111; }
+
+/* a11y collection */
+:where(button,a,[tabindex],input,select,textarea):focus-visible{outline:3px solid #38bdf8;outline-offset:2px;border-radius:6px;}
+(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}}
 </style>
 </head>
 <body>
 
 <p id="question">
-  <strong>Les deux barres rouges ont-elles la même longueur ?</strong><br>
-  <span style="font-size:13px;color:#999;">Glissez les barres pour les comparer côte à côte.</span>
+  <strong data-i18n="q">Les deux barres rouges ont-elles la même longueur ?</strong><br>
+  <span style="font-size:13px;color:#999;" data-i18n="qSub">Glissez les barres pour les comparer côte à côte.</span>
 </p>
 
 <svg id="svg" viewBox="0 0 650 440" xmlns="http://www.w3.org/2000/svg">
@@ -137,22 +141,22 @@ svg {
 </svg>
 
 <div id="controls">
-  <button id="btn-reset">↺ Remettre à neuf</button>
-  <button id="btn-rails">Masquer les rails</button>
+  <button id="btn-reset" data-i18n="reset">↺ Remettre à neuf</button>
+  <button id="btn-rails" data-i18n="railsHide">Masquer les rails</button>
 </div>
 
-<button id="btn-explain">▼ Voir l'explication</button>
+<button id="btn-explain" data-i18n="explShow">▼ Voir l'explication</button>
 
 <div id="explication">
-  <h2>L'illusion de Ponzo — ce que fait votre cerveau</h2>
+  <h2 data-i18n="explTitle">L'illusion de Ponzo — ce que fait votre cerveau</h2>
 
-  <p>
+  <p data-i18n-html="p1">
     <span class="answer">Oui, les deux barres sont rigoureusement identiques.</span>
     Elles mesurent exactement 120 unités dans le dessin. Et pourtant la barre du haut semble
     nettement plus longue. Masquez les rails et elles paraîtront aussitôt égales.
   </p>
 
-  <p>
+  <p data-i18n-html="p2">
     Cette illusion a été décrite en 1913 par le psychologue italien
     <strong>Mario Ponzo</strong>. Elle repose sur le mécanisme de
     <span class="highlight">constance de taille</span> : notre cerveau est entraîné depuis
@@ -162,14 +166,14 @@ svg {
     doit être plus grand pour avoir la même taille rétinienne.
   </p>
 
-  <p>
+  <p data-i18n-html="p3">
     Concrètement, le cortex visuel applique une <span class="highlight">correction de
     profondeur</span> : il amplifie mentalement la taille des objets perçus comme distants.
     Ici les deux barres ont la même taille sur la rétine, mais celle du haut est traitée
     comme plus éloignée — donc le cerveau la juge plus grande pour "compenser" la distance.
   </p>
 
-  <p>
+  <p data-i18n-html="p4">
     Ce biais est universel mais son intensité varie selon l'exposition culturelle à la
     perspective linéaire (architecture, photographie…). Des études ont montré que des
     personnes vivant dans des environnements sans lignes droites ni perspectives artificielles
@@ -178,7 +182,34 @@ svg {
   </p>
 </div>
 
+<script src="../i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    pageTitle: "Illusion de Ponzo",
+    q: "Les deux barres rouges ont-elles la même longueur ?",
+    qSub: "Glissez les barres pour les comparer côte à côte.",
+    reset: "↺ Remettre à neuf", railsHide: "Masquer les rails", railsShow: "Afficher les rails",
+    explShow: "▼ Voir l'explication", explHide: "▲ Masquer l'explication",
+    explTitle: "L'illusion de Ponzo — ce que fait votre cerveau",
+    p1: `<span class="answer">Oui, les deux barres sont rigoureusement identiques.</span> Elles mesurent exactement 120 unités dans le dessin. Et pourtant la barre du haut semble nettement plus longue. Masquez les rails et elles paraîtront aussitôt égales.`,
+    p2: `Cette illusion a été décrite en 1913 par le psychologue italien <strong>Mario Ponzo</strong>. Elle repose sur le mécanisme de <span class="highlight">constance de taille</span> : notre cerveau est entraîné depuis l'enfance à interpréter les lignes qui convergent comme des rails ou des routes qui s'éloignent vers un point de fuite. Dans ce contexte de perspective, il en déduit automatiquement que ce qui est situé plus haut (plus "loin") doit être plus grand pour avoir la même taille rétinienne.`,
+    p3: `Concrètement, le cortex visuel applique une <span class="highlight">correction de profondeur</span> : il amplifie mentalement la taille des objets perçus comme distants. Ici les deux barres ont la même taille sur la rétine, mais celle du haut est traitée comme plus éloignée — donc le cerveau la juge plus grande pour "compenser" la distance.`,
+    p4: `Ce biais est universel mais son intensité varie selon l'exposition culturelle à la perspective linéaire (architecture, photographie…). Des études ont montré que des personnes vivant dans des environnements sans lignes droites ni perspectives artificielles sont moins sensibles à cette illusion — preuve que notre perception est en partie <span class="highlight">apprise, pas innée</span>.`
+  },
+  en: {
+    pageTitle: "Ponzo Illusion",
+    q: "Are the two red bars the same length?",
+    qSub: "Drag the bars to compare them side by side.",
+    reset: "↺ Reset", railsHide: "Hide the rails", railsShow: "Show the rails",
+    explShow: "▼ See the explanation", explHide: "▲ Hide the explanation",
+    explTitle: "The Ponzo illusion — what your brain is doing",
+    p1: `<span class="answer">Yes, the two bars are strictly identical.</span> They are exactly 120 units long in the drawing. And yet the top bar looks clearly longer. Hide the rails and they immediately look equal.`,
+    p2: `This illusion was described in 1913 by the Italian psychologist <strong>Mario Ponzo</strong>. It relies on the mechanism of <span class="highlight">size constancy</span>: since childhood our brain is trained to read converging lines as rails or roads receding toward a vanishing point. In this perspective context, it automatically infers that whatever sits higher up (further "away") must be larger to have the same retinal size.`,
+    p3: `Concretely, the visual cortex applies a <span class="highlight">depth correction</span>: it mentally enlarges objects perceived as distant. Here both bars are the same size on the retina, but the top one is treated as farther away — so the brain judges it bigger to "compensate" for the distance.`,
+    p4: `This bias is universal, but its strength varies with cultural exposure to linear perspective (architecture, photography…). Studies have shown that people living in environments without straight lines or artificial perspective are less sensitive to this illusion — proof that our perception is partly <span class="highlight">learned, not innate</span>.`
+  }
+});
 const SVG_EL = document.getElementById('svg');
 const VB_W = 650, VB_H = 440;
 
@@ -230,7 +261,7 @@ let railsVisible = true;
 document.getElementById('btn-rails').addEventListener('click', function() {
   railsVisible = !railsVisible;
   document.getElementById('rails').style.visibility = railsVisible ? '' : 'hidden';
-  this.textContent = railsVisible ? 'Masquer les rails' : 'Afficher les rails';
+  this.textContent = I18N.t(railsVisible ? 'railsHide' : 'railsShow');
 });
 
 document.getElementById('btn-reset').addEventListener('click', () => {
@@ -240,14 +271,14 @@ document.getElementById('btn-reset').addEventListener('click', () => {
   bot.setAttribute('y1', '340'); bot.setAttribute('y2', '340');
   railsVisible = true;
   document.getElementById('rails').style.visibility = '';
-  document.getElementById('btn-rails').textContent = 'Masquer les rails';
+  document.getElementById('btn-rails').textContent = I18N.t('railsHide');
 });
 
 const btnEx = document.getElementById('btn-explain');
 const divEx = document.getElementById('explication');
 btnEx.addEventListener('click', () => {
   const visible = divEx.classList.toggle('visible');
-  btnEx.textContent = visible ? '▲ Masquer l\'explication' : '▼ Voir l\'explication';
+  btnEx.textContent = I18N.t(visible ? 'explHide' : 'explShow');
 });
 </script>
 </body>

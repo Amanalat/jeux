@@ -208,9 +208,16 @@ canvas{display:block;width:100%;height:100%}
   background:#00dcff;box-shadow:0 0 12px #00dcff;cursor:pointer;
 }
 #speed-slider::-moz-range-track{background:rgba(255,255,255,.1);height:5px;border-radius:99px}
+/* ── Collection : retour hub + accessibilité ── */
+.back-hub{position:fixed;top:12px;left:12px;z-index:9999;display:inline-flex;align-items:center;gap:5px;background:rgba(15,20,30,.72);border:1px solid rgba(255,255,255,.18);color:#cdd8e6;text-decoration:none;font-size:.8rem;font-weight:700;padding:7px 14px;border-radius:50px;opacity:.9;transition:opacity .2s,transform .2s;backdrop-filter:blur(4px);font-family:inherit;}
+.back-hub:hover{opacity:1;transform:translateX(-2px);}
+:where(button,a,[tabindex],input,select,textarea):focus-visible{outline:3px solid #f7c948;outline-offset:2px;border-radius:6px;}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}}
 </style>
 </head>
 <body>
+<a class="back-hub" href="index.html">← Retour aux jeux</a>
+<div style="position:fixed;bottom:8px;right:12px;z-index:9998;font-size:.68rem;font-weight:600;opacity:.5;color:#fff;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.6);">par Antonin Atger</div>
 
 <!-- HUD -->
 <div id="hud">

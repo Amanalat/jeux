@@ -14,9 +14,7 @@
     <div class="topbar">
       <div class="logo"><span class="radar">🛰️</span> Radar’naque</div>
       <div class="spacer"></div>
-      <button class="topbtn" id="menu-btn" title="Revenir au menu" style="display:none">🏠 Menu</button>
       <button class="topbtn" id="gloss-btn" title="Les mots à connaître">📖 Définitions</button>
-      <button class="topbtn" id="avis-btn" title="Donner votre avis">💬 Avis</button>
       <div class="textsize" aria-label="Taille du texte">
         <span>Texte</span>
         <button data-t="1" class="on">A</button>
@@ -35,22 +33,6 @@
 
     <main id="app"><!-- contenu injecté par app.js --></main>
 
-  </div>
-
-  <!-- Fenêtre « Votre avis » (envoi direct par e-mail via Web3Forms) -->
-  <div class="fb-overlay" id="fb-overlay" role="dialog" aria-modal="true" aria-label="Votre avis">
-    <div class="fb-modal">
-      <button class="fb-x" id="fb-x" type="button" aria-label="Fermer">✕</button>
-      <h2>💬 Votre avis sur Radar’naque</h2>
-      <p class="fb-sub">Vous avez aimé&nbsp;? Une remarque, une idée d’amélioration&nbsp;? Écrivez-moi, je lis tout&nbsp;!</p>
-      <input type="text" id="fb-name" placeholder="Votre prénom (optionnel)">
-      <input type="email" id="fb-email" placeholder="Votre email (optionnel, pour une réponse)">
-      <textarea id="fb-message" rows="4" placeholder="Votre message…"></textarea>
-      <div class="fb-actions">
-        <button class="fb-cancel" id="fb-cancel" type="button">Annuler</button>
-        <button class="fb-send" id="fb-send" type="button">📨 Envoyer</button>
-      </div>
-    </div>
   </div>
 
   <!-- Données puis logique (comme le reste de la collection : *-data puis app) -->

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suggestions design — jeu par jeu</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1b2d; --panel:#162236; --card:#1e3050;
+    --acc:#f7c948; --gr:#3ecf8e; --rd:#f75f5f; --bl:#4fa3f7; --pu:#a855f7; --or:#f97316;
+    --tx:#e8f1ff; --mu:#8fabce; --bord:rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Nunito',sans-serif;background:var(--bg);
+    background-image:radial-gradient(ellipse at 15% 10%,rgba(79,163,247,.08) 0%,transparent 55%),radial-gradient(ellipse at 85% 90%,rgba(247,201,72,.06) 0%,transparent 55%);
+    color:var(--tx);min-height:100vh;padding:32px 18px 80px;line-height:1.6;}
+  .wrap{max-width:960px;margin:0 auto;}
+  h1{font-family:'Fredoka One',cursive;font-size:clamp(1.8rem,5vw,2.5rem);color:var(--acc);text-shadow:0 0 30px rgba(247,201,72,.3);text-align:center;}
+  .subtitle{text-align:center;color:var(--mu);font-weight:700;margin-top:6px;}
+  .meta{text-align:center;color:var(--mu);font-size:.8rem;opacity:.75;margin-bottom:30px;}
+  h2{font-family:'Fredoka One',cursive;font-size:1.35rem;color:var(--tx);margin:36px 0 6px;padding-bottom:8px;border-bottom:2px solid var(--bord);}
+  h2 .em{margin-right:8px;}
+  .sec-intro{color:var(--mu);font-size:.9rem;margin-bottom:14px;}
+  .lead{background:var(--panel);border:1px solid var(--bord);border-left:4px solid var(--acc);border-radius:14px;padding:18px 22px;margin-bottom:16px;}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:14px 0 4px;font-size:.75rem;color:var(--mu);}
+  .grid{display:grid;gap:14px;}
+  .game{background:var(--panel);border:1px solid var(--bord);border-radius:16px;padding:16px 20px;position:relative;overflow:hidden;}
+  .game::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;background:var(--acc);}
+  .game.t-emi::before{background:var(--gr);}
+  .game.t-hub::before{background:var(--bl);}
+  .game.t-arcade::before{background:var(--pu);}
+  .game.t-keep::before{background:var(--or);}
+  .game.t-done::before{background:linear-gradient(180deg,var(--gr),var(--bl));}
+  .game h3{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--acc);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+  .game h3 .file{font-family:'Courier New',monospace;font-size:.72rem;color:var(--bl);font-weight:400;}
+  .state{font-size:.8rem;color:var(--mu);margin:6px 0 8px;padding:6px 10px;background:rgba(0,0,0,.18);border-radius:8px;}
+  .state b{color:var(--tx);}
+  ul{margin:4px 0 2px 18px;}
+  li{margin-bottom:5px;font-size:.9rem;}
+  .tag{font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px;margin-left:6px;vertical-align:middle;white-space:nowrap;}
+  .e-l{background:rgba(62,207,142,.18);color:var(--gr);}
+  .e-m{background:rgba(247,201,72,.18);color:var(--acc);}
+  .e-h{background:rgba(247,95,95,.18);color:var(--rd);}
+  .keep-badge{background:rgba(249,115,22,.18);color:var(--or);}
+  .done-badge{background:rgba(62,207,142,.2);color:var(--gr);}
+  code{font-family:'Courier New',monospace;background:rgba(0,0,0,.3);padding:1px 6px;border-radius:5px;font-size:.83rem;color:var(--acc);}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+  footer{text-align:center;color:var(--mu);font-size:.78rem;margin-top:40px;opacity:.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>🎮 Suggestions design — jeu par jeu</h1>
+  <p class="subtitle">Basé sur l'audit de la collection · EMI Antonin Atger</p>
+  <p class="meta">Établi le 7 juillet 2026 · <strong style="color:#3ecf8e;">✅ implémenté</strong> sur <strong>tous les jeux, Hub compris</strong></p>
+
+  <div style="background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.4);border-radius:14px;padding:16px 20px;margin-bottom:16px;">
+    <p style="margin:0 0 8px;font-weight:800;color:#3ecf8e;font-family:'Fredoka One',cursive;">✅ Ce qui a été appliqué</p>
+    <ul style="margin:0 0 0 18px;">
+      <li><strong>Lien « ← Retour aux jeux »</strong> ajouté partout où il manquait (pill fixe en haut à gauche).</li>
+      <li><strong>Signature « par Antonin Atger »</strong> ajoutée sur tous les jeux (discrète et non-cliquable sur les jeux plein-canvas et seniors).</li>
+      <li><strong>Accessibilité</strong> : <code>:focus-visible</code> + <code>prefers-reduced-motion</code> sur tous les jeux <em>et leurs sous-pages</em> (16 sous-pages Illusions/Arcade incluses).</li>
+      <li><strong>Spécifiques</strong> : Nunito sur Échecs &amp; Illusions · Comic Sans → Baloo 2 (biais CM1) · avatar « idle » + sélection ✓ + fondu vers la carte (exploration).</li>
+      <li><strong>Préservés</strong> : radar-anti-arnaques &amp; radarnaque (thème seniors), notes_google (imitation) → signature seule ou rien.</li>
+      <li><strong>Hub</strong> : police Nunito + titre en dégradé, <strong>liseré d'accent par carte reprenant la couleur du jeu ciblé</strong>, en-tête et footer signés « par Antonin Atger ».</li>
+    </ul>
+    <p style="margin:8px 0 0;font-size:.82rem;color:var(--mu);">Reste optionnel (non fait) : consolidation technique du rendu avatar dupliqué (refactor à froid).</p>
+  </div>
+
+  <div class="lead">
+    <p><strong>Le diagnostic en une phrase :</strong> la collection a déjà un design system soigné, mais <strong>seulement dans 5 jeux</strong>. Trois problèmes reviennent presque partout ailleurs :</p>
+    <ul style="margin-top:8px;">
+      <li>🖋️ <strong>Signature « par Antonin Atger » absente</strong> (présente seulement sur le hub + 5 jeux EMI).</li>
+      <li>🏠 <strong>Pas de lien « ← Retour aux jeux »</strong> (présent seulement sur Illusions, radarnaque, recrutement, exploration).</li>
+      <li>♿ <strong><code>:focus-visible</code> et <code>prefers-reduced-motion</code> quasi absents</strong> partout (sauf FakeMètre).</li>
+    </ul>
+    <p style="margin-top:8px;margin-bottom:0;">→ Ces 3 correctifs, appliqués partout, donneraient instantanément une <strong>identité de collection</strong>. Ce sont les quick wins prioritaires.</p>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--gr)"></span>famille EMI cohérente</span>
+    <span><span class="dot" style="background:var(--bl)"></span>vitrine / navigation</span>
+    <span><span class="dot" style="background:var(--pu)"></span>arcade / standalone</span>
+    <span><span class="dot" style="background:var(--or)"></span>à préserver tel quel</span>
+    <span class="tag e-l">effort faible</span><span class="tag e-m">moyen</span><span class="tag e-h">élevé</span>
+  </div>
+
+  <!-- ══════════ VITRINE ══════════ -->
+  <h2><span class="em">🏠</span>Vitrine &amp; navigation</h2>
+
+  <div class="grid">
+    <div class="game t-hub">
+      <h3>Hub — la page d'accueil <span class="file">index.html</span></h3>
+      <div class="state">État : police <b>system-ui</b>, logo 🎮 générique · auteur ✔ · <b>désaccord total</b> avec les polices des jeux qu'il présente.</div>
+      <ul>
+        <li><strong>Priorité n°1 de toute la collection.</strong> Charger <strong>Nunito</strong> et l'appliquer aux titres/cartes → fil rouge typographique. <span class="tag e-l">faible</span></li>
+        <li>Sur chaque carte de jeu, un <strong>liseré d'accent reprenant la couleur du jeu ciblé</strong> (comme les cartes de FakeMètre) → la vignette devient un aperçu d'identité. <span class="tag e-m">moyen</span></li>
+        <li>Remplacer le 🎮 par un vrai bloc d'en-tête signé (titre + baseline + auteur). <span class="tag e-l">faible</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════ FAMILLE EMI ══════════ -->
+  <h2><span class="em">🟢</span>Famille EMI — la référence à généraliser</h2>
+  <p class="sec-intro">Ces 5 jeux partagent déjà le template le plus abouti (Nunito + police display par jeu, bouton <code>.bigbtn</code>, signature auteur). À <strong>peaufiner</strong>, pas à refaire. Les 3 suggestions ci-dessous valent pour les cinq.</p>
+
+  <div class="grid">
+    <div class="game t-emi">
+      <h3>Arène rhétorique · Chasse aux biais · Grand oral · Radar désinfo · Répare la Une</h3>
+      <div class="state">État : cohérents, personnalisés, auteur ✔ · <b>manque le lien retour hub</b> · tags trop petits · animations sans garde-fou.</div>
+      <ul>
+        <li>Ajouter le <strong>lien « ← Retour aux jeux »</strong> unifié (absent des 5). <span class="tag e-l">faible</span></li>
+        <li>Envelopper les animations (<code>breathe</code>, glows) dans <code>@media (prefers-reduced-motion:no-preference)</code>. <span class="tag e-l">faible</span></li>
+        <li>Plancher de lisibilité : les tags <code>.68rem</code> → <code>.78rem</code> (utile pour les plus jeunes). <span class="tag e-l">faible</span></li>
+        <li><em>Fond :</em> extraire le template dupliqué en un <code>emi-base.css</code> partagé → fige la cohérence pour les futurs jeux. <span class="tag e-m">moyen</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════ EXPLORATION ══════════ -->
+  <h2><span class="em">🧭</span>Exploration &amp; créateur d'avatar</h2>
+
+  <div class="grid">
+    <div class="game t-emi">
+      <h3>Créateur d'avatar + village <span class="file">exploration/</span></h3>
+      <div class="state">État : <b>la pièce la plus travaillée du dépôt</b> (SVG génératif riche) · mais rupture de thème créateur↔carte · auteur absent.</div>
+      <ul>
+        <li><strong>Harmoniser le thème</strong> : le créateur est sombre, la <code>carte.html</code> est claire → transition assumée (fondu) ou fond de scène qui préfigure la carte. <span class="tag e-m">moyen</span></li>
+        <li><strong>Avatar vivant</strong> : micro-animation « idle » (flottement ±3px, clignement d'yeux toutes les ~4s). <span class="tag e-l">faible</span></li>
+        <li>Sélection des pastilles peu lisible sur fond clair → ajouter une <strong>coche ✓</strong> ou un anneau. Et <code>:focus-visible</code> sur puces/swatches/sliders (élèves au clavier). <span class="tag e-l">faible</span></li>
+        <li><em>Dette :</em> <code>render()</code> duplique <code>avatar-render.js</code> → consolider en une source unique avant d'ajouter du visuel. <span class="tag e-m">moyen</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════ ARCADE ══════════ -->
+  <h2><span class="em">🕹️</span>Arcade &amp; sous-jeux</h2>
+
+  <div class="grid">
+    <div class="game t-arcade">
+      <h3>Arcade quizz <span class="file">Arcade quizz/index.html</span></h3>
+      <div class="state">État : <b>bien construit</b> — vrai système de variables (Orbitron + Nunito, palette néon nommée) · auteur absent · retour hub absent.</div>
+      <ul>
+        <li>Adopter la <strong>signature auteur</strong> commune + lien retour hub. <span class="tag e-l">faible</span></li>
+        <li>Vérifier que les 6 sous-jeux (<code>brick-breaker-quiz</code>, <code>fake-blaster</code>, <code>fakenews_defender</code>, <code>qcm-classique</code>, <code>snake-fakenews</code>, <code>whac-a-quiz</code>) <strong>héritent bien du style de l'index</strong> et ont un retour vers l'index Arcade. <span class="tag e-m">moyen</span></li>
+        <li>Doublon à signaler : <code>Arcade quizz/snake-fakenews.html</code> existe aussi à la racine → garder une seule version. <span class="tag e-l">faible</span></li>
+      </ul>
+    </div>
+
+    <div class="game t-arcade">
+      <h3>Illusions d'optique <span class="file">Ilusions d'optique/</span></h3>
+      <div class="state">État : police <b>system-ui</b> (peu personnalisée) · auteur absent · <b>retour hub ✔</b> · ~11 pages d'illusions.</div>
+      <ul>
+        <li>Donner une <strong>police de collection</strong> (Nunito) au lieu de system-ui + signature auteur. <span class="tag e-l">faible</span></li>
+        <li>Uniformiser l'en-tête/pied des sous-pages d'illusions (elles se ressemblent mais gagneraient un gabarit commun). <span class="tag e-m">moyen</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════ BORNES D'ARCADE STANDALONE ══════════ -->
+  <h2><span class="em">👾</span>Jeux « bornes d'arcade » standalone</h2>
+  <p class="sec-intro">Chacun a sa police rétro assumée (divergence acceptable). Le vrai manque commun : <strong>ni signature, ni retour hub</strong>.</p>
+
+  <div class="grid">
+    <div class="game t-arcade">
+      <h3>Snake Fake News <span class="file">snake-fakenews.html</span></h3>
+      <div class="state">Press Start 2P + Exo 2 (rétro) · auteur absent · retour hub absent.</div>
+      <ul><li>Ajouter bandeau <strong>« ← Retour aux jeux »</strong> + signature discrète. <span class="tag e-l">faible</span></li></ul>
+    </div>
+    <div class="game t-arcade">
+      <h3>Mine <span class="file">mine.html</span></h3>
+      <div class="state">VT323 + Press Start 2P (terminal rétro) · auteur absent · retour hub absent.</div>
+      <ul><li>Idem : retour hub + signature. La police terminal est un bon parti pris, à garder. <span class="tag e-l">faible</span></li></ul>
+    </div>
+    <div class="game t-arcade">
+      <h3>Planète connaissance <span class="file">Planète connaissance.html</span></h3>
+      <div class="state">Orbitron + Exo 2 (thème spatial) · auteur absent · retour hub absent.</div>
+      <ul><li>Retour hub + signature. Identité spatiale cohérente, à conserver. <span class="tag e-l">faible</span></li></ul>
+    </div>
+    <div class="game t-arcade">
+      <h3>Terre ronde ou plate ? <span class="file">terre_ronde_plate.html</span></h3>
+      <div class="state">Baloo 2 (arrondi ludique) · auteur absent · retour hub absent.</div>
+      <ul><li>Retour hub + signature. <span class="tag e-l">faible</span></li></ul>
+    </div>
+    <div class="game t-arcade">
+      <h3>Més dés / mal information <span class="file">mes des mal information/</span></h3>
+      <div class="state">Baloo 2 (jeu de dés) · auteur absent · retour hub absent.</div>
+      <ul><li>Retour hub + signature ; aligner boutons/cartes sur le vocabulaire de la collection. <span class="tag e-l">faible</span></li></ul>
+    </div>
+  </div>
+
+  <!-- ══════════ AUTRES ══════════ -->
+  <h2><span class="em">🎯</span>Autres jeux</h2>
+
+  <div class="grid">
+    <div class="game">
+      <h3>Échecs <span class="file">echecs.html + echecs.css</span></h3>
+      <div class="state">État : <b>le plus générique du dépôt</b> — Segoe UI, fond plat, boutons par défaut · ni police de marque, ni auteur, ni retour hub.</div>
+      <ul>
+        <li>Le meilleur candidat pour une passe de personnalisation : <strong>police de collection + signature + lien retour</strong>. <span class="tag e-l">faible</span></li>
+        <li>Restyler les contrôles (boutons d'ouverture, panneau latéral) au vocabulaire des autres jeux. <span class="tag e-m">moyen</span></li>
+      </ul>
+    </div>
+
+    <div class="game">
+      <h3>Biais de confirmation (CM1) <span class="file">biais_confirmation_cm1.html</span></h3>
+      <div class="state">Nunito + <b>Comic Sans</b> en fallback, thème clair enfants · auteur absent.</div>
+      <ul>
+        <li>Remplacer le fallback <strong>Comic Sans</strong> (daté) par Baloo 2 (déjà utilisé ailleurs pour le jeune public). <span class="tag e-l">faible</span></li>
+        <li>Signature + retour hub. L'intention « douceur enfant » est bonne, à garder. <span class="tag e-l">faible</span></li>
+      </ul>
+    </div>
+
+    <div class="game">
+      <h3>Recrutement de Mehdi <span class="file">recrutement-de-mehdi/</span></h3>
+      <div class="state">Playfair Display + DM Sans (identité élégante distincte) · <b>retour hub ✔</b> · auteur absent · multi-écran (participant/screen/solo).</div>
+      <ul>
+        <li>Juste la <strong>signature auteur</strong>. L'identité éditoriale chic est un parti pris volontaire, à préserver. <span class="tag e-l">faible</span></li>
+      </ul>
+    </div>
+
+    <div class="game">
+      <h3>Radar'naque <span class="file">radarnaque/index.html</span></h3>
+      <div class="state">Thème dédié · <b>retour hub ✔</b> · auteur absent.</div>
+      <ul>
+        <li>Ajouter la signature. Attention : à ne pas confondre avec <code>radar-anti-arnaques</code> (voir ci-dessous) — clarifier si l'un remplace l'autre. <span class="tag e-l">faible</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════ À PRÉSERVER / FAIT ══════════ -->
+  <h2><span class="em">🛡️</span>À préserver — ne pas uniformiser</h2>
+
+  <div class="grid">
+    <div class="game t-keep">
+      <h3>Radar anti-arnaques <span class="tag keep-badge">à préserver</span></h3>
+      <div class="state">Thème <b>clair haut-contraste seniors</b>, cibles larges, réglage taille de texte.</div>
+      <ul>
+        <li><strong>Le meilleur exemple d'accessibilité du dépôt</strong> — à citer comme référence, surtout pas à passer en sombre. Seul ajout possible : signature discrète. <span class="tag e-l">faible</span></li>
+      </ul>
+    </div>
+    <div class="game t-keep">
+      <h3>Notes Google <span class="file">notes_google.html</span> <span class="tag keep-badge">à préserver</span></h3>
+      <div class="state">Imitation crédible de l'interface Google (divergence volontaire).</div>
+      <ul><li>Ne pas toucher au style : la ressemblance est le but pédagogique. <span class="tag e-l">—</span></li></ul>
+    </div>
+    <div class="game t-done">
+      <h3>FakeMètre <span class="tag done-badge">✓ déjà refait</span></h3>
+      <div class="state">Refonte appliquée : logo-jauge animé, accents de niveau, ombres, transitions, mètre-instrument, écran final animé, feedback verdict.</div>
+      <ul><li>Sert désormais de <strong>vocabulaire visuel de référence</strong> pour les tokens (couleurs, ombres, boutons) à diffuser au reste. <span class="tag e-m">moyen</span></li></ul>
+    </div>
+  </div>
+
+  <footer>
+    Document de travail — suggestions par jeu · lecture seule · à valider avant toute implémentation.<br>
+    Voir aussi <code>fakemetre-refonte/PROPOSITIONS-DESIGN.html</code> pour le détail FakeMètre.
+  </footer>
+
+</div>
+</body>
+</html>

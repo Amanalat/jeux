@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Terre ronde ou plate ?</title>
+<title data-i18n="pageTitle">La Terre ronde ou plate ?</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -200,9 +200,16 @@
     text-transform: uppercase; letter-spacing: 0.05em;
     text-align: center; line-height: 1.4;
   }
+/* ── Collection : retour hub + accessibilité ── */
+.back-hub{position:fixed;top:12px;left:12px;z-index:9999;display:inline-flex;align-items:center;gap:5px;background:rgba(15,20,30,.72);border:1px solid rgba(255,255,255,.18);color:#cdd8e6;text-decoration:none;font-size:.8rem;font-weight:700;padding:7px 14px;border-radius:50px;opacity:.9;transition:opacity .2s,transform .2s;backdrop-filter:blur(4px);font-family:inherit;}
+.back-hub:hover{opacity:1;transform:translateX(-2px);}
+:where(button,a,[tabindex],input,select,textarea):focus-visible{outline:3px solid #f7c948;outline-offset:2px;border-radius:6px;}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}}
 </style>
 </head>
 <body>
+<a class="back-hub" href="index.html" data-i18n="backHub">← Retour aux jeux</a>
+<div style="position:fixed;bottom:8px;right:12px;z-index:9998;font-size:.68rem;font-weight:600;opacity:.5;color:#fff;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.6);">par Antonin Atger</div>
 
 <canvas id="c"></canvas>
 <div id="space-panel">
@@ -214,10 +221,10 @@
     <div id="space-thumb"></div>
   </div>
   <span class="space-end-lbl">🌍</span>
-  <div id="space-label">Recul<br>spatial</div>
+  <div id="space-label" data-i18n-html="spaceLabel">Recul<br>spatial</div>
 </div>
 
-<div id="title">🌍 La Terre : ronde ou plate ?</div>
+<div id="title" data-i18n="mainTitle">🌍 La Terre : ronde ou plate ?</div>
 
 <div id="info-box">
   <strong id="info-title">👣 Échelle humaine</strong>
@@ -226,15 +233,15 @@
 
 <div id="slider-panel">
   <div id="scene-btns">
-    <button class="sbtn active" onclick="animateTo(0)">① Départ</button>
-    <button class="sbtn" onclick="animateTo(220)">② Petite Terre</button>
-    <button class="sbtn" onclick="animateTo(490)">③ Milieu</button>
-    <button class="sbtn" onclick="animateTo(750)">④ Vue plate</button>
-    <button class="sbtn" onclick="animateTo(1000)">⑤ Globale</button>
+    <button class="sbtn active" onclick="animateTo(0)" data-i18n="btnStart">① Départ</button>
+    <button class="sbtn" onclick="animateTo(220)" data-i18n="btnSmall">② Petite Terre</button>
+    <button class="sbtn" onclick="animateTo(490)" data-i18n="btnMid">③ Milieu</button>
+    <button class="sbtn" onclick="animateTo(750)" data-i18n="btnFlat">④ Vue plate</button>
+    <button class="sbtn" onclick="animateTo(1000)" data-i18n="btnGlobal">⑤ Globale</button>
   </div>
   <div id="slider-labels">
-    <span>🔬 Zoom max</span>
-    <span>🌍 Vue spatiale</span>
+    <span data-i18n="zoomMax">🔬 Zoom max</span>
+    <span data-i18n="spaceView">🌍 Vue spatiale</span>
   </div>
   <div id="slider-track-wrap">
     <div id="slider-bg"></div>
@@ -244,7 +251,38 @@
   </div>
 </div>
 
+<script src="i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    pageTitle: 'La Terre ronde ou plate ?',
+    mainTitle: '🌍 La Terre : ronde ou plate ?',
+    backHub: '← Retour aux jeux',
+    btnStart: '① Départ', btnSmall: '② Petite Terre', btnMid: '③ Milieu',
+    btnFlat: '④ Vue plate', btnGlobal: '⑤ Globale',
+    zoomMax: '🔬 Zoom max', spaceView: '🌍 Vue spatiale', spaceLabel: 'Recul<br>spatial',
+    info0title: 'Échelle humaine',   info0text: "Un homme debout à côté d'une petite boule bleue.",
+    info1title: 'Petite Terre',      info1text: 'La boule grossit. La courbure est déjà visible.',
+    info2title: 'Vue intermédiaire', info2text: "L'homme est minuscule. La Terre s'étend à l'horizon.",
+    info3title: 'Apparence plate !', info3text: "À notre échelle, la surface semble parfaitement plate. C'est l'illusion !",
+    info4title: 'Vue globale',       info4text: "En réalité, la Terre est bien une sphère. L'échelle change tout !",
+    lblYou: '▼ Vous', lblHorizon: '← horizon apparent →'
+  },
+  en: {
+    pageTitle: 'Round Earth or Flat?',
+    mainTitle: '🌍 Earth: round or flat?',
+    backHub: '← Back to games',
+    btnStart: '① Start', btnSmall: '② Small Earth', btnMid: '③ Middle',
+    btnFlat: '④ Flat view', btnGlobal: '⑤ Global',
+    zoomMax: '🔬 Max zoom', spaceView: '🌍 Space view', spaceLabel: 'Zoom<br>out',
+    info0title: 'Human scale',       info0text: 'A person standing next to a small blue ball.',
+    info1title: 'Small Earth',       info1text: 'The ball grows. The curvature is already visible.',
+    info2title: 'Intermediate view', info2text: 'The person is tiny. The Earth stretches to the horizon.',
+    info3title: 'Looks flat!',       info3text: "At our scale, the surface looks perfectly flat. That's the illusion!",
+    info4title: 'Global view',       info4text: 'In reality, the Earth really is a sphere — scale changes everything!',
+    lblYou: '▼ You', lblHorizon: '← apparent horizon →'
+  }
+});
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
 const sliderEl = document.getElementById('slider');
@@ -323,11 +361,11 @@ function updateBtns() {
 }
 
 const infoData = [
-  { t: 0,    icon: '👣', title: 'Échelle humaine',   text: 'Un homme debout à côté d\'une petite boule bleue.' },
-  { t: 220,  icon: '🎳', title: 'Petite Terre',      text: 'La boule grossit. La courbure est déjà visible.' },
-  { t: 490,  icon: '🔭', title: 'Vue intermédiaire', text: 'L\'homme est minuscule. La Terre s\'étend à l\'horizon.' },
-  { t: 750,  icon: '📏', title: 'Apparence plate !', text: 'À notre échelle, la surface semble parfaitement plate. C\'est l\'illusion !' },
-  { t: 1000, icon: '🌍', title: 'Vue globale',       text: 'En réalité, la Terre est bien une sphère. L\'échelle change tout !' },
+  { t: 0,    icon: '👣', title: I18N.t('info0title'), text: I18N.t('info0text') },
+  { t: 220,  icon: '🎳', title: I18N.t('info1title'), text: I18N.t('info1text') },
+  { t: 490,  icon: '🔭', title: I18N.t('info2title'), text: I18N.t('info2text') },
+  { t: 750,  icon: '📏', title: I18N.t('info3title'), text: I18N.t('info3text') },
+  { t: 1000, icon: '🌍', title: I18N.t('info4title'), text: I18N.t('info4text') },
 ];
 function updateInfo() {
   const d = infoData.reduce((a, b) => Math.abs(b.t - currentT) < Math.abs(a.t - currentT) ? b : a);
@@ -569,7 +607,7 @@ function draw(time) {
     ctx.fillStyle = '#ef233c';
     ctx.font = `bold ${Math.min(14, 13 * pSc * 10 + 8)}px 'Baloo 2'`;
     ctx.textAlign = 'center';
-    ctx.fillText('▼ Vous', earthCx, personTopY - 12);
+    ctx.fillText(I18N.t('lblYou'), earthCx, personTopY - 12);
     ctx.restore();
   }
 
@@ -586,7 +624,7 @@ function draw(time) {
     ctx.fillStyle = '#fff';
     ctx.font = "bold 11px 'Baloo 2'";
     ctx.textAlign = 'left';
-    ctx.fillText('← horizon apparent →', 14, feetY - 8);
+    ctx.fillText(I18N.t('lblHorizon'), 14, feetY - 8);
     ctx.restore();
   }
 

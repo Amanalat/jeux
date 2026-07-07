@@ -59,6 +59,18 @@
 
   .slider-row{ display:flex; align-items:center; gap:12px; }
   input[type=range]{ flex:1; accent-color:var(--acc); }
+
+  /* ── Collection : avatar vivant, focus clavier, sélection lisible, transition ── */
+  @keyframes avatarIdle{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+  #avatar{ animation:avatarIdle 3.2s ease-in-out infinite; }
+  .sw{ position:relative; }
+  .sw.sel{ box-shadow:0 0 0 3px var(--bg), 0 0 0 6px var(--acc); }
+  .sw.sel::after{ content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:800; font-size:.9rem; text-shadow:0 1px 2px rgba(0,0,0,.65); pointer-events:none; }
+  :where(.sw,.chip,button,a,input,select,[tabindex]):focus-visible{ outline:3px solid var(--acc); outline-offset:3px; border-radius:8px; }
+  .page-fade{ position:fixed; inset:0; background:#eef2f7; z-index:99999; opacity:0; pointer-events:none; transition:opacity .6s ease; }
+  .page-fade.show{ opacity:1; }
+  @media(prefers-reduced-motion:reduce){ #avatar{ animation:none; } *,*::before,*::after{ transition-duration:.001ms!important; } }
   .ends{ display:flex; justify-content:space-between; color:var(--doux); font-size:.8em; margin-top:4px; }
 
   .toggles{ display:flex; gap:10px; flex-wrap:wrap; }
@@ -82,6 +94,7 @@
   <header>
     <h1>🧭 Crée ton explorateur</h1>
     <p>Avant de partir à la découverte des jeux, façonne l'avatar qui te représentera.</p>
+    <p class="cred-atger" style="font-size:.8rem;font-weight:600;opacity:.65;margin:6px 0 0;">par <a href="https://antoninatger.com" target="_blank" style="color:var(--acc);text-decoration:none;">Antonin Atger</a></p>
   </header>
 
   <div class="wrap">
@@ -513,6 +526,7 @@
     const t=document.getElementById('toast');
     t.textContent = (state.nom? state.nom+', c’est parti !' : 'C’est parti !');
     t.classList.add('show');
+    document.getElementById('page-fade').classList.add('show'); // fondu doux vers la carte (claire)
     setTimeout(()=>{ window.location.href='carte.html'; }, 750);
   };
 
@@ -530,5 +544,6 @@
   render();
 })();
 </script>
+<div class="page-fade" id="page-fade" aria-hidden="true"></div>
 </body>
 </html>

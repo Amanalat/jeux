@@ -93,6 +93,10 @@ svg {
 #explication p:last-child { margin-bottom: 0; }
 #explication .highlight { color: #E67F39; font-weight: 600; }
 #explication .answer { font-weight: 700; color: #111; }
+
+/* a11y collection */
+:where(button,a,[tabindex],input,select,textarea):focus-visible{outline:3px solid #38bdf8;outline-offset:2px;border-radius:6px;}
+(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}}
 </style>
 </head>
 <body>

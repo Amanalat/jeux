@@ -19,6 +19,10 @@ svg{display:block;width:100%;overflow:visible}
 .exp-panel p{font-size:13px;color:var(--color-text-secondary,#4b5563);line-height:1.65;margin-bottom:8px}
 .exp-panel p:last-child{margin-bottom:0}
 .exp-panel strong{font-weight:600;color:var(--color-text-primary,#111827)}
+
+/* a11y collection */
+:where(button,a,[tabindex],input,select,textarea):focus-visible{outline:3px solid #38bdf8;outline-offset:2px;border-radius:6px;}
+(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}}
 </style>
 
 <h2 class="page-title">Illusion de Müller-Lyer</h2>
