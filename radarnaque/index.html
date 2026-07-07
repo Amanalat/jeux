@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Radar’naque — S’entraîner à déjouer les pièges en ligne</title>
+  <title data-i18n="pageTitle">Radar’naque — S’entraîner à déjouer les pièges en ligne</title>
   <meta name="description" content="Jeu pédagogique pour apprendre à repérer les arnaques en ligne (SMS, e-mails, appels, faux proches, deepfakes). Conçu pour les seniors et les personnes qui débutent.">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -14,11 +14,11 @@
     <div class="topbar">
       <div class="logo"><span class="radar">🛰️</span> Radar’naque</div>
       <div class="spacer"></div>
-      <button class="topbtn" id="menu-btn" title="Revenir au menu" style="display:none">🏠 Menu</button>
-      <button class="topbtn" id="gloss-btn" title="Les mots à connaître">📖 Définitions</button>
-      <button class="topbtn" id="avis-btn" title="Donner votre avis">💬 Avis</button>
-      <div class="textsize" aria-label="Taille du texte">
-        <span>Texte</span>
+      <button class="topbtn" id="menu-btn" title="Revenir au menu" data-i18n="menu" data-i18n-title="menuTitle" style="display:none">🏠 Menu</button>
+      <button class="topbtn" id="gloss-btn" title="Les mots à connaître" data-i18n="gloss" data-i18n-title="glossTitle">📖 Définitions</button>
+      <button class="topbtn" id="avis-btn" title="Donner votre avis" data-i18n="avis" data-i18n-title="avisTitle">💬 Avis</button>
+      <div class="textsize" aria-label="Taille du texte" data-i18n-aria-label="textAria">
+        <span data-i18n="textLabel">Texte</span>
         <button data-t="1" class="on">A</button>
         <button data-t="1.18">A+</button>
         <button data-t="1.4">A++</button>
@@ -40,21 +40,49 @@
   <!-- Fenêtre « Votre avis » (envoi direct par e-mail via Web3Forms) -->
   <div class="fb-overlay" id="fb-overlay" role="dialog" aria-modal="true" aria-label="Votre avis">
     <div class="fb-modal">
-      <button class="fb-x" id="fb-x" type="button" aria-label="Fermer">✕</button>
-      <h2>💬 Votre avis sur Radar’naque</h2>
-      <p class="fb-sub">Vous avez aimé&nbsp;? Une remarque, une idée d’amélioration&nbsp;? Écrivez-moi, je lis tout&nbsp;!</p>
-      <input type="text" id="fb-name" placeholder="Votre prénom (optionnel)">
-      <input type="email" id="fb-email" placeholder="Votre email (optionnel, pour une réponse)">
-      <textarea id="fb-message" rows="4" placeholder="Votre message…"></textarea>
+      <button class="fb-x" id="fb-x" type="button" aria-label="Fermer" data-i18n-aria-label="fbClose">✕</button>
+      <h2 data-i18n="fbTitle">💬 Votre avis sur Radar’naque</h2>
+      <p class="fb-sub" data-i18n-html="fbSub">Vous avez aimé&nbsp;? Une remarque, une idée d’amélioration&nbsp;? Écrivez-moi, je lis tout&nbsp;!</p>
+      <input type="text" id="fb-name" placeholder="Votre prénom (optionnel)" data-i18n-placeholder="fbName">
+      <input type="email" id="fb-email" placeholder="Votre email (optionnel, pour une réponse)" data-i18n-placeholder="fbEmail">
+      <textarea id="fb-message" rows="4" placeholder="Votre message…" data-i18n-placeholder="fbMsg"></textarea>
       <div class="fb-actions">
-        <button class="fb-cancel" id="fb-cancel" type="button">Annuler</button>
-        <button class="fb-send" id="fb-send" type="button">📨 Envoyer</button>
+        <button class="fb-cancel" id="fb-cancel" type="button" data-i18n="fbCancel">Annuler</button>
+        <button class="fb-send" id="fb-send" type="button" data-i18n="fbSend">📨 Envoyer</button>
       </div>
     </div>
   </div>
 
-  <!-- Données puis logique (comme le reste de la collection : *-data puis app) -->
-  <script src="scenarios.js"></script>
-  <script src="app.js"></script>
+  <script src="../i18n.js"></script>
+  <script>
+  I18N.register({
+    fr: {
+      pageTitle: "Radar’naque — S’entraîner à déjouer les pièges en ligne",
+      menu: "🏠 Menu", menuTitle: "Revenir au menu",
+      gloss: "📖 Définitions", glossTitle: "Les mots à connaître",
+      avis: "💬 Avis", avisTitle: "Donner votre avis",
+      textLabel: "Texte", textAria: "Taille du texte", fbClose: "Fermer",
+      fbTitle: "💬 Votre avis sur Radar’naque",
+      fbSub: "Vous avez aimé&nbsp;? Une remarque, une idée d’amélioration&nbsp;? Écrivez-moi, je lis tout&nbsp;!",
+      fbName: "Votre prénom (optionnel)", fbEmail: "Votre email (optionnel, pour une réponse)",
+      fbMsg: "Votre message…", fbCancel: "Annuler", fbSend: "📨 Envoyer"
+    },
+    en: {
+      pageTitle: "Radar’naque — Practise spotting online traps",
+      menu: "🏠 Menu", menuTitle: "Back to menu",
+      gloss: "📖 Definitions", glossTitle: "Words to know",
+      avis: "💬 Feedback", avisTitle: "Give your feedback",
+      textLabel: "Text", textAria: "Text size", fbClose: "Close",
+      fbTitle: "💬 Your feedback on Radar’naque",
+      fbSub: "Did you enjoy it? A comment, an idea for improvement? Write to me — I read everything!",
+      fbName: "Your first name (optional)", fbEmail: "Your email (optional, for a reply)",
+      fbMsg: "Your message…", fbCancel: "Cancel", fbSend: "📨 Send"
+    }
+  });
+  // Aiguillage FR/EN : données puis logique, dans la langue choisie.
+  var _en = I18N.lang === 'en';
+  document.write('<scr' + 'ipt src="' + (_en ? 'scenarios-en.js' : 'scenarios.js') + '"><\/scr' + 'ipt>');
+  document.write('<scr' + 'ipt src="' + (_en ? 'app-en.js' : 'app.js') + '"><\/scr' + 'ipt>');
+  </script>
 </body>
 </html>
