@@ -6,6 +6,22 @@
 <title>Brick Breaker Quiz</title>
 <script src="../i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    intro: `🧱 Une question s'affiche en haut — les réponses sont des briques.<br><strong style="color:#ffaa00">Casse toutes les FAUSSES réponses !</strong><br>⚠️ Lis les briques — toucher la <strong style="color:#ffcc00">bonne réponse</strong> coûte une vie !<br>⚠️ La balle qui tombe = −1 vie<br><br>← → ou <strong style="color:#00ffcc">Souris</strong> pour la raquette &nbsp;|&nbsp; <strong style="color:#00ffcc">ESPACE</strong> pour lancer &nbsp;|&nbsp; <strong style="color:#00ffcc">P</strong> = Pause`,
+    play: "JOUER ▶", menu: "← MENU & QUESTIONS", finalScore: "Score final :", replay: "REJOUER ▶",
+    winTitle: "BRAVO !<br>TOUTES<br>CASSÉES !", loseTitle: "GAME<br>OVER",
+    winMsg: "Tu as détruit toutes les fausses réponses !", loseMsg: "Continue à développer ton esprit critique !"
+  },
+  en: {
+    intro: `🧱 A question appears at the top — the answers are bricks.<br><strong style="color:#ffaa00">Break all the FALSE answers!</strong><br>⚠️ Read the bricks — hitting the <strong style="color:#ffcc00">correct answer</strong> costs a life!<br>⚠️ A falling ball = −1 life<br><br>← → or <strong style="color:#00ffcc">Mouse</strong> for the paddle &nbsp;|&nbsp; <strong style="color:#00ffcc">SPACE</strong> to launch &nbsp;|&nbsp; <strong style="color:#00ffcc">P</strong> = Pause`,
+    play: "PLAY ▶", menu: "← MENU & QUESTIONS", finalScore: "Final score:", replay: "REPLAY ▶",
+    winTitle: "WELL DONE!<br>ALL<br>BROKEN!", loseTitle: "GAME<br>OVER",
+    winMsg: "You destroyed all the false answers!", loseMsg: "Keep developing your critical thinking!"
+  }
+});
+</script>
+<script>
 (function(){var en=(window.I18N&&I18N.lang==='en');
 ['questions','questions-6e5e','questions-niveau1','questions-niveau2','questions-niveau3','qcm-store'].forEach(function(f){document.write('<scr'+'ipt src="'+f+(en?'-en':'')+'.js"><'+'/scr'+'ipt>');});})();
 </script>
@@ -161,7 +177,7 @@
 
   <div id="overlay">
     <h1>BRICK<br>BREAKER<br>QUIZ</h1>
-    <div class="sub">
+    <div class="sub" data-i18n-html="intro">
       🧱 Une question s'affiche en haut — les réponses sont des briques.<br>
       <strong style="color:#ffaa00">Casse toutes les FAUSSES réponses !</strong><br>
       ⚠️ Lis les briques — toucher la <strong style="color:#ffcc00">bonne réponse</strong> coûte une vie !<br>
@@ -169,8 +185,8 @@
       ← → ou <strong style="color:#00ffcc">Souris</strong> pour la raquette &nbsp;|&nbsp; <strong style="color:#00ffcc">ESPACE</strong> pour lancer &nbsp;|&nbsp; <strong style="color:#00ffcc">P</strong> = Pause
     </div>
     <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
-      <button onclick="startDefaultGame()">JOUER ▶</button>
-      <button class="btn-custom" onclick="location.href='index.html'">← MENU &amp; QUESTIONS</button>
+      <button onclick="startDefaultGame()" data-i18n="play">JOUER ▶</button>
+      <button class="btn-custom" onclick="location.href='index.html'" data-i18n="menu">← MENU &amp; QUESTIONS</button>
     </div>
   </div>
 </div>
@@ -465,12 +481,12 @@ function endGame(win) {
   const ov = document.getElementById('overlay');
   ov.style.display = 'flex';
   ov.innerHTML = `
-    <h1 style="color:${win?'#00ffcc':'#ff4466'}">${win?'BRAVO !<br>TOUTES<br>CASSÉES !':'GAME<br>OVER'}</h1>
-    <div class="sub">Score final : <strong style="color:#00ffcc">${score}</strong><br>
-    ${win?'Tu as détruit toutes les fausses réponses !':'Continue à développer ton esprit critique !'}</div>
+    <h1 style="color:${win?'#00ffcc':'#ff4466'}">${win?I18N.t('winTitle'):I18N.t('loseTitle')}</h1>
+    <div class="sub">${I18N.t('finalScore')} <strong style="color:#00ffcc">${score}</strong><br>
+    ${win?I18N.t('winMsg'):I18N.t('loseMsg')}</div>
     <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
-      <button onclick="startDefaultGame()">REJOUER ▶</button>
-      <button class="btn-custom" onclick="location.href='index.html'">← MENU &amp; QUESTIONS</button>
+      <button onclick="startDefaultGame()">${I18N.t('replay')}</button>
+      <button class="btn-custom" onclick="location.href='index.html'">${I18N.t('menu')}</button>
     </div>`;
 }
 
