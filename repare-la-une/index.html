@@ -111,64 +111,64 @@ header{text-align:center;border-bottom:3px double rgba(60,48,25,.45);padding:0 2
 </style>
 </head>
 <body>
-<a class="back-hub" href="../index.html">← Retour aux jeux</a>
+<a class="back-hub" href="../index.html" data-i18n="back">← Retour aux jeux</a>
 
 <header>
-  <h1>🗞️ Répare la Une !</h1>
-  <p class="sub">Moins d'émotion, plus de contexte : réécris les titres anxiogènes.</p>
+  <h1 data-i18n="h1">🗞️ Répare la Une !</h1>
+  <p class="sub" data-i18n="sub">Moins d'émotion, plus de contexte : réécris les titres anxiogènes.</p>
   <p class="author">par <a href="https://antoninatger.com" target="_blank">Antonin Atger</a></p>
 </header>
 
 <div id="intro">
   <div class="brief">
-    <p>📰 Tu es <b>rédacteur en chef</b>. Ton stagiaire adore les titres qui font peur : majuscules, points d'exclamation, sous-entendus… De l'<b>effet de cadrage</b> à l'état pur !</p>
-    <p style="margin-top:10px;">🎯 Ta mission : <b>réécrire chaque titre</b> en choisissant de meilleurs segments, pour faire <b>baisser l'émotion 😱</b> (objectif ≤ 30) et <b>monter la précision &amp; le contexte 🎯</b> (objectif ≥ 70). Attention : certains segments en rajoutent encore dans le dramatique…</p>
-    <p style="margin-top:10px;">🙈 <b>Les jauges restent cachées pendant l'écriture</b> : à toi de juger chaque segment avec ton flair de rédac chef. Le verdict ne tombe qu'au moment de publier !</p>
-    <p style="margin-top:10px;">🔎 <b>Consulte les sources à disposition</b> avant de publier : certains segments ont l'air précis… mais ne correspondent pas à ce que disent les sources. Le rédac chef ne laissera rien passer !</p>
+    <p data-i18n-html="brief1">📰 Tu es <b>rédacteur en chef</b>. Ton stagiaire adore les titres qui font peur : majuscules, points d'exclamation, sous-entendus… De l'<b>effet de cadrage</b> à l'état pur !</p>
+    <p style="margin-top:10px;" data-i18n-html="brief2">🎯 Ta mission : <b>réécrire chaque titre</b> en choisissant de meilleurs segments, pour faire <b>baisser l'émotion 😱</b> (objectif ≤ 30) et <b>monter la précision &amp; le contexte 🎯</b> (objectif ≥ 70). Attention : certains segments en rajoutent encore dans le dramatique…</p>
+    <p style="margin-top:10px;" data-i18n-html="brief3">🙈 <b>Les jauges restent cachées pendant l'écriture</b> : à toi de juger chaque segment avec ton flair de rédac chef. Le verdict ne tombe qu'au moment de publier !</p>
+    <p style="margin-top:10px;" data-i18n-html="brief4">🔎 <b>Consulte les sources à disposition</b> avant de publier : certains segments ont l'air précis… mais ne correspondent pas à ce que disent les sources. Le rédac chef ne laissera rien passer !</p>
   </div>
-  <button class="bigbtn" onclick="startGame()">🗞️ Prendre la rédaction</button>
+  <button class="bigbtn" onclick="startGame()" data-i18n="start">🗞️ Prendre la rédaction</button>
 </div>
 
 <div id="hud">
-  <span>Une <span class="num" id="qnum">1</span>/<span id="qtot">6</span></span>
+  <span><span data-i18n="une">Une</span> <span class="num" id="qnum">1</span>/<span id="qtot">6</span></span>
   <span id="hud-stars">⭐ 0</span>
 </div>
 
 <div id="game">
   <div class="paper tabloid">
-    <div class="masthead"><span class="mh-name">⚡ LE CRI DU WEB</span><span class="mh-meta">Édition spéciale — 0,99 €</span></div>
+    <div class="masthead"><span class="mh-name" data-i18n="tabloidName">⚡ LE CRI DU WEB</span><span class="mh-meta" data-i18n="tabloidMeta">Édition spéciale — 0,99 €</span></div>
     <div class="paper-bd">
-      <span class="ttag">😱 La une du stagiaire</span>
+      <span class="ttag" data-i18n="tabloidTag">😱 La une du stagiaire</span>
       <p class="ttxt" id="orig-txt"></p>
     </div>
   </div>
 
-  <p class="sectitle">🗂️ Sources à disposition (clique pour lire)</p>
+  <p class="sectitle" data-i18n="sourcesTitle">🗂️ Sources à disposition (clique pour lire)</p>
   <div id="sources"></div>
 
-  <p class="sectitle">✏️ Ta réécriture</p>
+  <p class="sectitle" data-i18n="draftTitle">✏️ Ta réécriture</p>
   <div class="paper" id="draft">
-    <div class="masthead"><span class="mh-name">🗞️ LA GAZETTE</span><span class="mh-meta" id="draft-date"></span></div>
+    <div class="masthead"><span class="mh-name" data-i18n="gazette">🗞️ LA GAZETTE</span><span class="mh-meta" id="draft-date"></span></div>
     <div class="paper-bd">
-      <span class="ttag">🎯 Ta une</span>
+      <span class="ttag" data-i18n="yourTag">🎯 Ta une</span>
       <p id="draft-txt"></p>
     </div>
   </div>
 
   <div id="slots"></div>
-  <button id="publish" onclick="publish()">🖨️ Publier la une</button>
+  <button id="publish" onclick="publish()" data-i18n="publish">🖨️ Publier la une</button>
 
   <div id="gauges">
-    <div class="gtitle">🧪 Verdict de l'imprimerie</div>
+    <div class="gtitle" data-i18n="verdict">🧪 Verdict de l'imprimerie</div>
     <div class="gauge emo">
-      <div class="glabels"><span class="gname">😱 Émotion</span><span class="gval" id="emo-val"></span></div>
+      <div class="glabels"><span class="gname" data-i18n="emotion">😱 Émotion</span><span class="gval" id="emo-val"></span></div>
       <div class="gbg"><div class="gfill" id="emo-fill"></div><div class="gmark" style="left:30%"></div></div>
-      <div class="ghint">Objectif : descendre sous la barre (≤ 30)</div>
+      <div class="ghint" data-i18n="emoHint">Objectif : descendre sous la barre (≤ 30)</div>
     </div>
     <div class="gauge prec">
-      <div class="glabels"><span class="gname">🎯 Précision &amp; contexte</span><span class="gval" id="prec-val"></span></div>
+      <div class="glabels"><span class="gname" data-i18n="precision">🎯 Précision &amp; contexte</span><span class="gval" id="prec-val"></span></div>
       <div class="gbg"><div class="gfill" id="prec-fill"></div><div class="gmark" style="left:70%"></div></div>
-      <div class="ghint">Objectif : dépasser la barre (≥ 70)</div>
+      <div class="ghint" data-i18n="precHint">Objectif : dépasser la barre (≥ 70)</div>
     </div>
   </div>
 
@@ -177,16 +177,51 @@ header{text-align:center;border-bottom:3px double rgba(60,48,25,.45);padding:0 2
     <p id="fb-expl"></p>
     <div id="fb-stars"></div>
   </div>
-  <button id="nextbtn" onclick="nextLevel()">Une suivante ➜</button>
+  <button id="nextbtn" onclick="nextLevel()" data-i18n="next">Une suivante ➜</button>
 </div>
 
 <div id="end">
   <h2 id="end-title"></h2>
   <div class="score-big" id="end-score"></div>
   <p id="end-msg"></p>
-  <button class="bigbtn" onclick="location.reload()">🔄 Rejouer</button>
+  <button class="bigbtn" onclick="location.reload()" data-i18n="replay">🔄 Rejouer</button>
 </div>
 
-<script src="app.js"></script>
+<script src="../i18n.js"></script>
+<script>
+I18N.register({
+  fr: {
+    back: "← Retour aux jeux", h1: "🗞️ Répare la Une !",
+    sub: "Moins d'émotion, plus de contexte : réécris les titres anxiogènes.",
+    brief1: `📰 Tu es <b>rédacteur en chef</b>. Ton stagiaire adore les titres qui font peur : majuscules, points d'exclamation, sous-entendus… De l'<b>effet de cadrage</b> à l'état pur !`,
+    brief2: `🎯 Ta mission : <b>réécrire chaque titre</b> en choisissant de meilleurs segments, pour faire <b>baisser l'émotion 😱</b> (objectif ≤ 30) et <b>monter la précision & le contexte 🎯</b> (objectif ≥ 70). Attention : certains segments en rajoutent encore dans le dramatique…`,
+    brief3: `🙈 <b>Les jauges restent cachées pendant l'écriture</b> : à toi de juger chaque segment avec ton flair de rédac chef. Le verdict ne tombe qu'au moment de publier !`,
+    brief4: `🔎 <b>Consulte les sources à disposition</b> avant de publier : certains segments ont l'air précis… mais ne correspondent pas à ce que disent les sources. Le rédac chef ne laissera rien passer !`,
+    start: "🗞️ Prendre la rédaction", une: "Une",
+    tabloidName: "⚡ LE CRI DU WEB", tabloidMeta: "Édition spéciale — 0,99 €", tabloidTag: "😱 La une du stagiaire",
+    sourcesTitle: "🗂️ Sources à disposition (clique pour lire)", draftTitle: "✏️ Ta réécriture",
+    gazette: "🗞️ LA GAZETTE", yourTag: "🎯 Ta une", publish: "🖨️ Publier la une",
+    verdict: "🧪 Verdict de l'imprimerie", emotion: "😱 Émotion", precision: "🎯 Précision & contexte",
+    emoHint: "Objectif : descendre sous la barre (≤ 30)", precHint: "Objectif : dépasser la barre (≥ 70)",
+    next: "Une suivante ➜", replay: "🔄 Rejouer"
+  },
+  en: {
+    back: "← Back to games", h1: "🗞️ Fix the Headline!",
+    sub: "Less emotion, more context: rewrite the fear-mongering headlines.",
+    brief1: `📰 You are the <b>editor-in-chief</b>. Your intern loves scary headlines: capital letters, exclamation marks, insinuations… <b>framing effect</b> in its purest form!`,
+    brief2: `🎯 Your mission: <b>rewrite each headline</b> by choosing better segments, to <b>bring the emotion down 😱</b> (target ≤ 30) and <b>push precision & context up 🎯</b> (target ≥ 70). Watch out: some segments pile on even more drama…`,
+    brief3: `🙈 <b>The gauges stay hidden while you write</b>: it's up to you to judge each segment with your editor's instinct. The verdict only drops when you publish!`,
+    brief4: `🔎 <b>Check the available sources</b> before publishing: some segments look precise… but don't match what the sources say. The editor won't let anything slip through!`,
+    start: "🗞️ Take over the newsroom", une: "Headline",
+    tabloidName: "⚡ THE WEB SCREAM", tabloidMeta: "Special edition — €0.99", tabloidTag: "😱 The intern's headline",
+    sourcesTitle: "🗂️ Available sources (click to read)", draftTitle: "✏️ Your rewrite",
+    gazette: "🗞️ THE GAZETTE", yourTag: "🎯 Your headline", publish: "🖨️ Publish the headline",
+    verdict: "🧪 Printing-press verdict", emotion: "😱 Emotion", precision: "🎯 Precision & context",
+    emoHint: "Target: drop below the line (≤ 30)", precHint: "Target: rise above the line (≥ 70)",
+    next: "Next headline ➜", replay: "🔄 Play again"
+  }
+});
+document.write('<scr' + 'ipt src="' + (I18N.lang === 'en' ? 'app-en.js' : 'app.js') + '"><\/scr' + 'ipt>');
+</script>
 </body>
 </html>

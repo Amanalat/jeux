@@ -79,54 +79,79 @@ header{text-align:center;}
 </style>
 </head>
 <body>
-<a class="back-hub" href="../index.html">← Retour aux jeux</a>
+<a class="back-hub" href="../index.html" data-i18n="back">← Retour aux jeux</a>
 
 <header>
-  <h1>🛰️ Radar de la Désinfo</h1>
-  <p class="sub">Au-delà de la fake news : démasque la technique de manipulation !</p>
+  <h1 data-i18n="h1">🛰️ Radar de la Désinfo</h1>
+  <p class="sub" data-i18n="sub">Au-delà de la fake news : démasque la technique de manipulation !</p>
   <p class="author">par <a href="https://antoninatger.com" target="_blank">Antonin Atger</a></p>
 </header>
 
 <div id="intro">
   <div class="brief">
-    <p>📰 Tu es <b>fact-checker</b> dans une grande rédaction. Des dépêches arrivent sur ton bureau : pour chacune, identifie la <b>technique de désinformation</b> utilisée… ou décide qu'il s'agit d'une <b>info fiable</b> !</p>
-    <p style="margin-top:10px;">⚠️ Rappelle-toi : la fake news n'est que <b>l'arbre qui cache la forêt</b>. On peut désinformer sans dire un seul mensonge…</p>
-    <p style="margin-top:10px;">❤️ Tu as 3 vies. Bonne chance, le radar est à toi !</p>
+    <p data-i18n-html="brief1">📰 Tu es <b>fact-checker</b> dans une grande rédaction. Des dépêches arrivent sur ton bureau : pour chacune, identifie la <b>technique de désinformation</b> utilisée… ou décide qu'il s'agit d'une <b>info fiable</b> !</p>
+    <p style="margin-top:10px;" data-i18n-html="brief2">⚠️ Rappelle-toi : la fake news n'est que <b>l'arbre qui cache la forêt</b>. On peut désinformer sans dire un seul mensonge…</p>
+    <p style="margin-top:10px;" data-i18n-html="brief3">❤️ Tu as 3 vies. Bonne chance, le radar est à toi !</p>
   </div>
-  <button class="bigbtn" onclick="startGame()">🛰️ Activer le radar</button>
+  <button class="bigbtn" onclick="startGame()" data-i18n="start">🛰️ Activer le radar</button>
 </div>
 
 <div id="hud">
-  <span>Dépêche <span class="num" id="qnum">1</span>/<span id="qtot">12</span></span>
-  <span>Score <span class="num" id="score">0</span></span>
+  <span><span data-i18n="depeche">Dépêche</span> <span class="num" id="qnum">1</span>/<span id="qtot">12</span></span>
+  <span><span data-i18n="scoreLabel">Score</span> <span class="num" id="score">0</span></span>
   <span id="streak"></span>
   <span id="lives">❤️❤️❤️</span>
 </div>
 
 <div id="game">
   <div class="depeche">
-    <div class="wire-hd"><span>📠 Fil agence — dépêche entrante</span><span id="wire-time"></span></div>
+    <div class="wire-hd"><span data-i18n="wire">📠 Fil agence — dépêche entrante</span><span id="wire-time"></span></div>
     <div class="wire-bd">
-      <span class="dtag">⚠ À vérifier</span>
+      <span class="dtag" data-i18n="dtag">⚠ À vérifier</span>
       <p class="dtxt" id="dtxt"></p>
     </div>
   </div>
-  <p class="dq">Quel est ton verdict de fact-checker ?</p>
+  <p class="dq" data-i18n="dq">Quel est ton verdict de fact-checker ?</p>
   <div id="cats"></div>
   <div id="feedback">
     <div id="fb-title"></div>
     <p id="fb-expl"></p>
   </div>
 </div>
-<button id="nextbtn" onclick="nextQ()">Dépêche suivante ➜</button>
+<button id="nextbtn" onclick="nextQ()" data-i18n="next">Dépêche suivante ➜</button>
 
 <div id="end">
   <h2 id="end-title"></h2>
   <div class="score-big" id="end-score"></div>
   <p id="end-msg"></p>
-  <button class="bigbtn" onclick="location.reload()">🔄 Rejouer</button>
+  <button class="bigbtn" onclick="location.reload()" data-i18n="replay">🔄 Rejouer</button>
 </div>
 
-<script src="app.js"></script>
+<script src="../i18n.js"></script>
+<script>
+I18N.register({
+  fr: {
+    back: "← Retour aux jeux", h1: "🛰️ Radar de la Désinfo",
+    sub: "Au-delà de la fake news : démasque la technique de manipulation !",
+    brief1: `📰 Tu es <b>fact-checker</b> dans une grande rédaction. Des dépêches arrivent sur ton bureau : pour chacune, identifie la <b>technique de désinformation</b> utilisée… ou décide qu'il s'agit d'une <b>info fiable</b> !`,
+    brief2: `⚠️ Rappelle-toi : la fake news n'est que <b>l'arbre qui cache la forêt</b>. On peut désinformer sans dire un seul mensonge…`,
+    brief3: `❤️ Tu as 3 vies. Bonne chance, le radar est à toi !`,
+    start: "🛰️ Activer le radar", depeche: "Dépêche", scoreLabel: "Score",
+    wire: "📠 Fil agence — dépêche entrante", dtag: "⚠ À vérifier",
+    dq: "Quel est ton verdict de fact-checker ?", next: "Dépêche suivante ➜", replay: "🔄 Rejouer"
+  },
+  en: {
+    back: "← Back to games", h1: "🛰️ Disinfo Radar",
+    sub: "Beyond fake news: unmask the manipulation technique!",
+    brief1: `📰 You are a <b>fact-checker</b> in a major newsroom. Wire dispatches land on your desk: for each one, identify the <b>disinformation technique</b> used… or decide it's <b>reliable info</b>!`,
+    brief2: `⚠️ Remember: fake news is just <b>the tree that hides the forest</b>. You can spread disinformation without telling a single lie…`,
+    brief3: `❤️ You have 3 lives. Good luck — the radar is yours!`,
+    start: "🛰️ Activate the radar", depeche: "Dispatch", scoreLabel: "Score",
+    wire: "📠 Agency wire — incoming dispatch", dtag: "⚠ To verify",
+    dq: "What's your fact-checker verdict?", next: "Next dispatch ➜", replay: "🔄 Play again"
+  }
+});
+document.write('<scr' + 'ipt src="' + (I18N.lang === 'en' ? 'app-en.js' : 'app.js') + '"><\/scr' + 'ipt>');
+</script>
 </body>
 </html>

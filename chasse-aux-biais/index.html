@@ -114,29 +114,29 @@ header{text-align:center;}
 </style>
 </head>
 <body>
-<a class="back-hub" href="../index.html">← Retour aux jeux</a>
+<a class="back-hub" href="../index.html" data-i18n="back">← Retour aux jeux</a>
 
 <header>
-  <h1>🧠 Chasse aux Biais</h1>
-  <p class="sub">Ton cerveau va trop vite… apprends à le rattraper !</p>
+  <h1 data-i18n="h1">🧠 Chasse aux Biais</h1>
+  <p class="sub" data-i18n="sub">Ton cerveau va trop vite… apprends à le rattraper !</p>
   <p class="author">par <a href="https://antoninatger.com" target="_blank">Antonin Atger</a></p>
 </header>
 
 <div id="intro">
   <div class="brief">
-    <p>🧠 Ton cerveau a deux vitesses : le mode <b>intuitif</b> (rapide, automatique… et parfois piégé) et le mode <b>analytique</b> (plus lent, mais plus fiable).</p>
-    <p style="margin-top:10px;">🎯 Dans ce jeu, tu vas affronter des <b>énigmes-pièges</b> où l'intuition se trompe, et des <b>scénarios</b> où il faut démasquer le biais cognitif à l'œuvre.</p>
-    <p style="margin-top:10px;">🌬️ Règle d'or de la chasse : avant chaque réponse, <b>compte jusqu'à 2</b>. Les boutons restent verrouillés 2 secondes — le temps d'une respiration. C'est exactement le réflexe à avoir avant de partager une info sur les réseaux !</p>
+    <p data-i18n-html="brief1">🧠 Ton cerveau a deux vitesses : le mode <b>intuitif</b> (rapide, automatique… et parfois piégé) et le mode <b>analytique</b> (plus lent, mais plus fiable).</p>
+    <p style="margin-top:10px;" data-i18n-html="brief2">🎯 Dans ce jeu, tu vas affronter des <b>énigmes-pièges</b> où l'intuition se trompe, et des <b>scénarios</b> où il faut démasquer le biais cognitif à l'œuvre.</p>
+    <p style="margin-top:10px;" data-i18n-html="brief3">🌬️ Règle d'or de la chasse : avant chaque réponse, <b>compte jusqu'à 2</b>. Les boutons restent verrouillés 2 secondes — le temps d'une respiration. C'est exactement le réflexe à avoir avant de partager une info sur les réseaux !</p>
   </div>
   <div class="menu-btns">
-    <button class="bigbtn" onclick="startGame()">🧠 Lancer la chasse</button>
-    <button class="bigbtn ghost" onclick="showFiches()">📑 Comprendre les biais</button>
+    <button class="bigbtn" onclick="startGame()" data-i18n="start">🧠 Lancer la chasse</button>
+    <button class="bigbtn ghost" onclick="showFiches()" data-i18n="fiches">📑 Comprendre les biais</button>
   </div>
 </div>
 
 <div id="hud">
-  <span>Question <span class="num" id="qnum">1</span>/<span id="qtot">12</span></span>
-  <span>Score <span class="num" id="score">0</span></span>
+  <span><span data-i18n="qLabel">Question</span> <span class="num" id="qnum">1</span>/<span id="qtot">12</span></span>
+  <span><span data-i18n="scoreLabel">Score</span> <span class="num" id="score">0</span></span>
   <span id="streak"></span>
 </div>
 
@@ -148,12 +148,12 @@ header{text-align:center;}
   </div>
   <div id="breath">
     <div id="breath-circle">1</div>
-    <div id="breath-txt">Respire… compte jusqu'à 2</div>
+    <div id="breath-txt" data-i18n="breath">Respire… compte jusqu'à 2</div>
   </div>
   <div id="timer-wrap">
     <div id="timer-num">15</div>
     <div id="timer-bar"><div id="timer-fill"></div></div>
-    <div id="timer-lab">⏱ Réponds vite… mais <b>JUSTE</b> !</div>
+    <div id="timer-lab" data-i18n-html="timer">⏱ Réponds vite… mais <b>JUSTE</b> !</div>
   </div>
   <div id="answers"></div>
   <div id="feedback">
@@ -161,22 +161,55 @@ header{text-align:center;}
     <p id="fb-expl"></p>
   </div>
 </div>
-<button id="nextbtn" onclick="nextQ()">Question suivante ➜</button>
+<button id="nextbtn" onclick="nextQ()" data-i18n="next">Question suivante ➜</button>
 
 <div id="end">
   <h2 id="end-title"></h2>
   <div class="score-big" id="end-score"></div>
   <p id="end-msg"></p>
-  <button class="bigbtn gold" onclick="location.reload()">🔄 Rejouer</button>
+  <button class="bigbtn gold" onclick="location.reload()" data-i18n="replay">🔄 Rejouer</button>
 </div>
 
 <div id="fiches">
-  <h2>📑 Les fiches anti-biais</h2>
-  <p class="fiches-sub">Comprends les pièges de ton cerveau, un par un — puis va les démasquer en jeu.</p>
+  <h2 data-i18n="fichesTitle">📑 Les fiches anti-biais</h2>
+  <p class="fiches-sub" data-i18n="fichesSub">Comprends les pièges de ton cerveau, un par un — puis va les démasquer en jeu.</p>
   <div id="fiches-grid"></div>
-  <button class="bigbtn ghost" onclick="hideFiches()" style="margin:18px auto 0;display:block;">← Retour au menu</button>
+  <button class="bigbtn ghost" onclick="hideFiches()" style="margin:18px auto 0;display:block;" data-i18n="fichesBack">← Retour au menu</button>
 </div>
 
-<script src="app.js"></script>
+<script src="../i18n.js"></script>
+<script>
+I18N.register({
+  fr: {
+    back: "← Retour aux jeux", h1: "🧠 Chasse aux Biais",
+    sub: "Ton cerveau va trop vite… apprends à le rattraper !",
+    brief1: `🧠 Ton cerveau a deux vitesses : le mode <b>intuitif</b> (rapide, automatique… et parfois piégé) et le mode <b>analytique</b> (plus lent, mais plus fiable).`,
+    brief2: `🎯 Dans ce jeu, tu vas affronter des <b>énigmes-pièges</b> où l'intuition se trompe, et des <b>scénarios</b> où il faut démasquer le biais cognitif à l'œuvre.`,
+    brief3: `🌬️ Règle d'or de la chasse : avant chaque réponse, <b>compte jusqu'à 2</b>. Les boutons restent verrouillés 2 secondes — le temps d'une respiration. C'est exactement le réflexe à avoir avant de partager une info sur les réseaux !`,
+    start: "🧠 Lancer la chasse", fiches: "📑 Comprendre les biais",
+    qLabel: "Question", scoreLabel: "Score",
+    breath: "Respire… compte jusqu'à 2", timer: `⏱ Réponds vite… mais <b>JUSTE</b> !`,
+    next: "Question suivante ➜", replay: "🔄 Rejouer",
+    fichesTitle: "📑 Les fiches anti-biais",
+    fichesSub: "Comprends les pièges de ton cerveau, un par un — puis va les démasquer en jeu.",
+    fichesBack: "← Retour au menu"
+  },
+  en: {
+    back: "← Back to games", h1: "🧠 Bias Hunt",
+    sub: "Your brain runs too fast… learn to catch up with it!",
+    brief1: `🧠 Your brain has two speeds: the <b>intuitive</b> mode (fast, automatic… and sometimes trapped) and the <b>analytical</b> mode (slower, but more reliable).`,
+    brief2: `🎯 In this game you'll face <b>trick puzzles</b> where intuition gets it wrong, and <b>scenarios</b> where you must unmask the cognitive bias at work.`,
+    brief3: `🌬️ The golden rule of the hunt: before each answer, <b>count to 2</b>. The buttons stay locked for 2 seconds — the time of one breath. That's exactly the reflex to have before sharing news on social media!`,
+    start: "🧠 Start the hunt", fiches: "📑 Understand the biases",
+    qLabel: "Question", scoreLabel: "Score",
+    breath: "Breathe… count to 2", timer: `⏱ Answer fast… but <b>RIGHT</b>!`,
+    next: "Next question ➜", replay: "🔄 Play again",
+    fichesTitle: "📑 The anti-bias cards",
+    fichesSub: "Understand your brain's traps, one by one — then go unmask them in the game.",
+    fichesBack: "← Back to menu"
+  }
+});
+document.write('<scr' + 'ipt src="' + (I18N.lang === 'en' ? 'app-en.js' : 'app.js') + '"><\/scr' + 'ipt>');
+</script>
 </body>
 </html>

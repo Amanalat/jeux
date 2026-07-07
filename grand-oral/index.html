@@ -104,31 +104,31 @@ header{text-align:center;}
 </style>
 </head>
 <body>
-<a class="back-hub" href="../index.html">← Retour aux jeux</a>
+<a class="back-hub" href="../index.html" data-i18n="back">← Retour aux jeux</a>
 
 <header>
-  <h1>🎤 Le Grand Oral</h1>
-  <p class="sub">Assemble ton discours : ethos, pathos, logos… adaptés à ton auditoire !</p>
+  <h1 data-i18n="h1">🎤 Le Grand Oral</h1>
+  <p class="sub" data-i18n="sub">Assemble ton discours : ethos, pathos, logos… adaptés à ton auditoire !</p>
   <p class="author">par <a href="https://antoninatger.com" target="_blank">Antonin Atger</a></p>
 </header>
 
 <div id="intro">
   <div class="brief">
-    <p>🏟️ Comme dans l'exercice en classe : une rangée défend avec l'<b>ethos</b> (l'éthique, la légitimité), une avec le <b>pathos</b> (l'émotion), une avec le <b>logos</b> (la logique). Ici, tu joues les trois rangées à la fois !</p>
-    <p style="margin-top:10px;">🎯 Pour chaque mission, <b>étudie d'abord ton auditoire</b> : ses valeurs, ses craintes, ses fiertés. Puis choisis UN argument de chaque registre pour composer ton discours.</p>
-    <p style="margin-top:10px;">⚠️ Piège : certains arguments sont <b>excellents… pour un autre public</b>. D'autres sont carrément <b>fallacieux</b>. La rhétorique, c'est l'art de l'adaptation !</p>
+    <p data-i18n-html="brief1">🏟️ Comme dans l'exercice en classe : une rangée défend avec l'<b>ethos</b> (l'éthique, la légitimité), une avec le <b>pathos</b> (l'émotion), une avec le <b>logos</b> (la logique). Ici, tu joues les trois rangées à la fois !</p>
+    <p style="margin-top:10px;" data-i18n-html="brief2">🎯 Pour chaque mission, <b>étudie d'abord ton auditoire</b> : ses valeurs, ses craintes, ses fiertés. Puis choisis UN argument de chaque registre pour composer ton discours.</p>
+    <p style="margin-top:10px;" data-i18n-html="brief3">⚠️ Piège : certains arguments sont <b>excellents… pour un autre public</b>. D'autres sont carrément <b>fallacieux</b>. La rhétorique, c'est l'art de l'adaptation !</p>
   </div>
-  <button class="bigbtn" onclick="startGame()">🎤 Monter à la tribune</button>
+  <button class="bigbtn" onclick="startGame()" data-i18n="start">🎤 Monter à la tribune</button>
 </div>
 
 <div id="hud">
-  <span>Discours <span class="num" id="qnum">1</span>/<span id="qtot">5</span></span>
+  <span><span data-i18n="discours">Discours</span> <span class="num" id="qnum">1</span>/<span id="qtot">5</span></span>
   <span id="hud-stars">⭐ 0</span>
 </div>
 
 <div id="game">
   <div class="mission">
-    <span class="mtag">📜 Ta mission</span>
+    <span class="mtag" data-i18n="mission">📜 Ta mission</span>
     <p class="mtxt" id="mtxt"></p>
     <div class="audience">
       <span class="aemoji" id="aemoji"></span>
@@ -140,40 +140,40 @@ header{text-align:center;}
   </div>
 
   <div id="builder">
-    <p class="sectitle">✍️ Compose ton discours (un argument par registre)</p>
+    <p class="sectitle" data-i18n="compose">✍️ Compose ton discours (un argument par registre)</p>
     <div class="reg ethos">
       <div class="reg-hd">🏛️ Ethos</div>
-      <div class="reg-sub">Convaincre par l'éthique, les valeurs, la légitimité</div>
+      <div class="reg-sub" data-i18n="subEthos">Convaincre par l'éthique, les valeurs, la légitimité</div>
       <div class="reg-opts" id="opts-ethos"></div>
     </div>
     <div class="reg pathos">
       <div class="reg-hd">💔 Pathos</div>
-      <div class="reg-sub">Convaincre par l'émotion</div>
+      <div class="reg-sub" data-i18n="subPathos">Convaincre par l'émotion</div>
       <div class="reg-opts" id="opts-pathos"></div>
     </div>
     <div class="reg logos">
       <div class="reg-hd">🧮 Logos</div>
-      <div class="reg-sub">Convaincre par la logique et les faits</div>
+      <div class="reg-sub" data-i18n="subLogos">Convaincre par la logique et les faits</div>
       <div class="reg-opts" id="opts-logos"></div>
     </div>
     <button id="speakbtn" onclick="speak()" disabled>🎙️ Choisis un argument par registre</button>
   </div>
 
   <div id="delivery">
-    <p class="sectitle">🎙️ À la tribune…</p>
+    <p class="sectitle" data-i18n="tribune">🎙️ À la tribune…</p>
     <div id="convbar">
-      <div class="glabels"><span class="gname">Conviction de l'auditoire</span><span class="gval" id="conv-val">0 %</span></div>
+      <div class="glabels"><span class="gname" data-i18n="conviction">Conviction de l'auditoire</span><span class="gval" id="conv-val">0 %</span></div>
       <div class="gbg"><div id="conv-fill"></div></div>
     </div>
-    <div class="dstep ethos" id="step0"><div class="dreg">🏛️ Ton ethos</div><div class="dsaid"></div><div class="dreact"></div></div>
-    <div class="dstep pathos" id="step1"><div class="dreg">💔 Ton pathos</div><div class="dsaid"></div><div class="dreact"></div></div>
-    <div class="dstep logos" id="step2"><div class="dreg">🧮 Ton logos</div><div class="dsaid"></div><div class="dreact"></div></div>
+    <div class="dstep ethos" id="step0"><div class="dreg" data-i18n="yourEthos">🏛️ Ton ethos</div><div class="dsaid"></div><div class="dreact"></div></div>
+    <div class="dstep pathos" id="step1"><div class="dreg" data-i18n="yourPathos">💔 Ton pathos</div><div class="dsaid"></div><div class="dreact"></div></div>
+    <div class="dstep logos" id="step2"><div class="dreg" data-i18n="yourLogos">🧮 Ton logos</div><div class="dsaid"></div><div class="dreact"></div></div>
     <div id="verdict">
       <h3 id="v-title"></h3>
       <div class="vstars" id="v-stars"></div>
       <p id="v-lesson"></p>
     </div>
-    <button id="nextbtn" onclick="nextMission()">Mission suivante ➜</button>
+    <button id="nextbtn" onclick="nextMission()" data-i18n="next">Mission suivante ➜</button>
   </div>
 </div>
 
@@ -181,9 +181,42 @@ header{text-align:center;}
   <h2 id="end-title"></h2>
   <div class="score-big" id="end-score"></div>
   <p id="end-msg"></p>
-  <button class="bigbtn" onclick="location.reload()">🔄 Rejouer</button>
+  <button class="bigbtn" onclick="location.reload()" data-i18n="replay">🔄 Rejouer</button>
 </div>
 
-<script src="app.js"></script>
+<script src="../i18n.js"></script>
+<script>
+I18N.register({
+  fr: {
+    back: "← Retour aux jeux", h1: "🎤 Le Grand Oral",
+    sub: "Assemble ton discours : ethos, pathos, logos… adaptés à ton auditoire !",
+    brief1: `🏟️ Comme dans l'exercice en classe : une rangée défend avec l'<b>ethos</b> (l'éthique, la légitimité), une avec le <b>pathos</b> (l'émotion), une avec le <b>logos</b> (la logique). Ici, tu joues les trois rangées à la fois !`,
+    brief2: `🎯 Pour chaque mission, <b>étudie d'abord ton auditoire</b> : ses valeurs, ses craintes, ses fiertés. Puis choisis UN argument de chaque registre pour composer ton discours.`,
+    brief3: `⚠️ Piège : certains arguments sont <b>excellents… pour un autre public</b>. D'autres sont carrément <b>fallacieux</b>. La rhétorique, c'est l'art de l'adaptation !`,
+    start: "🎤 Monter à la tribune", discours: "Discours", mission: "📜 Ta mission",
+    compose: "✍️ Compose ton discours (un argument par registre)",
+    subEthos: "Convaincre par l'éthique, les valeurs, la légitimité",
+    subPathos: "Convaincre par l'émotion", subLogos: "Convaincre par la logique et les faits",
+    tribune: "🎙️ À la tribune…", conviction: "Conviction de l'auditoire",
+    yourEthos: "🏛️ Ton ethos", yourPathos: "💔 Ton pathos", yourLogos: "🧮 Ton logos",
+    next: "Mission suivante ➜", replay: "🔄 Rejouer"
+  },
+  en: {
+    back: "← Back to games", h1: "🎤 The Grand Oral",
+    sub: "Assemble your speech: ethos, pathos, logos… tailored to your audience!",
+    brief1: `🏟️ Just like the classroom exercise: one row defends with <b>ethos</b> (ethics, legitimacy), one with <b>pathos</b> (emotion), one with <b>logos</b> (logic). Here, you play all three rows at once!`,
+    brief2: `🎯 For each mission, <b>study your audience first</b>: its values, its fears, its pride. Then pick ONE argument from each register to compose your speech.`,
+    brief3: `⚠️ Trap: some arguments are <b>excellent… for a different audience</b>. Others are downright <b>fallacious</b>. Rhetoric is the art of adaptation!`,
+    start: "🎤 Take the stand", discours: "Speech", mission: "📜 Your mission",
+    compose: "✍️ Compose your speech (one argument per register)",
+    subEthos: "Convince through ethics, values, legitimacy",
+    subPathos: "Convince through emotion", subLogos: "Convince through logic and facts",
+    tribune: "🎙️ At the podium…", conviction: "Audience conviction",
+    yourEthos: "🏛️ Your ethos", yourPathos: "💔 Your pathos", yourLogos: "🧮 Your logos",
+    next: "Next mission ➜", replay: "🔄 Play again"
+  }
+});
+document.write('<scr' + 'ipt src="' + (I18N.lang === 'en' ? 'app-en.js' : 'app.js') + '"><\/scr' + 'ipt>');
+</script>
 </body>
 </html>
