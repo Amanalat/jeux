@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Le parcours de l'explorateur — Exploration</title>
+<title data-i18n="pageTitle">Le parcours de l'explorateur — Exploration</title>
 <style>
   :root{
     --txt:#0f2033; --doux:#40566f; --card:#ffffff; --bord:#d7e2f0;
@@ -87,15 +87,15 @@
 </head>
 <body>
   <div class="topnav">
-    <a href="index.html">🧑‍🎨 Mon avatar</a>
-    <button class="link" id="reset">↺ Recommencer le parcours</button>
+    <a href="index.html" data-i18n="myAvatar">🧑‍🎨 Mon avatar</a>
+    <button class="link" id="reset" data-i18n="reset">↺ Recommencer le parcours</button>
     <span class="sp"></span>
-    <a href="../index.html">🎮 Tous les jeux</a>
+    <a href="../index.html" data-i18n="allGames">🎮 Tous les jeux</a>
   </div>
 
   <header>
-    <h1>🗺️ Le parcours de l'explorateur</h1>
-    <div class="greet" id="greet">Avance de lieu en lieu&nbsp;: chaque étape en débloque une nouvelle.</div>
+    <h1 data-i18n="h1">🗺️ Le parcours de l'explorateur</h1>
+    <div class="greet" id="greet" data-i18n-html="greet">Avance de lieu en lieu&nbsp;: chaque étape en débloque une nouvelle.</div>
     <div class="progress" id="progress"></div>
   </header>
 
@@ -108,27 +108,64 @@
 
   <div class="player" id="player">
     <div class="bar">
-      <span class="ttl" id="player-ttl">Jeu</span>
-      <button class="fs" id="player-fs" type="button">⛶ Plein écran</button>
-      <button class="back" id="player-back" type="button">← Parcours</button>
+      <span class="ttl" id="player-ttl" data-i18n="playerTtl">Jeu</span>
+      <button class="fs" id="player-fs" type="button" data-i18n="fs">⛶ Plein écran</button>
+      <button class="back" id="player-back" type="button" data-i18n="backBtn">← Parcours</button>
     </div>
     <iframe id="player-frame" title="Jeu" allow="fullscreen" allowfullscreen></iframe>
   </div>
 
 <script src="avatar-render.js"></script>
+<script src="../i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    pageTitle: "Le parcours de l'explorateur — Exploration",
+    myAvatar: "🧑‍🎨 Mon avatar", reset: "↺ Recommencer le parcours", allGames: "🎮 Tous les jeux",
+    h1: "🗺️ Le parcours de l'explorateur",
+    greet: "Avance de lieu en lieu&nbsp;: chaque étape en débloque une nouvelle.",
+    playerTtl: "Jeu", fs: "⛶ Plein écran", backBtn: "← Parcours",
+    stepHint: "Chaque étape franchie débloque la suivante.",
+    visited: "Lieux visités :", done: " — parcours terminé, bravo ! 🎉",
+    lockA: "🔒 Termine d'abord l'étape ", lockB: " pour débloquer celle-ci.",
+    unlockA: "🎉 Nouveau lieu débloqué : ", resetMsg: "Parcours réinitialisé.",
+    n_radarnaque: "Radar'naque", d_radarnaque: "Déjouer les arnaques",
+    n_fakemetre: "Fakemètre", d_fakemetre: "Mesurer la fiabilité",
+    n_chasse: "Chasse aux biais", d_chasse: "Débusquer les biais",
+    n_radardesinfo: "Radar désinfo", d_radardesinfo: "Repérer la désinformation",
+    n_arene: "Arène de rhétorique", d_arene: "Reconnaître les sophismes",
+    n_repare: "Répare la une", d_repare: "Corriger un journal trompeur"
+  },
+  en: {
+    pageTitle: "The explorer's journey — Exploration",
+    myAvatar: "🧑‍🎨 My avatar", reset: "↺ Restart the journey", allGames: "🎮 All games",
+    h1: "🗺️ The explorer's journey",
+    greet: "Move from place to place: each step unlocks a new one.",
+    playerTtl: "Game", fs: "⛶ Fullscreen", backBtn: "← Journey",
+    stepHint: "Each step you complete unlocks the next one.",
+    visited: "Places visited:", done: " — journey complete, well done! 🎉",
+    lockA: "🔒 Finish step ", lockB: " first to unlock this one.",
+    unlockA: "🎉 New place unlocked: ", resetMsg: "Journey reset.",
+    n_radarnaque: "Radar'naque", d_radarnaque: "Outsmart scams",
+    n_fakemetre: "Fakemètre", d_fakemetre: "Measure reliability",
+    n_chasse: "Bias Hunt", d_chasse: "Track down biases",
+    n_radardesinfo: "Disinfo Radar", d_radardesinfo: "Spot disinformation",
+    n_arene: "Rhetoric Arena", d_arene: "Recognise fallacies",
+    n_repare: "Fix the Headline", d_repare: "Fix a misleading newspaper"
+  }
+});
 (function(){
   'use strict';
   var AV_KEY = 'jeux.exploration.avatar.v1';
   var PROG_KEY = 'jeux.exploration.progress.v2';
 
   var LIEUX = [
-    { id:'radarnaque',    nom:"Radar'naque",         emoji:'🛡️', desc:'Déjouer les arnaques',            url:'../radarnaque/index.html',              col:'#ef4444' },
-    { id:'fakemetre',     nom:'Fakemètre',           emoji:'🕵️', desc:"Mesurer la fiabilité",           url:'https://amanalat.github.io/fakemetre/', col:'#f59e0b' },
-    { id:'chasse-biais',  nom:'Chasse aux biais',    emoji:'🎯', desc:'Débusquer les biais',            url:'../chasse-aux-biais/index.html',        col:'#10b981' },
-    { id:'radar-desinfo', nom:'Radar désinfo',       emoji:'📡', desc:'Repérer la désinformation',      url:'../radar-desinfo/index.html',           col:'#3b82f6' },
-    { id:'arene',         nom:'Arène de rhétorique', emoji:'⚔️', desc:'Reconnaître les sophismes',      url:'../arene-rhetorique/index.html',        col:'#8b5cf6' },
-    { id:'repare-une',    nom:'Répare la une',       emoji:'📰', desc:'Corriger un journal trompeur',   url:'../repare-la-une/index.html',           col:'#ec4899' }
+    { id:'radarnaque',    nom:I18N.t('n_radarnaque'),   emoji:'🛡️', desc:I18N.t('d_radarnaque'),   url:'../radarnaque/index.html',              col:'#ef4444' },
+    { id:'fakemetre',     nom:I18N.t('n_fakemetre'),    emoji:'🕵️', desc:I18N.t('d_fakemetre'),    url:'https://amanalat.github.io/fakemetre/', col:'#f59e0b' },
+    { id:'chasse-biais',  nom:I18N.t('n_chasse'),       emoji:'🎯', desc:I18N.t('d_chasse'),       url:'../chasse-aux-biais/index.html',        col:'#10b981' },
+    { id:'radar-desinfo', nom:I18N.t('n_radardesinfo'), emoji:'📡', desc:I18N.t('d_radardesinfo'), url:'../radar-desinfo/index.html',           col:'#3b82f6' },
+    { id:'arene',         nom:I18N.t('n_arene'),        emoji:'⚔️', desc:I18N.t('d_arene'),        url:'../arene-rhetorique/index.html',        col:'#8b5cf6' },
+    { id:'repare-une',    nom:I18N.t('n_repare'),       emoji:'📰', desc:I18N.t('d_repare'),       url:'../repare-la-une/index.html',           col:'#ec4899' }
   ];
 
   // Géométrie du parcours (zigzag). x en unités 0..1000 ; y en pixels.
@@ -154,7 +191,7 @@
   // Salutation
   var nom = (avatar && avatar.nom) ? String(avatar.nom).replace(/[<>&]/g,'') : '';
   document.getElementById('greet').innerHTML = (nom ? 'En route, <b>'+nom+'</b>&nbsp;! ' : '')
-    + 'Chaque étape franchie débloque la suivante.';
+    + I18N.t('stepHint');
 
   // Route (SVG) reliant les étapes
   var road = document.getElementById('road');
@@ -207,8 +244,8 @@
     });
     var n = LIEUX.filter(function(l){ return prog.visited[l.id]; }).length;
     document.getElementById('progress').innerHTML =
-      'Lieux visités : <b>'+n+'</b> / '+LIEUX.length +
-      (n===LIEUX.length ? ' — parcours terminé, bravo ! 🎉' : '');
+      I18N.t('visited')+' <b>'+n+'</b> / '+LIEUX.length +
+      (n===LIEUX.length ? I18N.t('done') : '');
   }
 
   // Place l'avatar (sans animation) sur l'étape courante
@@ -245,7 +282,7 @@
     if(enMarche) return;
     if(!estDebloque(i)){
       stopsEls[i].classList.remove('shake'); void stopsEls[i].offsetWidth; stopsEls[i].classList.add('shake');
-      dire('🔒 Termine d’abord l’étape ' + prog.reached + ' pour débloquer celle-ci.');
+      dire(I18N.t('lockA') + prog.reached + I18N.t('lockB'));
       return;
     }
     marcherVers(i, function(){ ouvrir(i); });
@@ -267,7 +304,7 @@
     save(PROG_KEY, prog);
     refresh();
     if(etaitFront && prog.reached-1 === i+1){
-      setTimeout(function(){ dire('🎉 Nouveau lieu débloqué : ' + LIEUX[i+1].nom + ' !'); }, 400);
+      setTimeout(function(){ dire(I18N.t('unlockA') + LIEUX[i+1].nom + ' !'); }, 400);
     }
   }
   function fermer(){ player.classList.remove('open'); frame.src='about:blank'; document.body.style.overflow=''; }
@@ -281,7 +318,7 @@
   document.getElementById('reset').onclick = function(){
     if(confirm('Recommencer le parcours à zéro ? (ton avatar est conservé)')){
       prog = { reached:1, visited:{}, pos:0 }; save(PROG_KEY, prog);
-      placer(0); refresh(); dire('Parcours réinitialisé.');
+      placer(0); refresh(); dire(I18N.t('resetMsg'));
     }
   };
 })();
