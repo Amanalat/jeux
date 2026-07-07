@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QCM Arcade</title>
+<title data-i18n="pageTitle">QCM Arcade</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Nunito:wght@600;700;800&display=swap');
 
@@ -251,27 +251,27 @@ body::before{
 <a class="back-hub" href="../index.html">← Retour aux jeux</a>
 
 <div class="site-header">
-  <h1 class="site-title">QCM ARCADE</h1>
-  <p class="site-sub">Fake News &amp; Esprit Critique</p>
+  <h1 class="site-title" data-i18n="siteTitle">QCM ARCADE</h1>
+  <p class="site-sub" data-i18n="siteSub">Fake News &amp; Esprit Critique</p>
   <p class="cred-atger" style="font-size:.78rem;font-weight:600;opacity:.7;margin-top:6px;">par <a href="https://antoninatger.com" target="_blank" style="color:inherit;">Antonin Atger</a></p>
 </div>
 
 <div class="hub">
-  <div class="hub-step">— 1. Choisir une série de questions —</div>
+  <div class="hub-step" data-i18n="hubStep">— 1. Choisir une série de questions —</div>
   <div class="set-grid" id="set-grid"></div>
   <div class="upload-row">
     <label class="upload-zone">
-      ⬆ Importer un fichier (.xlsx / .json)
+      <span data-i18n="uploadZone">⬆ Importer un fichier (.xlsx / .json)</span>
       <input type="file" id="q-file-input" accept=".xlsx,.xls,.json">
     </label>
   </div>
   <div class="session-row" id="session-row">
-    <span class="session-label">Questions par partie :</span>
+    <span class="session-label" data-i18n="sessionLabel">Questions par partie :</span>
     <button class="count-chip" data-count="5">5</button>
     <button class="count-chip" data-count="10">10</button>
     <button class="count-chip" data-count="30">30</button>
   </div>
-  <div class="hub-status empty" id="hub-status">Aucune série sélectionnée</div>
+  <div class="hub-status empty" id="hub-status" data-i18n="noSet">Aucune série sélectionnée</div>
 </div>
 
 <div class="grid">
@@ -279,8 +279,8 @@ body::before{
     <canvas id="cv-snake" width="420" height="170"></canvas>
     <div class="card-body">
       <div class="card-title">Snake</div>
-      <div class="card-desc">Mange la bonne réponse, évite les mauvaises !</div>
-      <div class="play-btn">▶ Jouer</div>
+      <div class="card-desc" data-i18n="descSnake">Mange la bonne réponse, évite les mauvaises !</div>
+      <div class="play-btn" data-i18n="play">▶ Jouer</div>
     </div>
   </a>
 
@@ -288,8 +288,8 @@ body::before{
     <canvas id="cv-brick" width="420" height="170"></canvas>
     <div class="card-body">
       <div class="card-title">Brick Breaker</div>
-      <div class="card-desc">Casse les briques des mauvaises réponses !</div>
-      <div class="play-btn">▶ Jouer</div>
+      <div class="card-desc" data-i18n="descBrick">Casse les briques des mauvaises réponses !</div>
+      <div class="play-btn" data-i18n="play">▶ Jouer</div>
     </div>
   </a>
 
@@ -297,8 +297,8 @@ body::before{
     <canvas id="cv-defend" width="420" height="170"></canvas>
     <div class="card-body">
       <div class="card-title">Fake News Defender</div>
-      <div class="card-desc">Tire sur les fausses réponses tombantes !</div>
-      <div class="play-btn">▶ Jouer</div>
+      <div class="card-desc" data-i18n="descDefender">Tire sur les fausses réponses tombantes !</div>
+      <div class="play-btn" data-i18n="play">▶ Jouer</div>
     </div>
   </a>
 
@@ -306,8 +306,8 @@ body::before{
     <canvas id="cv-whac" width="420" height="170"></canvas>
     <div class="card-body">
       <div class="card-title">Whac-A-Quiz</div>
-      <div class="card-desc">Frappe les taupes des mauvaises réponses !</div>
-      <div class="play-btn">▶ Jouer</div>
+      <div class="card-desc" data-i18n="descWhac">Frappe les taupes des mauvaises réponses !</div>
+      <div class="play-btn" data-i18n="play">▶ Jouer</div>
     </div>
   </a>
 
@@ -315,26 +315,56 @@ body::before{
     <canvas id="cv-blaster" width="840" height="170"></canvas>
     <div class="card-body">
       <div class="card-title">Fake Blaster</div>
-      <div class="card-desc">Tire sur les fausses affirmations qui avancent vers toi, esquive les vraies ! Jeu de plateforme arcade.</div>
-      <div class="play-btn">▶ Jouer</div>
+      <div class="card-desc" data-i18n="descBlaster">Tire sur les fausses affirmations qui avancent vers toi, esquive les vraies ! Jeu de plateforme arcade.</div>
+      <div class="play-btn" data-i18n="play">▶ Jouer</div>
     </div>
   </a>
 
   <a class="card" href="qcm-classique.html" style="--c:var(--green);grid-column:span 2">
     <canvas id="cv-qcm" width="840" height="170"></canvas>
     <div class="card-body">
-      <div class="card-title">QCM Classique</div>
-      <div class="card-desc">Réponds aux questions à ton rythme, lis les explications et suis ta progression par thème !</div>
-      <div class="play-btn">▶ Jouer</div>
+      <div class="card-title" data-i18n="titleQcm">QCM Classique</div>
+      <div class="card-desc" data-i18n="descQcm">Réponds aux questions à ton rythme, lis les explications et suis ta progression par thème !</div>
+      <div class="play-btn" data-i18n="play">▶ Jouer</div>
     </div>
   </a>
 </div>
 
-<a class="btn-edit" href="editeur-questions.html">✏ Intégrer tes questions</a>
-<p class="blink">— Sélectionne un jeu —</p>
+<a class="btn-edit" href="editeur-questions.html" data-i18n="btnEdit">✏ Intégrer tes questions</a>
+<p class="blink" data-i18n="selectGame">— Sélectionne un jeu —</p>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="../i18n.js"></script>
+<script>
+I18N.register({
+  fr: {
+    pageTitle: "QCM Arcade", siteTitle: "QCM ARCADE", siteSub: "Fake News & Esprit Critique",
+    hubStep: "— 1. Choisir une série de questions —", uploadZone: "⬆ Importer un fichier (.xlsx / .json)",
+    sessionLabel: "Questions par partie :", noSet: "Aucune série sélectionnée",
+    descSnake: "Mange la bonne réponse, évite les mauvaises !",
+    descBrick: "Casse les briques des mauvaises réponses !",
+    descDefender: "Tire sur les fausses réponses tombantes !",
+    descWhac: "Frappe les taupes des mauvaises réponses !",
+    descBlaster: "Tire sur les fausses affirmations qui avancent vers toi, esquive les vraies ! Jeu de plateforme arcade.",
+    titleQcm: "QCM Classique",
+    descQcm: "Réponds aux questions à ton rythme, lis les explications et suis ta progression par thème !",
+    play: "▶ Jouer", btnEdit: "✏ Intégrer tes questions", selectGame: "— Sélectionne un jeu —"
+  },
+  en: {
+    pageTitle: "Arcade Quiz", siteTitle: "ARCADE QUIZ", siteSub: "Fake News & Critical Thinking",
+    hubStep: "— 1. Choose a question set —", uploadZone: "⬆ Import a file (.xlsx / .json)",
+    sessionLabel: "Questions per game:", noSet: "No set selected",
+    descSnake: "Eat the right answer, avoid the wrong ones!",
+    descBrick: "Smash the bricks of wrong answers!",
+    descDefender: "Shoot the falling wrong answers!",
+    descWhac: "Whack the moles of wrong answers!",
+    descBlaster: "Shoot the false statements advancing toward you, dodge the true ones! An arcade platformer.",
+    titleQcm: "Classic Quiz",
+    descQcm: "Answer at your own pace, read the explanations and track your progress by topic!",
+    play: "▶ Play", btnEdit: "✏ Add your questions", selectGame: "— Select a game —"
+  }
+});
+</script>
 <script>
 (function(){var en=(window.I18N&&I18N.lang==='en');
 ['questions','questions-6e5e','questions-niveau1','questions-niveau2','questions-niveau3','qcm-store'].forEach(function(f){document.write('<scr'+'ipt src="'+f+(en?'-en':'')+'.js"><'+'/scr'+'ipt>');});})();
