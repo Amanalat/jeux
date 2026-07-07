@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Crée ton explorateur — Mode Exploration</title>
+<title data-i18n="pageTitle">Crée ton explorateur — Mode Exploration</title>
 <style>
   :root{
     --bg:#0b1220; --bg2:#0f172a; --card:#182338; --card2:#1f2c45;
@@ -90,10 +90,10 @@
 </style>
 </head>
 <body>
-  <a class="back" href="../index.html">← Retour aux jeux</a>
+  <a class="back" href="../index.html" data-i18n="back">← Retour aux jeux</a>
   <header>
-    <h1>🧭 Crée ton explorateur</h1>
-    <p>Avant de partir à la découverte des jeux, façonne l'avatar qui te représentera.</p>
+    <h1 data-i18n="h1">🧭 Crée ton explorateur</h1>
+    <p data-i18n="intro">Avant de partir à la découverte des jeux, façonne l'avatar qui te représentera.</p>
     <p class="cred-atger" style="font-size:.8rem;font-weight:600;opacity:.65;margin:6px 0 0;">par <a href="https://antoninatger.com" target="_blank" style="color:var(--acc);text-decoration:none;">Antonin Atger</a></p>
   </header>
 
@@ -108,54 +108,54 @@
     <!-- Contrôles -->
     <div class="controls">
       <div class="field">
-        <label class="title" for="nom">Ton nom d'explorateur</label>
-        <input type="text" id="nom" maxlength="24" placeholder="Ex : Sam, Léa, Robin…">
+        <label class="title" for="nom" data-i18n="nameLabel">Ton nom d'explorateur</label>
+        <input type="text" id="nom" maxlength="24" placeholder="Ex : Sam, Léa, Robin…" data-i18n-placeholder="namePh">
       </div>
 
       <div class="field">
-        <label class="title">Genre</label>
+        <label class="title" data-i18n="genreLabel">Genre</label>
         <div class="choices" id="genre"></div>
       </div>
 
       <div class="field">
-        <label class="title">Couleur de peau</label>
+        <label class="title" data-i18n="skinLabel">Couleur de peau</label>
         <div class="swatches" id="peau"></div>
       </div>
 
       <div class="field">
-        <label class="title">Cheveux <span class="hint">— style</span></label>
+        <label class="title" data-i18n-html="hairLabel">Cheveux <span class="hint">— style</span></label>
         <div class="choices" id="cheveuxStyle" style="margin-bottom:12px;"></div>
-        <label class="title" style="margin-bottom:8px;">Couleur des cheveux</label>
+        <label class="title" style="margin-bottom:8px;" data-i18n="hairColorLabel">Couleur des cheveux</label>
         <div class="swatches" id="cheveuxCouleur"></div>
       </div>
 
       <div class="field">
-        <label class="title">Habit <span class="hint">— forme &amp; costumes</span></label>
+        <label class="title" data-i18n-html="clothesLabel">Habit <span class="hint">— forme &amp; costumes</span></label>
         <div class="choices" id="habitForme" style="margin-bottom:12px;"></div>
-        <label class="title" style="margin-bottom:8px;">Couleur de l'habit</label>
+        <label class="title" style="margin-bottom:8px;" data-i18n="clothesColorLabel">Couleur de l'habit</label>
         <div class="swatches" id="habit"></div>
       </div>
 
       <div class="field">
-        <label class="title">Taille</label>
+        <label class="title" data-i18n="sizeLabel">Taille</label>
         <div class="slider-row"><input type="range" id="taille" min="0.86" max="1.14" step="0.02" value="1"></div>
-        <div class="ends"><span>Petit·e</span><span>Grand·e</span></div>
+        <div class="ends"><span data-i18n="small">Petit·e</span><span data-i18n="tall">Grand·e</span></div>
       </div>
 
       <div class="field">
-        <label class="title">Corpulence</label>
+        <label class="title" data-i18n="buildLabel">Corpulence</label>
         <div class="slider-row"><input type="range" id="corpulence" min="0.82" max="1.28" step="0.02" value="1"></div>
-        <div class="ends"><span>Mince</span><span>Costaud·e</span></div>
+        <div class="ends"><span data-i18n="thin">Mince</span><span data-i18n="strong">Costaud·e</span></div>
       </div>
 
       <div class="field">
-        <label class="title">Détails</label>
+        <label class="title" data-i18n="detailsLabel">Détails</label>
         <div class="toggles" id="options"></div>
       </div>
 
       <div class="actions">
-        <button class="act btn-rand" id="rand">🎲 Aléatoire</button>
-        <button class="act btn-go" id="go">🧭 Explorer !</button>
+        <button class="act btn-rand" id="rand" data-i18n="random">🎲 Aléatoire</button>
+        <button class="act btn-go" id="go" data-i18n="explore">🧭 Explorer !</button>
       </div>
     </div>
   </div>
@@ -163,7 +163,42 @@
   <div class="toast" id="toast">Avatar enregistré ✓</div>
 
 <script src="avatar-render.js"></script>
+<script src="../i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    back: "← Retour aux jeux", h1: "🧭 Crée ton explorateur",
+    intro: "Avant de partir à la découverte des jeux, façonne l'avatar qui te représentera.",
+    nameLabel: "Ton nom d'explorateur", namePh: "Ex : Sam, Léa, Robin…",
+    genreLabel: "Genre", skinLabel: "Couleur de peau",
+    hairLabel: `Cheveux <span class="hint">— style</span>`, hairColorLabel: "Couleur des cheveux",
+    clothesLabel: `Habit <span class="hint">— forme &amp; costumes</span>`, clothesColorLabel: "Couleur de l'habit",
+    sizeLabel: "Taille", small: "Petit·e", tall: "Grand·e",
+    buildLabel: "Corpulence", thin: "Mince", strong: "Costaud·e",
+    detailsLabel: "Détails", random: "🎲 Aléatoire", explore: "🧭 Explorer !",
+    gMale: "♂ Homme", gFemale: "♀ Femme", gAny: "⚧ Indifférent",
+    hBald: "Chauve", hShort: "Court", hBob: "Carré", hLong: "Long", hPigtails: "Couettes", hBun: "Chignon", hMohawk: "Crête", hCurly: "Bouclé",
+    cTshirt: "T-shirt", cSweater: "Pull", cShirt: "Chemise", cDress: "Robe", cTank: "Débardeur", cCave: "🦴 Cavernes", cAstro: "🚀 Cosmonaute",
+    glasses: "👓 Lunettes", beard: "🧔 Barbe",
+    goSuffix: ", c'est parti !", goAnon: "C'est parti !"
+  },
+  en: {
+    back: "← Back to games", h1: "🧭 Create your explorer",
+    intro: "Before setting off to discover the games, shape the avatar that will represent you.",
+    nameLabel: "Your explorer name", namePh: "e.g. Sam, Lea, Robin…",
+    genreLabel: "Gender", skinLabel: "Skin colour",
+    hairLabel: `Hair <span class="hint">— style</span>`, hairColorLabel: "Hair colour",
+    clothesLabel: `Outfit <span class="hint">— shape &amp; costumes</span>`, clothesColorLabel: "Outfit colour",
+    sizeLabel: "Height", small: "Short", tall: "Tall",
+    buildLabel: "Build", thin: "Slim", strong: "Sturdy",
+    detailsLabel: "Details", random: "🎲 Random", explore: "🧭 Explore!",
+    gMale: "♂ Male", gFemale: "♀ Female", gAny: "⚧ Any",
+    hBald: "Bald", hShort: "Short", hBob: "Bob", hLong: "Long", hPigtails: "Pigtails", hBun: "Bun", hMohawk: "Mohawk", hCurly: "Curly",
+    cTshirt: "T-shirt", cSweater: "Sweater", cShirt: "Shirt", cDress: "Dress", cTank: "Tank top", cCave: "🦴 Caveman", cAstro: "🚀 Astronaut",
+    glasses: "👓 Glasses", beard: "🧔 Beard",
+    goSuffix: ", let's go!", goAnon: "Let's go!"
+  }
+});
 /* =====================================================================
    CRÉATEUR D'AVATAR — Mode Exploration
    L'avatar est sauvegardé dans localStorage sous la clé STORAGE_KEY.
@@ -179,11 +214,11 @@
                    '#b0453a','#d94f2b','#e8e8e8','#7a4fd1','#2e8b57','#2f7bd6'];
   const HABITS  = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#16a085','#3498db','#2c3e50',
                    '#9b59b6','#e84393','#ecf0f1','#111827'];
-  const STYLES  = [['chauve','Chauve'],['court','Court'],['carre','Carré'],['long','Long'],
-                   ['couettes','Couettes'],['chignon','Chignon'],['crete','Crête'],['boucle','Bouclé']];
-  const FORMES  = [['tshirt','T-shirt'],['pull','Pull'],['chemise','Chemise'],['robe','Robe'],
-                   ['debardeur','Débardeur'],['cavernes','🦴 Cavernes'],['cosmonaute','🚀 Cosmonaute']];
-  const GENRES  = [['homme','♂ Homme'],['femme','♀ Femme'],['indifferent','⚧ Indifférent']];
+  const STYLES  = [['chauve',I18N.t('hBald')],['court',I18N.t('hShort')],['carre',I18N.t('hBob')],['long',I18N.t('hLong')],
+                   ['couettes',I18N.t('hPigtails')],['chignon',I18N.t('hBun')],['crete',I18N.t('hMohawk')],['boucle',I18N.t('hCurly')]];
+  const FORMES  = [['tshirt',I18N.t('cTshirt')],['pull',I18N.t('cSweater')],['chemise',I18N.t('cShirt')],['robe',I18N.t('cDress')],
+                   ['debardeur',I18N.t('cTank')],['cavernes',I18N.t('cCave')],['cosmonaute',I18N.t('cAstro')]];
+  const GENRES  = [['homme',I18N.t('gMale')],['femme',I18N.t('gFemale')],['indifferent',I18N.t('gAny')]];
 
   /* --- État --- */
   const state = {
@@ -478,7 +513,7 @@
 
   function buildOptions(){
     const host=document.getElementById('options'); host.innerHTML='';
-    [['lunettes','👓 Lunettes'],['barbe','🧔 Barbe']].forEach(([key,label])=>{
+    [['lunettes',I18N.t('glasses')],['barbe',I18N.t('beard')]].forEach(([key,label])=>{
       const b=document.createElement('button');
       b.className='chip'+(state[key]?' sel':''); b.textContent=label;
       b.onclick=()=>{ state[key]=!state[key]; b.classList.toggle('sel',state[key]); render(); };
@@ -524,7 +559,7 @@
   document.getElementById('go').onclick=()=>{
     try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
     const t=document.getElementById('toast');
-    t.textContent = (state.nom? state.nom+', c’est parti !' : 'C’est parti !');
+    t.textContent = (state.nom? state.nom+I18N.t('goSuffix') : I18N.t('goAnon'));
     t.classList.add('show');
     document.getElementById('page-fade').classList.add('show'); // fondu doux vers la carte (claire)
     setTimeout(()=>{ window.location.href='carte.html'; }, 750);
