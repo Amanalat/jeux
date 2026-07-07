@@ -216,39 +216,39 @@ canvas{display:block;width:100%;height:100%}
 </style>
 </head>
 <body>
-<a class="back-hub" href="index.html">← Retour aux jeux</a>
+<a class="back-hub" href="index.html" data-i18n="back">← Retour aux jeux</a>
 <div style="position:fixed;bottom:8px;right:12px;z-index:9998;font-size:.68rem;font-weight:600;opacity:.5;color:#fff;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.6);">par Antonin Atger</div>
 
 <!-- HUD -->
 <div id="hud">
   <div class="hud-block">
-    <div class="hud-lbl">Score</div>
+    <div class="hud-lbl" data-i18n="score">Score</div>
     <div class="hud-val" id="hv-score">0</div>
   </div>
   <div class="hud-block">
-    <div class="hud-lbl">Mission</div>
+    <div class="hud-lbl" data-i18n="mission">Mission</div>
     <div class="hud-val" id="hv-q">0/10</div>
   </div>
   <div class="hud-block">
-    <div class="hud-lbl">Vies</div>
+    <div class="hud-lbl" data-i18n="lives">Vies</div>
     <div id="lives-row"><span class="hf">❤️</span><span class="hf">❤️</span><span class="hf">❤️</span></div>
   </div>
 </div>
 <div id="fire-hint" style="position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
   font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:3px;
   color:rgba(0,255,200,.45);z-index:20;pointer-events:none;text-align:center;">
-  ◀ ▶ DÉPLACER &nbsp;·&nbsp; ESPACE · CLIC = 🔫 TIRER
+  <span data-i18n-html="fireHint">◀ ▶ DÉPLACER &nbsp;·&nbsp; ESPACE · CLIC = 🔫 TIRER</span>
 </div>
 
 <div id="speed-wrap">
-  <label>☄️ Vitesse</label>
+  <label data-i18n="speedLabel">☄️ Vitesse</label>
   <input type="range" id="speed-slider" min="1" max="5" step="0.5" value="1"
     oninput="updateSpeed(this.value)">
-  <div id="speed-val">🐢 Lent</div>
+  <div id="speed-val" data-i18n="speedSlow">🐢 Lent</div>
 </div>
 <div id="prog-wrap">
   <div id="prog-bg"><div id="prog-bar"></div></div>
-  <div id="prog-txt" id="prog-lbl">DÉCOLLAGE</div>
+  <div id="prog-txt" id="prog-lbl" data-i18n="progStart">DÉCOLLAGE</div>
 </div>
 
 <!-- CANVAS -->
@@ -261,18 +261,18 @@ canvas{display:block;width:100%;height:100%}
 <!-- QUESTION MODAL -->
 <div id="q-modal">
   <div id="q-box">
-    <div class="q-danger"><span class="q-danger-dot"></span>ASTÉROÏDE EN APPROCHE !</div>
+    <div class="q-danger"><span class="q-danger-dot"></span><span data-i18n="asteroid">ASTÉROÏDE EN APPROCHE !</span></div>
     <div id="q-text"><span class="q-quote">"</span><span id="q-inner"></span></div>
     <div class="ans-grid">
       <button class="ans-btn abf" id="btn-fait" onclick="answer('fait')">
-        <span class="aico">📋</span>FAIT<span class="asub">vérifiable</span>
+        <span class="aico">📋</span><span data-i18n="fact">FAIT</span><span class="asub" data-i18n="factSub">vérifiable</span>
       </button>
       <button class="ans-btn abo" id="btn-op" onclick="answer('opinion')">
-        <span class="aico">💬</span>OPINION<span class="asub">avis personnel</span>
+        <span class="aico">💬</span><span data-i18n="opinion">OPINION</span><span class="asub" data-i18n="opinionSub">avis personnel</span>
       </button>
     </div>
     <div id="q-feedback"></div>
-    <button id="q-continue" onclick="closeQuestion()">⚡ CONTINUER LA MISSION</button>
+    <button id="q-continue" onclick="closeQuestion()" data-i18n="continueBtn">⚡ CONTINUER LA MISSION</button>
   </div>
 </div>
 
@@ -280,8 +280,8 @@ canvas{display:block;width:100%;height:100%}
 <div class="screen" id="intro-screen">
   <div class="screen-box">
     <span class="s-ico">🚀</span>
-    <div class="s-title">Planète Connaissance</div>
-    <p class="s-desc">
+    <div class="s-title" data-i18n="introTitle">Planète Connaissance</div>
+    <p class="s-desc" data-i18n-html="introDesc">
       Ton vaisseau monte vers la <strong style="color:#ffd700">Planète de la Connaissance</strong> 🪐<br><br>
       Des <strong style="color:#ff8866">astéroïdes</strong> foncent sur toi !<br>
       🖱️ Déplace la souris (ou <strong style="color:#00ffcc">◀ ▶</strong>) pour viser<br>
@@ -290,7 +290,7 @@ canvas{display:block;width:100%;height:100%}
       Utilise <strong style="color:#00ffcc">◀ ▶</strong> pour choisir, <strong style="color:#00ffcc">ENTRÉE</strong> pour valider.<br>
       Réponds bien → <strong style="color:#00ff88">explosion</strong> ! Sinon tu perds une vie ❤️
     </p>
-    <button class="s-btn" onclick="startGame()">🚀 DÉCOLLER !</button>
+    <button class="s-btn" onclick="startGame()" data-i18n="liftoffBtn">🚀 DÉCOLLER !</button>
   </div>
 </div>
 
@@ -298,12 +298,12 @@ canvas{display:block;width:100%;height:100%}
 <div class="screen" id="win-screen" style="display:none">
   <div class="screen-box">
     <span class="s-ico">🪐</span>
-    <div class="s-title gold">ATTERRISSAGE RÉUSSI !</div>
-    <p class="s-desc" style="margin-bottom:4px">Tu as atteint la <strong style="color:#ffd700">Planète de la Connaissance</strong> !</p>
+    <div class="s-title gold" data-i18n="winTitle">ATTERRISSAGE RÉUSSI !</div>
+    <p class="s-desc" style="margin-bottom:4px" data-i18n-html="winDesc1">Tu as atteint la <strong style="color:#ffd700">Planète de la Connaissance</strong> !</p>
     <div class="final-score" id="win-score">0 pts</div>
     <div class="final-stars" id="win-stars">⭐⭐⭐</div>
-    <p class="s-desc">Tu distingues parfaitement les faits des opinions. Mission accomplie, cosmonaute !</p>
-    <button class="s-btn" onclick="restartGame()">🔄 NOUVELLE MISSION</button>
+    <p class="s-desc" data-i18n="winDesc2">Tu distingues parfaitement les faits des opinions. Mission accomplie, cosmonaute !</p>
+    <button class="s-btn" onclick="restartGame()" data-i18n="newMissionBtn">🔄 NOUVELLE MISSION</button>
   </div>
 </div>
 
@@ -311,13 +311,50 @@ canvas{display:block;width:100%;height:100%}
 <div class="screen" id="over-screen" style="display:none">
   <div class="screen-box">
     <span class="s-ico" style="animation:none">💥</span>
-    <div class="s-title red">VAISSEAU DÉTRUIT !</div>
-    <p class="s-desc">Les astéroïdes ont eu raison de toi…<br>
+    <div class="s-title red" data-i18n="overTitle">VAISSEAU DÉTRUIT !</div>
+    <p class="s-desc" data-i18n-html="overDesc">Les astéroïdes ont eu raison de toi…<br>
       Rappelle-toi : un <strong style="color:#00ff88">FAIT</strong> se prouve, une <strong style="color:#ff3cac">OPINION</strong> exprime un avis personnel !</p>
-    <button class="s-btn red-btn" onclick="restartGame()">🔄 RECOMMENCER</button>
+    <button class="s-btn red-btn" onclick="restartGame()" data-i18n="restartBtn">🔄 RECOMMENCER</button>
   </div>
 </div>
 
-<script src="planete-connaissance.js"></script>
+<script src="i18n.js"></script>
+<script>
+I18N.register({
+  fr: {
+    back: "← Retour aux jeux", score: "Score", mission: "Mission", lives: "Vies",
+    fireHint: "◀ ▶ DÉPLACER &nbsp;·&nbsp; ESPACE · CLIC = 🔫 TIRER",
+    speedLabel: "☄️ Vitesse", speedSlow: "🐢 Lent", progStart: "DÉCOLLAGE",
+    asteroid: "ASTÉROÏDE EN APPROCHE !", fact: "FAIT", factSub: "vérifiable",
+    opinion: "OPINION", opinionSub: "avis personnel", continueBtn: "⚡ CONTINUER LA MISSION",
+    introTitle: "Planète Connaissance",
+    introDesc: `Ton vaisseau monte vers la <strong style="color:#ffd700">Planète de la Connaissance</strong> 🪐<br><br>Des <strong style="color:#ff8866">astéroïdes</strong> foncent sur toi !<br>🖱️ Déplace la souris (ou <strong style="color:#00ffcc">◀ ▶</strong>) pour viser<br>⌨️ Appuie sur <strong style="color:#00ffcc">ESPACE</strong> (ou <strong style="color:#00ffcc">clique</strong>) pour tirer !<br><br>Quand ton laser touche l'astéroïde, une <strong style="color:#ffd700">question</strong> surgit.<br>Utilise <strong style="color:#00ffcc">◀ ▶</strong> pour choisir, <strong style="color:#00ffcc">ENTRÉE</strong> pour valider.<br>Réponds bien → <strong style="color:#00ff88">explosion</strong> ! Sinon tu perds une vie ❤️`,
+    liftoffBtn: "🚀 DÉCOLLER !",
+    winTitle: "ATTERRISSAGE RÉUSSI !",
+    winDesc1: `Tu as atteint la <strong style="color:#ffd700">Planète de la Connaissance</strong> !`,
+    winDesc2: "Tu distingues parfaitement les faits des opinions. Mission accomplie, cosmonaute !",
+    newMissionBtn: "🔄 NOUVELLE MISSION", overTitle: "VAISSEAU DÉTRUIT !",
+    overDesc: `Les astéroïdes ont eu raison de toi…<br>Rappelle-toi : un <strong style="color:#00ff88">FAIT</strong> se prouve, une <strong style="color:#ff3cac">OPINION</strong> exprime un avis personnel !`,
+    restartBtn: "🔄 RECOMMENCER"
+  },
+  en: {
+    back: "← Back to games", score: "Score", mission: "Mission", lives: "Lives",
+    fireHint: "◀ ▶ MOVE &nbsp;·&nbsp; SPACE · CLICK = 🔫 FIRE",
+    speedLabel: "☄️ Speed", speedSlow: "🐢 Slow", progStart: "LIFTOFF",
+    asteroid: "ASTEROID INCOMING!", fact: "FACT", factSub: "verifiable",
+    opinion: "OPINION", opinionSub: "personal view", continueBtn: "⚡ CONTINUE THE MISSION",
+    introTitle: "Knowledge Planet",
+    introDesc: `Your ship is climbing toward the <strong style="color:#ffd700">Knowledge Planet</strong> 🪐<br><br><strong style="color:#ff8866">Asteroids</strong> are rushing at you!<br>🖱️ Move the mouse (or <strong style="color:#00ffcc">◀ ▶</strong>) to aim<br>⌨️ Press <strong style="color:#00ffcc">SPACE</strong> (or <strong style="color:#00ffcc">click</strong>) to fire!<br><br>When your laser hits an asteroid, a <strong style="color:#ffd700">question</strong> appears.<br>Use <strong style="color:#00ffcc">◀ ▶</strong> to choose, <strong style="color:#00ffcc">ENTER</strong> to confirm.<br>Answer right → <strong style="color:#00ff88">explosion</strong>! Otherwise you lose a life ❤️`,
+    liftoffBtn: "🚀 LIFT OFF!",
+    winTitle: "LANDING SUCCESSFUL!",
+    winDesc1: `You've reached the <strong style="color:#ffd700">Knowledge Planet</strong>!`,
+    winDesc2: "You tell facts from opinions perfectly. Mission accomplished, astronaut!",
+    newMissionBtn: "🔄 NEW MISSION", overTitle: "SHIP DESTROYED!",
+    overDesc: `The asteroids got the better of you…<br>Remember: a <strong style="color:#00ff88">FACT</strong> can be proven, an <strong style="color:#ff3cac">OPINION</strong> expresses a personal view!`,
+    restartBtn: "🔄 RESTART"
+  }
+});
+document.write('<scr' + 'ipt src="' + (I18N.lang === 'en' ? 'planete-connaissance-en.js' : 'planete-connaissance.js') + '"><\/scr' + 'ipt>');
+</script>
 </body>
 </html>
