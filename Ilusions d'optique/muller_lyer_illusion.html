@@ -25,31 +25,58 @@ svg{display:block;width:100%;overflow:visible}
 (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}}
 </style>
 
-<h2 class="page-title">Illusion de Müller-Lyer</h2>
-<p class="page-sub">Essaye de voir si les lignes sont de la même taille</p>
-<p class="page-hint">Glisse les lignes horizontales pour les comparer · glisse les flèches &gt; et &lt; sur les bords · clique sur une flèche pour afficher le bouton rotation</p>
+<h2 class="page-title" data-i18n="title">Illusion de Müller-Lyer</h2>
+<p class="page-sub" data-i18n="sub">Essaye de voir si les lignes sont de la même taille</p>
+<p class="page-hint" data-i18n="hint">Glisse les lignes horizontales pour les comparer · glisse les flèches &gt; et &lt; sur les bords · clique sur une flèche pour afficher le bouton rotation</p>
 
 <div class="svg-wrap" id="wrap">
   <svg id="svg" viewBox="0 0 660 260" xmlns="http://www.w3.org/2000/svg" aria-label="Illusion de Müller-Lyer interactive"></svg>
-  <button id="rot-btn" type="button">↻ Rotation</button>
+  <button id="rot-btn" type="button" data-i18n="rot">↻ Rotation</button>
 </div>
 
 <div class="controls">
-  <button class="ctrl-btn" id="reset-btn" type="button">↺ Remettre à neuf</button>
+  <button class="ctrl-btn" id="reset-btn" type="button" data-i18n="reset">↺ Remettre à neuf</button>
   <span style="font-size:11px;color:var(--color-text-tertiary,#6b7280)" id="status-txt"></span>
 </div>
 
-<button class="exp-btn" id="exp-btn" type="button">▼ Voir l'explication</button>
+<button class="exp-btn" id="exp-btn" type="button" data-i18n="explShow">▼ Voir l'explication</button>
 
 <div class="exp-panel" id="exp-panel">
-  <h3>L'illusion de Müller-Lyer — pourquoi notre cerveau se fait avoir</h3>
-  <p><strong>Les deux lignes horizontales ont exactement la même longueur au départ.</strong> Pourtant, elles ne semblent pas identiques parce que les flèches placées à leurs extrémités changent notre perception.</p>
-  <p>Quand les pointes donnent l'impression de s'ouvrir vers l'extérieur, le cerveau peut interpréter la forme comme un angle proche ou saillant. La ligne paraît alors plus courte.</p>
-  <p>Quand les pointes semblent se refermer vers l'intérieur, elles peuvent évoquer un angle rentrant, comme le coin d'une pièce qui part en profondeur. Le cerveau applique alors des indices de perspective et la ligne paraît plus longue.</p>
-  <p>Cette illusion montre que notre perception n'est pas une simple mesure géométrique : le cerveau interprète le contexte visuel. Même quand on sait que les lignes sont de la même taille, l'effet peut continuer à fonctionner.</p>
+  <h3 data-i18n="explTitle">L'illusion de Müller-Lyer — pourquoi notre cerveau se fait avoir</h3>
+  <p data-i18n-html="p1"><strong>Les deux lignes horizontales ont exactement la même longueur au départ.</strong> Pourtant, elles ne semblent pas identiques parce que les flèches placées à leurs extrémités changent notre perception.</p>
+  <p data-i18n-html="p2">Quand les pointes donnent l'impression de s'ouvrir vers l'extérieur, le cerveau peut interpréter la forme comme un angle proche ou saillant. La ligne paraît alors plus courte.</p>
+  <p data-i18n-html="p3">Quand les pointes semblent se refermer vers l'intérieur, elles peuvent évoquer un angle rentrant, comme le coin d'une pièce qui part en profondeur. Le cerveau applique alors des indices de perspective et la ligne paraît plus longue.</p>
+  <p data-i18n-html="p4">Cette illusion montre que notre perception n'est pas une simple mesure géométrique : le cerveau interprète le contexte visuel. Même quand on sait que les lignes sont de la même taille, l'effet peut continuer à fonctionner.</p>
 </div>
 
+<script src="../i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    title: "Illusion de Müller-Lyer",
+    sub: "Essaye de voir si les lignes sont de la même taille",
+    hint: "Glisse les lignes horizontales pour les comparer · glisse les flèches > et < sur les bords · clique sur une flèche pour afficher le bouton rotation",
+    rot: "↻ Rotation", reset: "↺ Remettre à neuf",
+    explShow: "▼ Voir l'explication", explHide: "▲ Masquer l'explication",
+    explTitle: "L'illusion de Müller-Lyer — pourquoi notre cerveau se fait avoir",
+    p1: `<strong>Les deux lignes horizontales ont exactement la même longueur au départ.</strong> Pourtant, elles ne semblent pas identiques parce que les flèches placées à leurs extrémités changent notre perception.`,
+    p2: `Quand les pointes donnent l'impression de s'ouvrir vers l'extérieur, le cerveau peut interpréter la forme comme un angle proche ou saillant. La ligne paraît alors plus courte.`,
+    p3: `Quand les pointes semblent se refermer vers l'intérieur, elles peuvent évoquer un angle rentrant, comme le coin d'une pièce qui part en profondeur. Le cerveau applique alors des indices de perspective et la ligne paraît plus longue.`,
+    p4: `Cette illusion montre que notre perception n'est pas une simple mesure géométrique : le cerveau interprète le contexte visuel. Même quand on sait que les lignes sont de la même taille, l'effet peut continuer à fonctionner.`
+  },
+  en: {
+    title: "Müller-Lyer Illusion",
+    sub: "Try to see whether the lines are the same length",
+    hint: "Drag the horizontal lines to compare them · drag the > and < arrows on the ends · click an arrow to show the rotation button",
+    rot: "↻ Rotate", reset: "↺ Reset",
+    explShow: "▼ See the explanation", explHide: "▲ Hide the explanation",
+    explTitle: "The Müller-Lyer illusion — why our brain gets fooled",
+    p1: `<strong>The two horizontal lines are exactly the same length to begin with.</strong> Yet they don't look identical, because the arrows placed at their ends change our perception.`,
+    p2: `When the tips seem to open outward, the brain may read the shape as a near or protruding angle. The line then appears shorter.`,
+    p3: `When the tips seem to close inward, they can evoke a receding angle, like the corner of a room going off into depth. The brain then applies perspective cues and the line appears longer.`,
+    p4: `This illusion shows that our perception is not a simple geometric measurement: the brain interprets the visual context. Even when you know the lines are the same length, the effect can keep working.`
+  }
+});
 const SVG=document.getElementById('svg');
 const WRAP=document.getElementById('wrap');
 const ROT=document.getElementById('rot-btn');
@@ -233,7 +260,7 @@ function updateStatus(){
 const expBtn=document.getElementById('exp-btn'),expPanel=document.getElementById('exp-panel');
 expBtn.addEventListener('click',()=>{
   const open=expPanel.classList.toggle('open');
-  expBtn.textContent=(open?'▲ Masquer':'▼ Voir')+' l\'explication';
+  expBtn.textContent=I18N.t(open?'explHide':'explShow');
 });
 
 render();

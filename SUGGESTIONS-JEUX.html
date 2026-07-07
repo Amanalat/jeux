@@ -63,7 +63,7 @@
       <li><strong>Signature « par Antonin Atger »</strong> ajoutée sur tous les jeux (discrète et non-cliquable sur les jeux plein-canvas et seniors).</li>
       <li><strong>Accessibilité</strong> : <code>:focus-visible</code> + <code>prefers-reduced-motion</code> sur tous les jeux <em>et leurs sous-pages</em> (16 sous-pages Illusions/Arcade incluses).</li>
       <li><strong>Spécifiques</strong> : Nunito sur Échecs &amp; Illusions · Comic Sans → Baloo 2 (biais CM1) · avatar « idle » + sélection ✓ + fondu vers la carte (exploration).</li>
-      <li><strong>Préservés</strong> : radar-anti-arnaques &amp; radarnaque (thème seniors), notes_google (imitation) → signature seule ou rien.</li>
+      <li><strong>Préservés</strong> : radarnaque (thème seniors), notes_google (imitation) → signature seule ou rien.</li>
       <li><strong>Hub</strong> : police Nunito + titre en dégradé, <strong>liseré d'accent par carte reprenant la couleur du jeu ciblé</strong>, en-tête et footer signés « par Antonin Atger ».</li>
     </ul>
     <p style="margin:8px 0 0;font-size:.82rem;color:var(--mu);">Reste optionnel (non fait) : consolidation technique du rendu avatar dupliqué (refactor à froid).</p>
@@ -222,10 +222,10 @@
     </div>
 
     <div class="game">
-      <h3>Radar'naque <span class="file">radarnaque/index.html</span></h3>
-      <div class="state">Thème dédié · <b>retour hub ✔</b> · auteur absent.</div>
+      <h3>Radar'naque <span class="file">radarnaque/index.html</span> <span class="tag keep-badge">thème seniors à préserver</span></h3>
+      <div class="state">Thème <b>clair haut-contraste seniors</b> (taille de texte A/A+/A++) · <b>retour hub ✔</b> · signature ✔.</div>
       <ul>
-        <li>Ajouter la signature. Attention : à ne pas confondre avec <code>radar-anti-arnaques</code> (voir ci-dessous) — clarifier si l'un remplace l'autre. <span class="tag e-l">faible</span></li>
+        <li><strong>Le meilleur exemple d'accessibilité du dépôt</strong> — ne pas passer en sombre. L'ancien doublon <code>radar-anti-arnaques/</code> a été supprimé (07-07). <span class="tag e-l">faible</span></li>
       </ul>
     </div>
   </div>
@@ -235,11 +235,8 @@
 
   <div class="grid">
     <div class="game t-keep">
-      <h3>Radar anti-arnaques <span class="tag keep-badge">à préserver</span></h3>
-      <div class="state">Thème <b>clair haut-contraste seniors</b>, cibles larges, réglage taille de texte.</div>
-      <ul>
-        <li><strong>Le meilleur exemple d'accessibilité du dépôt</strong> — à citer comme référence, surtout pas à passer en sombre. Seul ajout possible : signature discrète. <span class="tag e-l">faible</span></li>
-      </ul>
+      <h3>Radar anti-arnaques <span class="tag keep-badge">supprimé</span></h3>
+      <div class="state">Ancienne version de <code>radarnaque/</code> — supprimée le 07-07. Le jeu seniors à préserver est désormais <b>Radar'naque</b> (carte plus haut).</div>
     </div>
     <div class="game t-keep">
       <h3>Notes Google <span class="file">notes_google.html</span> <span class="tag keep-badge">à préserver</span></h3>

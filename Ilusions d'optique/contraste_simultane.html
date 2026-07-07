@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contraste simultané de luminosité</title>
+<title data-i18n="pageTitle">Contraste simultané de luminosité</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -105,8 +105,8 @@ svg {
 <body>
 
 <p id="question">
-  <strong>Les deux petits carrés sont-ils du même gris ?</strong><br>
-  <span style="font-size:13px;color:#999;">Glissez les carrés gris pour les comparer côte à côte, ou isolez-les.</span>
+  <strong data-i18n="q">Les deux petits carrés sont-ils du même gris ?</strong><br>
+  <span style="font-size:13px;color:#999;" data-i18n="qSub">Glissez les carrés gris pour les comparer côte à côte, ou isolez-les.</span>
 </p>
 
 <svg id="svg" viewBox="0 0 650 380" xmlns="http://www.w3.org/2000/svg">
@@ -129,23 +129,23 @@ svg {
 </svg>
 
 <div id="controls">
-  <button id="btn-reset">↺ Remettre à neuf</button>
-  <button id="btn-isoler">Isoler les carrés</button>
+  <button id="btn-reset" data-i18n="reset">↺ Remettre à neuf</button>
+  <button id="btn-isoler" data-i18n="isolateDo">Isoler les carrés</button>
 </div>
 
-<button id="btn-explain">▼ Voir l'explication</button>
+<button id="btn-explain" data-i18n="explShow">▼ Voir l'explication</button>
 
 <div id="explication">
-  <h2>Le contraste simultané de luminosité — ce que fait votre cerveau</h2>
+  <h2 data-i18n="explTitle">Le contraste simultané de luminosité — ce que fait votre cerveau</h2>
 
-  <p>
+  <p data-i18n-html="p1">
     <span class="answer">Oui, les deux carrés sont rigoureusement du même gris : #808080.</span>
     Ils ont exactement la même luminosité. Et pourtant, le carré sur fond noir paraît
     nettement plus clair, et celui sur fond blanc plus sombre. Placez-les côte à côte
     et l'illusion s'effondre.
   </p>
 
-  <p>
+  <p data-i18n-html="p2">
     Ce phénomène s'appelle le <span class="highlight">contraste simultané de luminosité</span>.
     Il a été étudié dès le milieu du XIX<sup>e</sup> siècle par le chimiste français
     <strong>Michel Eugène Chevreul</strong>, qui observait des distorsions de couleur
@@ -153,7 +153,7 @@ svg {
     <span class="highlight">inhibition latérale</span> dans la rétine et le cortex visuel.
   </p>
 
-  <p>
+  <p data-i18n-html="p3">
     Les cellules ganglionnaires de la rétine répondent non pas à la luminosité absolue
     d'un point, mais à la <em>différence</em> entre ce point et ses voisins immédiats.
     Quand le carré gris est entouré de noir, les cellules voisines peu actives
@@ -163,7 +163,7 @@ svg {
     pas des valeurs absolues.</span>
   </p>
 
-  <p>
+  <p data-i18n-html="p4">
     Ce mécanisme est fondamental pour la survie : il permet de distinguer des objets
     dans des conditions d'éclairage très variables. Mais il nous rend aussi
     systématiquement trompés par les contextes de luminosité. Les peintres (Rubens,
@@ -173,7 +173,34 @@ svg {
   </p>
 </div>
 
+<script src="../i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    pageTitle: "Contraste simultané de luminosité",
+    q: "Les deux petits carrés sont-ils du même gris ?",
+    qSub: "Glissez les carrés gris pour les comparer côte à côte, ou isolez-les.",
+    reset: "↺ Remettre à neuf", isolateDo: "Isoler les carrés", isolateUndo: "Restaurer les fonds",
+    explShow: "▼ Voir l'explication", explHide: "▲ Masquer l'explication",
+    explTitle: "Le contraste simultané de luminosité — ce que fait votre cerveau",
+    p1: `<span class="answer">Oui, les deux carrés sont rigoureusement du même gris : #808080.</span> Ils ont exactement la même luminosité. Et pourtant, le carré sur fond noir paraît nettement plus clair, et celui sur fond blanc plus sombre. Placez-les côte à côte et l'illusion s'effondre.`,
+    p2: `Ce phénomène s'appelle le <span class="highlight">contraste simultané de luminosité</span>. Il a été étudié dès le milieu du XIX<sup>e</sup> siècle par le chimiste français <strong>Michel Eugène Chevreul</strong>, qui observait des distorsions de couleur dans les tapisseries des Gobelins. Le mécanisme sous-jacent est l'<span class="highlight">inhibition latérale</span> dans la rétine et le cortex visuel.`,
+    p3: `Les cellules ganglionnaires de la rétine répondent non pas à la luminosité absolue d'un point, mais à la <em>différence</em> entre ce point et ses voisins immédiats. Quand le carré gris est entouré de noir, les cellules voisines peu actives "inhibent peu" les cellules centrales — celles-ci répondent donc fort, signalant un gris clair. Sur fond blanc, l'inhibition est maximale et le signal est affaibli, signalant un gris sombre. <span class="highlight">La rétine calcule des contrastes, pas des valeurs absolues.</span>`,
+    p4: `Ce mécanisme est fondamental pour la survie : il permet de distinguer des objets dans des conditions d'éclairage très variables. Mais il nous rend aussi systématiquement trompés par les contextes de luminosité. Les peintres (Rubens, Rembrandt) l'exploitaient intuitivement pour faire "vibrer" leurs couleurs. Aujourd'hui, il guide la conception des interfaces numériques et des éclairages scéniques.`
+  },
+  en: {
+    pageTitle: "Simultaneous Brightness Contrast",
+    q: "Are the two small squares the same grey?",
+    qSub: "Drag the grey squares to compare them side by side, or isolate them.",
+    reset: "↺ Reset", isolateDo: "Isolate the squares", isolateUndo: "Restore the backgrounds",
+    explShow: "▼ See the explanation", explHide: "▲ Hide the explanation",
+    explTitle: "Simultaneous brightness contrast — what your brain is doing",
+    p1: `<span class="answer">Yes, the two squares are strictly the same grey: #808080.</span> They have exactly the same brightness. And yet the square on the black background looks clearly lighter, and the one on the white background darker. Place them side by side and the illusion collapses.`,
+    p2: `This phenomenon is called <span class="highlight">simultaneous brightness contrast</span>. It was studied as early as the mid-19<sup>th</sup> century by the French chemist <strong>Michel Eugène Chevreul</strong>, who observed colour distortions in the Gobelins tapestries. The underlying mechanism is <span class="highlight">lateral inhibition</span> in the retina and the visual cortex.`,
+    p3: `The retina's ganglion cells respond not to the absolute brightness of a point, but to the <em>difference</em> between that point and its immediate neighbours. When the grey square is surrounded by black, the barely-active neighbouring cells "inhibit little", so the central cells respond strongly, signalling a light grey. On a white background the inhibition is maximal and the signal is weakened, signalling a dark grey. <span class="highlight">The retina computes contrasts, not absolute values.</span>`,
+    p4: `This mechanism is fundamental for survival: it lets us tell objects apart under highly variable lighting. But it also makes us systematically fooled by brightness contexts. Painters (Rubens, Rembrandt) exploited it intuitively to make their colours "vibrate". Today it guides the design of digital interfaces and stage lighting.`
+  }
+});
 const SVG_EL = document.getElementById('svg');
 const VB_W = 650, VB_H = 380;
 
@@ -227,7 +254,7 @@ document.getElementById('btn-isoler').addEventListener('click', function() {
   isolated = !isolated;
   document.getElementById('bg-noir').style.visibility   = isolated ? 'hidden' : '';
   document.getElementById('bg-blanc').style.visibility  = isolated ? 'hidden' : '';
-  this.textContent = isolated ? 'Restaurer les fonds' : 'Isoler les carrés';
+  this.textContent = I18N.t(isolated ? 'isolateUndo' : 'isolateDo');
 });
 
 document.getElementById('btn-reset').addEventListener('click', () => {
@@ -238,14 +265,14 @@ document.getElementById('btn-reset').addEventListener('click', () => {
   isolated = false;
   document.getElementById('bg-noir').style.visibility  = '';
   document.getElementById('bg-blanc').style.visibility = '';
-  document.getElementById('btn-isoler').textContent = 'Isoler les carrés';
+  document.getElementById('btn-isoler').textContent = I18N.t('isolateDo');
 });
 
 const btnEx = document.getElementById('btn-explain');
 const divEx = document.getElementById('explication');
 btnEx.addEventListener('click', () => {
   const visible = divEx.classList.toggle('visible');
-  btnEx.textContent = visible ? '▲ Masquer l\'explication' : '▼ Voir l\'explication';
+  btnEx.textContent = I18N.t(visible ? 'explHide' : 'explShow');
 });
 </script>
 </body>

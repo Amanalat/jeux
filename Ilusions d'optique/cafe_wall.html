@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Illusion du Mur du Café</title>
+<title data-i18n="pageTitle">Illusion du Mur du Café</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -102,8 +102,8 @@ svg {
 <body>
 
 <p id="question">
-  <strong>Les lignes grises entre les rangées sont-elles droites ou inclinées ?</strong><br>
-  <span style="font-size:13px;color:#999;">Utilisez les boutons pour vérifier par vous-même.</span>
+  <strong data-i18n="q">Les lignes grises entre les rangées sont-elles droites ou inclinées ?</strong><br>
+  <span style="font-size:13px;color:#999;" data-i18n="qSub">Utilisez les boutons pour vérifier par vous-même.</span>
 </p>
 
 <svg id="svg" viewBox="0 0 650 420" xmlns="http://www.w3.org/2000/svg">
@@ -112,23 +112,23 @@ svg {
 </svg>
 
 <div id="controls">
-  <button id="btn-reset">↺ Remettre à neuf</button>
-  <button id="btn-align" class="ctrl-btn">Aligner les rangées</button>
-  <button id="btn-color" class="ctrl-btn">Colorier le mortier en rouge</button>
+  <button id="btn-reset" data-i18n="reset">↺ Remettre à neuf</button>
+  <button id="btn-align" class="ctrl-btn" data-i18n="alignDo">Aligner les rangées</button>
+  <button id="btn-color" class="ctrl-btn" data-i18n="colorDo">Colorier le mortier en rouge</button>
 </div>
 
-<button id="btn-explain">▼ Voir l'explication</button>
+<button id="btn-explain" data-i18n="explShow">▼ Voir l'explication</button>
 
 <div id="explication">
-  <h2>L'illusion du Mur du Café — ce que fait votre cerveau</h2>
+  <h2 data-i18n="explTitle">L'illusion du Mur du Café — ce que fait votre cerveau</h2>
 
-  <p>
+  <p data-i18n-html="p1">
     <span class="answer">Les lignes de mortier sont parfaitement droites et horizontales.</span>
     Elles ne penchent ni à gauche ni à droite. Alignez les rangées ou colorez le mortier
     en rouge pour le constater immédiatement.
   </p>
 
-  <p>
+  <p data-i18n-html="p2">
     Cette illusion a été documentée en 1979 par le psychologue britannique
     <strong>Richard Gregory</strong> après avoir été observée sur le mur carrelé
     d'un café de Bristol. Son mécanisme repose sur un phénomène appelé
@@ -138,7 +138,7 @@ svg {
     comme un bord incliné, et extrapole cette pente sur toute la ligne de mortier.
   </p>
 
-  <p>
+  <p data-i18n-html="p3">
     Chaque ligne de mortier grise est "tiraillée" dans des directions opposées par
     les paires de carreaux qui l'encadrent. Comme les décalages alternent d'une rangée
     à l'autre, les distorsions perçues s'inversent en direction : certaines lignes
@@ -146,7 +146,7 @@ svg {
     <span class="highlight">en accordéon</span>.
   </p>
 
-  <p>
+  <p data-i18n-html="p4">
     La largeur du mortier est cruciale : trop épais ou trop fin, l'illusion disparaît.
     À l'épaisseur optimale, le gris du mortier est traité comme une zone ambiguë dont
     la luminosité se rapproche trop de celle des carreaux adjacents, ce qui
@@ -155,7 +155,38 @@ svg {
   </p>
 </div>
 
+<script src="../i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    pageTitle: "Illusion du Mur du Café",
+    q: "Les lignes grises entre les rangées sont-elles droites ou inclinées ?",
+    qSub: "Utilisez les boutons pour vérifier par vous-même.",
+    reset: "↺ Remettre à neuf",
+    alignDo: "Aligner les rangées", alignUndo: "Restaurer le décalage",
+    colorDo: "Colorier le mortier en rouge", colorUndo: "Restaurer le gris du mortier",
+    explShow: "▼ Voir l'explication", explHide: "▲ Masquer l'explication",
+    explTitle: "L'illusion du Mur du Café — ce que fait votre cerveau",
+    p1: `<span class="answer">Les lignes de mortier sont parfaitement droites et horizontales.</span> Elles ne penchent ni à gauche ni à droite. Alignez les rangées ou colorez le mortier en rouge pour le constater immédiatement.`,
+    p2: `Cette illusion a été documentée en 1979 par le psychologue britannique <strong>Richard Gregory</strong> après avoir été observée sur le mur carrelé d'un café de Bristol. Son mécanisme repose sur un phénomène appelé <span class="highlight">expansion de contraste de bord</span>. Là où un carreau noir jouxte un carreau blanc de la rangée voisine, la frontière entre eux crée une micro-région de contraste intense. Le système visuel interprète cette zone comme un bord incliné, et extrapole cette pente sur toute la ligne de mortier.`,
+    p3: `Chaque ligne de mortier grise est "tiraillée" dans des directions opposées par les paires de carreaux qui l'encadrent. Comme les décalages alternent d'une rangée à l'autre, les distorsions perçues s'inversent en direction : certaines lignes semblent pencher à gauche, d'autres à droite, renforçant l'impression d'une grille <span class="highlight">en accordéon</span>.`,
+    p4: `La largeur du mortier est cruciale : trop épais ou trop fin, l'illusion disparaît. À l'épaisseur optimale, le gris du mortier est traité comme une zone ambiguë dont la luminosité se rapproche trop de celle des carreaux adjacents, ce qui <span class="highlight">empêche le cerveau de délimiter clairement les bords</span> et laisse l'angle apparent flotter entre plusieurs interprétations.`
+  },
+  en: {
+    pageTitle: "Café Wall Illusion",
+    q: "Are the grey lines between the rows straight or slanted?",
+    qSub: "Use the buttons to check for yourself.",
+    reset: "↺ Reset",
+    alignDo: "Align the rows", alignUndo: "Restore the offset",
+    colorDo: "Colour the mortar red", colorUndo: "Restore the grey mortar",
+    explShow: "▼ See the explanation", explHide: "▲ Hide the explanation",
+    explTitle: "The Café Wall illusion — what your brain is doing",
+    p1: `<span class="answer">The mortar lines are perfectly straight and horizontal.</span> They lean neither left nor right. Align the rows or colour the mortar red to see it at once.`,
+    p2: `This illusion was documented in 1979 by the British psychologist <strong>Richard Gregory</strong> after being spotted on the tiled wall of a café in Bristol. Its mechanism relies on a phenomenon called <span class="highlight">border-contrast expansion</span>. Where a black tile sits next to a white tile in the neighbouring row, the boundary between them creates a micro-region of intense contrast. The visual system reads this zone as a slanted edge and extrapolates that slope along the whole mortar line.`,
+    p3: `Each grey mortar line is "tugged" in opposite directions by the pairs of tiles framing it. Since the offsets alternate from one row to the next, the perceived distortions reverse direction: some lines seem to lean left, others right, reinforcing the impression of an <span class="highlight">accordion-like</span> grid.`,
+    p4: `The width of the mortar is crucial: too thick or too thin and the illusion disappears. At the optimal thickness, the grey of the mortar is treated as an ambiguous zone whose brightness is too close to that of the adjacent tiles, which <span class="highlight">prevents the brain from clearly delimiting the edges</span> and leaves the apparent angle floating between several interpretations.`
+  }
+});
 const SVG_EL = document.getElementById('svg');
 const ROWS = 6;
 const COLS = 6;
@@ -210,10 +241,10 @@ document.getElementById('btn-align').addEventListener('click', function() {
   aligned = !aligned;
   if (aligned) {
     offsets = new Array(ROWS).fill(0);
-    this.textContent = 'Restaurer le décalage';
+    this.textContent = I18N.t('alignUndo');
   } else {
     offsets = [...defaultOffsets];
-    this.textContent = 'Aligner les rangées';
+    this.textContent = I18N.t('alignDo');
   }
   draw();
 });
@@ -221,7 +252,7 @@ document.getElementById('btn-align').addEventListener('click', function() {
 document.getElementById('btn-color').addEventListener('click', function() {
   colored = !colored;
   morterColor = colored ? '#c0392b' : '#999';
-  this.textContent = colored ? 'Restaurer le gris du mortier' : 'Colorier le mortier en rouge';
+  this.textContent = I18N.t(colored ? 'colorUndo' : 'colorDo');
   draw();
 });
 
@@ -230,8 +261,8 @@ document.getElementById('btn-reset').addEventListener('click', () => {
   colored = false;
   offsets = [...defaultOffsets];
   morterColor = '#999';
-  document.getElementById('btn-align').textContent = 'Aligner les rangées';
-  document.getElementById('btn-color').textContent = 'Colorier le mortier en rouge';
+  document.getElementById('btn-align').textContent = I18N.t('alignDo');
+  document.getElementById('btn-color').textContent = I18N.t('colorDo');
   draw();
 });
 
@@ -239,7 +270,7 @@ const btnEx = document.getElementById('btn-explain');
 const divEx = document.getElementById('explication');
 btnEx.addEventListener('click', () => {
   const visible = divEx.classList.toggle('visible');
-  btnEx.textContent = visible ? '▲ Masquer l\'explication' : '▼ Voir l\'explication';
+  btnEx.textContent = I18N.t(visible ? 'explHide' : 'explShow');
 });
 </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Illusion de Zöllner</title>
+<title data-i18n="pageTitle">Illusion de Zöllner</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -102,29 +102,29 @@ svg {
 <body>
 
 <p id="question">
-  <strong>Ces lignes longues sont-elles parallèles ?</strong><br>
-  <span style="font-size:13px;color:#999;">Glissez les lignes verticalement pour les rapprocher · cliquez sur une hachure pour la masquer.</span>
+  <strong data-i18n="q">Ces lignes longues sont-elles parallèles ?</strong><br>
+  <span style="font-size:13px;color:#999;" data-i18n="qSub">Glissez les lignes verticalement pour les rapprocher · cliquez sur une hachure pour la masquer.</span>
 </p>
 
 <svg id="svg" viewBox="0 0 650 330" xmlns="http://www.w3.org/2000/svg" style="touch-action:none;"></svg>
 
 <div id="controls">
-  <button id="btn-reset">↺ Remettre à neuf</button>
-  <button id="btn-hachures">Masquer toutes les hachures</button>
+  <button id="btn-reset" data-i18n="reset">↺ Remettre à neuf</button>
+  <button id="btn-hachures" data-i18n="hatchHide">Masquer toutes les hachures</button>
 </div>
 
-<button id="btn-explain">▼ Voir l'explication</button>
+<button id="btn-explain" data-i18n="explShow">▼ Voir l'explication</button>
 
 <div id="explication">
-  <h2>L'illusion de Zöllner — ce que fait votre cerveau</h2>
+  <h2 data-i18n="explTitle">L'illusion de Zöllner — ce que fait votre cerveau</h2>
 
-  <p>
+  <p data-i18n-html="p1">
     <span class="answer">Oui, les quatre lignes longues sont parfaitement parallèles.</span>
     Elles sont toutes tracées à la même hauteur relative et ne divergent jamais.
     Masquez les hachures et cette évidence s'impose aussitôt.
   </p>
 
-  <p>
+  <p data-i18n-html="p2">
     Cette illusion a été découverte en 1860 par l'astronome et physicien allemand
     <strong>Johann Karl Friedrich Zöllner</strong> en observant un motif sur un tissu.
     Elle repose sur un conflit entre deux niveaux de traitement visuel.
@@ -133,7 +133,7 @@ svg {
     entre la ligne principale et chaque hachure.
   </p>
 
-  <p>
+  <p data-i18n-html="p3">
     Ce mécanisme s'appelle <span class="highlight">l'expansion des angles aigus</span> :
     le système visuel tend à surestimer les petits angles (inférieurs à 90°) et à les
     "pousser" légèrement vers l'extérieur. Comme les hachures alternent de sens entre
@@ -141,7 +141,7 @@ svg {
     donnant l'impression que les lignes convergent ou divergent comme des rails tordus.
   </p>
 
-  <p>
+  <p data-i18n-html="p4">
     L'illusion de Zöllner illustre le fait que notre système visuel traite simultanément
     plusieurs niveaux d'information — orientation locale vs. direction globale — et que
     les <span class="highlight">erreurs locales peuvent corrompre le jugement global</span>.
@@ -150,7 +150,34 @@ svg {
   </p>
 </div>
 
+<script src="../i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    pageTitle: "Illusion de Zöllner",
+    q: "Ces lignes longues sont-elles parallèles ?",
+    qSub: "Glissez les lignes verticalement pour les rapprocher · cliquez sur une hachure pour la masquer.",
+    reset: "↺ Remettre à neuf", hatchHide: "Masquer toutes les hachures", hatchShow: "Afficher toutes les hachures",
+    explShow: "▼ Voir l'explication", explHide: "▲ Masquer l'explication",
+    explTitle: "L'illusion de Zöllner — ce que fait votre cerveau",
+    p1: `<span class="answer">Oui, les quatre lignes longues sont parfaitement parallèles.</span> Elles sont toutes tracées à la même hauteur relative et ne divergent jamais. Masquez les hachures et cette évidence s'impose aussitôt.`,
+    p2: `Cette illusion a été découverte en 1860 par l'astronome et physicien allemand <strong>Johann Karl Friedrich Zöllner</strong> en observant un motif sur un tissu. Elle repose sur un conflit entre deux niveaux de traitement visuel. Lorsque de courtes hachures traversent une longue ligne en diagonale, le cerveau perçoit implicitement un <span class="highlight">angle aigu local</span> entre la ligne principale et chaque hachure.`,
+    p3: `Ce mécanisme s'appelle <span class="highlight">l'expansion des angles aigus</span> : le système visuel tend à surestimer les petits angles (inférieurs à 90°) et à les "pousser" légèrement vers l'extérieur. Comme les hachures alternent de sens entre les lignes, les distorsions locales s'accumulent dans des directions opposées, donnant l'impression que les lignes convergent ou divergent comme des rails tordus.`,
+    p4: `L'illusion de Zöllner illustre le fait que notre système visuel traite simultanément plusieurs niveaux d'information — orientation locale vs. direction globale — et que les <span class="highlight">erreurs locales peuvent corrompre le jugement global</span>. Ce type d'interférence est exploité en camouflage militaire (dazzle camouflage) et dans certains motifs textiles pour créer des effets de mouvement.`
+  },
+  en: {
+    pageTitle: "Zöllner Illusion",
+    q: "Are these long lines parallel?",
+    qSub: "Drag the lines vertically to bring them closer · click a hatch mark to hide it.",
+    reset: "↺ Reset", hatchHide: "Hide all hatch marks", hatchShow: "Show all hatch marks",
+    explShow: "▼ See the explanation", explHide: "▲ Hide the explanation",
+    explTitle: "The Zöllner illusion — what your brain is doing",
+    p1: `<span class="answer">Yes, the four long lines are perfectly parallel.</span> They are all drawn at the same relative height and never diverge. Hide the hatch marks and it becomes obvious at once.`,
+    p2: `This illusion was discovered in 1860 by the German astronomer and physicist <strong>Johann Karl Friedrich Zöllner</strong> while observing a pattern on a fabric. It relies on a conflict between two levels of visual processing. When short hatch marks cross a long line diagonally, the brain implicitly perceives an <span class="highlight">acute local angle</span> between the main line and each hatch.`,
+    p3: `This mechanism is called <span class="highlight">acute-angle expansion</span>: the visual system tends to overestimate small angles (below 90°) and to "push" them slightly outward. Since the hatch marks alternate direction from one line to the next, the local distortions build up in opposite directions, giving the impression that the lines converge or diverge like twisted rails.`,
+    p4: `The Zöllner illusion shows that our visual system processes several levels of information at once — local orientation vs. global direction — and that <span class="highlight">local errors can corrupt the overall judgement</span>. This kind of interference is exploited in military camouflage (dazzle camouflage) and in certain textile patterns to create effects of movement.`
+  }
+});
 const SVG_EL = document.getElementById('svg');
 const VW = 650, VH = 330;
 const NS = 'http://www.w3.org/2000/svg';
@@ -254,7 +281,7 @@ document.getElementById('btn-hachures').addEventListener('click', function() {
   SVG_EL.querySelectorAll('.hachure').forEach(h => {
     h.style.visibility = hachVisible ? '' : 'hidden';
   });
-  this.textContent = hachVisible ? 'Masquer toutes les hachures' : 'Afficher toutes les hachures';
+  this.textContent = I18N.t(hachVisible ? 'hatchHide' : 'hatchShow');
 });
 
 document.getElementById('btn-reset').addEventListener('click', () => {
@@ -262,14 +289,14 @@ document.getElementById('btn-reset').addEventListener('click', () => {
   groups.forEach(g => g.setAttribute('transform', 'translate(0,0)'));
   hachVisible = true;
   SVG_EL.querySelectorAll('.hachure').forEach(h => h.style.visibility = '');
-  document.getElementById('btn-hachures').textContent = 'Masquer toutes les hachures';
+  document.getElementById('btn-hachures').textContent = I18N.t('hatchHide');
 });
 
 const btnEx = document.getElementById('btn-explain');
 const divEx = document.getElementById('explication');
 btnEx.addEventListener('click', () => {
   const visible = divEx.classList.toggle('visible');
-  btnEx.textContent = visible ? '▲ Masquer l\'explication' : '▼ Voir l\'explication';
+  btnEx.textContent = I18N.t(visible ? 'explHide' : 'explShow');
 });
 </script>
 </body>

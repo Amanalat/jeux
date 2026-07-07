@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Illusion de Poggendorff</title>
+<title data-i18n="pageTitle">Illusion de Poggendorff</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -102,8 +102,8 @@ svg {
 <body>
 
 <p id="question">
-  <strong>Lequel des deux traits de droite est le prolongement du trait noir : A ou B ?</strong><br>
-  <span style="font-size:13px;color:#999;">Cliquez sur "Révéler la réponse" pour vérifier.</span>
+  <strong data-i18n="q">Lequel des deux traits de droite est le prolongement du trait noir : A ou B ?</strong><br>
+  <span style="font-size:13px;color:#999;" data-i18n="qSub">Cliquez sur "Révéler la réponse" pour vérifier.</span>
 </p>
 
 <!--
@@ -149,22 +149,22 @@ svg {
 </svg>
 
 <div id="controls">
-  <button id="btn-reset">↺ Remettre à neuf</button>
-  <button id="btn-reveal">Révéler la réponse</button>
+  <button id="btn-reset" data-i18n="reset">↺ Remettre à neuf</button>
+  <button id="btn-reveal" data-i18n="revealShow">Révéler la réponse</button>
 </div>
 
-<button id="btn-explain">▼ Voir l'explication</button>
+<button id="btn-explain" data-i18n="explShow">▼ Voir l'explication</button>
 
 <div id="explication">
-  <h2>L'illusion de Poggendorff — ce que fait votre cerveau</h2>
+  <h2 data-i18n="explTitle">L'illusion de Poggendorff — ce que fait votre cerveau</h2>
 
-  <p>
+  <p data-i18n-html="p1">
     <span class="answer">C'est le trait A (rouge) qui est le vrai prolongement.</span>
     Le trait B (bleu), pourtant situé plus haut, semble au premier regard continuer
     naturellement la ligne noire. C'est précisément l'illusion de Poggendorff.
   </p>
 
-  <p>
+  <p data-i18n-html="p2">
     Cette illusion a été décrite en 1860 par le physicien allemand
     <strong>Johann Christian Poggendorff</strong>. Elle surgit quand une ligne diagonale
     est interrompue par une bande opaque. Les deux segments visibles paraissent décalés :
@@ -172,7 +172,7 @@ svg {
     paraît s'aligner naturellement avec le segment d'entrée.
   </p>
 
-  <p>
+  <p data-i18n-html="p3">
     Le mécanisme principal est une <span class="highlight">surestimation de l'angle</span>
     entre la diagonale et les bords verticaux du rectangle. Le cerveau interprète cet angle
     comme plus ouvert qu'il ne l'est réellement, ce qui déplace mentalement le point de
@@ -180,7 +180,7 @@ svg {
     et que le leurre (B), positionné plus haut, semble correspondre à l'extrapolation naturelle.
   </p>
 
-  <p>
+  <p data-i18n-html="p4">
     L'illusion est d'autant plus forte que l'angle de la diagonale est proche de 45°
     et que le rectangle est large. Elle disparaît presque entièrement pour des lignes
     horizontales ou verticales. Ce biais a des implications pratiques réelles :
@@ -190,28 +190,55 @@ svg {
   </p>
 </div>
 
+<script src="../i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    pageTitle: "Illusion de Poggendorff",
+    q: "Lequel des deux traits de droite est le prolongement du trait noir : A ou B ?",
+    qSub: 'Cliquez sur "Révéler la réponse" pour vérifier.',
+    reset: "↺ Remettre à neuf", revealShow: "Révéler la réponse", revealHide: "Masquer la réponse",
+    explShow: "▼ Voir l'explication", explHide: "▲ Masquer l'explication",
+    explTitle: "L'illusion de Poggendorff — ce que fait votre cerveau",
+    p1: `<span class="answer">C'est le trait A (rouge) qui est le vrai prolongement.</span> Le trait B (bleu), pourtant situé plus haut, semble au premier regard continuer naturellement la ligne noire. C'est précisément l'illusion de Poggendorff.`,
+    p2: `Cette illusion a été décrite en 1860 par le physicien allemand <strong>Johann Christian Poggendorff</strong>. Elle surgit quand une ligne diagonale est interrompue par une bande opaque. Les deux segments visibles paraissent décalés : le vrai prolongement semble trop bas, et un trait légèrement décalé vers le haut paraît s'aligner naturellement avec le segment d'entrée.`,
+    p3: `Le mécanisme principal est une <span class="highlight">surestimation de l'angle</span> entre la diagonale et les bords verticaux du rectangle. Le cerveau interprète cet angle comme plus ouvert qu'il ne l'est réellement, ce qui déplace mentalement le point de sortie attendu vers le haut. Il en résulte que le vrai prolongement (A) paraît "trop bas", et que le leurre (B), positionné plus haut, semble correspondre à l'extrapolation naturelle.`,
+    p4: `L'illusion est d'autant plus forte que l'angle de la diagonale est proche de 45° et que le rectangle est large. Elle disparaît presque entièrement pour des lignes horizontales ou verticales. Ce biais a des implications pratiques réelles : dans l'aviation ou la chirurgie assistée, des interfaces mal conçues peuvent provoquer des erreurs d'alignement — preuve que <span class="highlight">notre cerveau ne suit pas automatiquement les droites</span>.`
+  },
+  en: {
+    pageTitle: "Poggendorff Illusion",
+    q: "Which of the two lines on the right continues the black line: A or B?",
+    qSub: 'Click "Reveal the answer" to check.',
+    reset: "↺ Reset", revealShow: "Reveal the answer", revealHide: "Hide the answer",
+    explShow: "▼ See the explanation", explHide: "▲ Hide the explanation",
+    explTitle: "The Poggendorff illusion — what your brain is doing",
+    p1: `<span class="answer">It is line A (red) that is the true continuation.</span> Line B (blue), although higher up, looks at first glance like the natural continuation of the black line. That is precisely the Poggendorff illusion.`,
+    p2: `This illusion was described in 1860 by the German physicist <strong>Johann Christian Poggendorff</strong>. It arises when a diagonal line is interrupted by an opaque band. The two visible segments appear offset: the true continuation seems too low, and a line shifted slightly upward seems to align naturally with the entry segment.`,
+    p3: `The main mechanism is an <span class="highlight">overestimation of the angle</span> between the diagonal and the vertical edges of the rectangle. The brain reads this angle as more open than it really is, which mentally shifts the expected exit point upward. As a result the true continuation (A) looks "too low", and the decoy (B), placed higher, seems to match the natural extrapolation.`,
+    p4: `The illusion is all the stronger when the diagonal's angle is close to 45° and the rectangle is wide. It almost entirely disappears for horizontal or vertical lines. This bias has real practical implications: in aviation or assisted surgery, poorly designed interfaces can cause alignment errors — proof that <span class="highlight">our brain does not automatically follow straight lines</span>.`
+  }
+});
 let revealed = false;
 
 document.getElementById('btn-reveal').addEventListener('click', function() {
   revealed = !revealed;
   document.getElementById('hidden-seg').setAttribute('opacity', revealed ? '1' : '0');
   document.getElementById('rect-main').setAttribute('fill-opacity', revealed ? '0.28' : '1');
-  this.textContent = revealed ? 'Masquer la réponse' : 'Révéler la réponse';
+  this.textContent = I18N.t(revealed ? 'revealHide' : 'revealShow');
 });
 
 document.getElementById('btn-reset').addEventListener('click', () => {
   revealed = false;
   document.getElementById('hidden-seg').setAttribute('opacity', '0');
   document.getElementById('rect-main').setAttribute('fill-opacity', '1');
-  document.getElementById('btn-reveal').textContent = 'Révéler la réponse';
+  document.getElementById('btn-reveal').textContent = I18N.t('revealShow');
 });
 
 const btnEx = document.getElementById('btn-explain');
 const divEx = document.getElementById('explication');
 btnEx.addEventListener('click', () => {
   const visible = divEx.classList.toggle('visible');
-  btnEx.textContent = visible ? '▲ Masquer l\'explication' : '▼ Voir l\'explication';
+  btnEx.textContent = I18N.t(visible ? 'explHide' : 'explShow');
 });
 </script>
 </body>
