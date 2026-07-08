@@ -7,6 +7,32 @@
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Exo+2:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="../i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    autoAdvance: "AUTO-AVANCE (3 s)", play: "▶ JOUER", back: "← RETOUR", menu: "← MENU",
+    catPlaceholder: "Catégorie", qPlaceholder: "Question...", nextQ: "QUESTION SUIVANTE ➜",
+    resTitle: "BRAVO !", replay: "🔄 REJOUER", home: "← ACCUEIL",
+    noSet: "⚠️ Aucune série sélectionnée — choisis-la au menu principal",
+    noQuestions: "Aucune question disponible — choisis une série au menu principal.",
+    goodAnswer: "Bonne réponse !", badAnswer: "Mauvaise réponse.",
+    resultsByTheme: "📊 RÉSULTATS PAR THÈME", totalScore: "Score total :",
+    gameOf: "— partie de", qWord: "question", qWordP: "questions",
+    hint: "(série et longueur se choisissent au menu principal)"
+  },
+  en: {
+    autoAdvance: "AUTO-ADVANCE (3 s)", play: "▶ PLAY", back: "← BACK", menu: "← MENU",
+    catPlaceholder: "Category", qPlaceholder: "Question...", nextQ: "NEXT QUESTION ➜",
+    resTitle: "WELL DONE!", replay: "🔄 REPLAY", home: "← HOME",
+    noSet: "⚠️ No set selected — choose one from the main menu",
+    noQuestions: "No questions available — choose a set from the main menu.",
+    goodAnswer: "Correct answer!", badAnswer: "Wrong answer.",
+    resultsByTheme: "📊 RESULTS BY THEME", totalScore: "Total score:",
+    gameOf: "— game of", qWord: "question", qWordP: "questions",
+    hint: "(set and length are chosen from the main menu)"
+  }
+});
+</script>
+<script>
 (function(){var en=(window.I18N&&I18N.lang==='en');
 ['questions','questions-6e5e','questions-niveau1','questions-niveau2','questions-niveau3','qcm-store'].forEach(function(f){document.write('<scr'+'ipt src="'+f+(en?'-en':'')+'.js"><'+'/scr'+'ipt>');});})();
 </script>
@@ -225,10 +251,10 @@ body::before{
 
   <label style="font-family:'Exo 2',sans-serif;font-size:13px;font-weight:600;color:var(--dim);cursor:pointer;display:flex;align-items:center;gap:10px;user-select:none;letter-spacing:.5px">
     <input type="checkbox" id="auto-advance" style="accent-color:var(--yellow);width:14px;height:14px;cursor:pointer">
-    AUTO-AVANCE (3 s)
+    <span data-i18n="autoAdvance">AUTO-AVANCE (3 s)</span>
   </label>
-  <button class="play-btn-main" onclick="startGame()">▶ JOUER</button>
-  <a class="back-link" href="index.html">← RETOUR</a>
+  <button class="play-btn-main" onclick="startGame()" data-i18n="play">▶ JOUER</button>
+  <a class="back-link" href="index.html" data-i18n="back">← RETOUR</a>
 </div>
 
 <!-- ── GAME ───────────────────────────────────────────────── -->
@@ -236,23 +262,23 @@ body::before{
   <div class="hud">
     <div class="hud-item">Q <span id="q-num">1</span>/<span id="q-total">30</span></div>
     <div class="hud-item">⭐ <span id="score-live">0</span></div>
-    <div class="hud-item"><a href="index.html" style="color:#9a9ad0;text-decoration:none;font-family:'Press Start 2P',monospace;font-size:11px;letter-spacing:1px" onmouseover="this.style.color='#4fc3f7'" onmouseout="this.style.color=''">← MENU</a></div>
+    <div class="hud-item"><a href="index.html" style="color:#9a9ad0;text-decoration:none;font-family:'Press Start 2P',monospace;font-size:11px;letter-spacing:1px" onmouseover="this.style.color='#4fc3f7'" onmouseout="this.style.color=''" data-i18n="menu">← MENU</a></div>
   </div>
   <div class="prog-bg"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
 
   <div class="q-card">
-    <div class="cat-pill" id="cat-pill">Catégorie</div>
-    <div class="q-text" id="q-text">Question...</div>
+    <div class="cat-pill" id="cat-pill" data-i18n="catPlaceholder">Catégorie</div>
+    <div class="q-text" id="q-text" data-i18n="qPlaceholder">Question...</div>
     <div class="options" id="options"></div>
     <div class="feedback" id="feedback"></div>
   </div>
 
-  <button class="next-btn" id="next-btn" onclick="nextQ()">QUESTION SUIVANTE ➜</button>
+  <button class="next-btn" id="next-btn" onclick="nextQ()" data-i18n="nextQ">QUESTION SUIVANTE ➜</button>
 </div>
 
 <!-- ── RESULTS ────────────────────────────────────────────── -->
 <div id="results">
-  <div class="res-title" id="res-title">BRAVO !</div>
+  <div class="res-title" id="res-title" data-i18n="resTitle">BRAVO !</div>
   <div class="score-ring" id="score-ring">
     <div class="score-inner">
       <div class="score-num" id="final-score">0</div>
@@ -261,8 +287,8 @@ body::before{
   </div>
   <div class="breakdown" id="breakdown"></div>
   <div class="res-actions">
-    <button class="btn-restart" onclick="restart()">🔄 REJOUER</button>
-    <a class="btn-home" href="index.html">← ACCUEIL</a>
+    <button class="btn-restart" onclick="restart()" data-i18n="replay">🔄 REJOUER</button>
+    <a class="btn-home" href="index.html" data-i18n="home">← ACCUEIL</a>
   </div>
 </div>
 
@@ -272,9 +298,9 @@ const activeInfo = QCMStore.getActiveInfo();
 const sel = document.getElementById('set-selector');
 if (activeInfo.count) {
   const n = Math.min(QCMStore.loadSessionCount(), activeInfo.count);
-  sel.innerHTML = `<div style="font-family:'Exo 2',sans-serif;font-size:15px;font-weight:600;color:#9a9ad0;text-align:center">📚 ${activeInfo.label} — partie de ${n} question${n>1?'s':''}<br><span style="font-size:13px;color:var(--dim)">(série et longueur se choisissent au menu principal)</span></div>`;
+  sel.innerHTML = `<div style="font-family:'Exo 2',sans-serif;font-size:15px;font-weight:600;color:#9a9ad0;text-align:center">📚 ${activeInfo.label} ${I18N.t('gameOf')} ${n} ${n>1?I18N.t('qWordP'):I18N.t('qWord')}<br><span style="font-size:13px;color:var(--dim)">${I18N.t('hint')}</span></div>`;
 } else {
-  sel.innerHTML = `<div style="font-family:'Exo 2',sans-serif;font-size:15px;font-weight:600;color:#ffd740;text-align:center">⚠️ Aucune série sélectionnée — choisis-la au menu principal</div>`;
+  sel.innerHTML = `<div style="font-family:'Exo 2',sans-serif;font-size:15px;font-weight:600;color:#ffd740;text-align:center">${I18N.t('noSet')}</div>`;
 }
 
 // ── State ────────────────────────────────────────────────────
@@ -296,7 +322,7 @@ function startGame() {
   // Tirage de la partie : sessionCount questions au hasard dans la série du hub
   let raw = QCMStore.getSessionQuestions();
   if (!raw || !raw.length) raw = (typeof DEFAULT_QCM !== 'undefined') ? shuffle(DEFAULT_QCM).slice(0, QCMStore.loadSessionCount()) : [];
-  if (!raw.length) { alert('Aucune question disponible — choisis une série au menu principal.'); return; }
+  if (!raw.length) { alert(I18N.t('noQuestions')); return; }
 
   // Build shuffled questions with shuffled options
   shuffled = shuffle(raw).map(q => {
@@ -362,12 +388,12 @@ function pick(i, correct, expl, cat) {
     score++;
     if (cat) catStats[cat].c++;
     fb.className = 'feedback ok show';
-    fb.innerHTML = '✅ ' + (expl || 'Bonne réponse !');
+    fb.innerHTML = '✅ ' + (expl || I18N.t('goodAnswer'));
   } else {
     btns[i].classList.add('wrong');
     btns[correct].classList.add('correct');
     fb.className = 'feedback ko show';
-    fb.innerHTML = '❌ ' + (expl || 'Mauvaise réponse.');
+    fb.innerHTML = '❌ ' + (expl || I18N.t('badAnswer'));
   }
 
   document.getElementById('score-live').textContent = score;
@@ -408,7 +434,7 @@ function showResults() {
   const ring = document.getElementById('score-ring');
   ring.style.setProperty('--pct', (pct * 100) + '%');
 
-  let html = '<div class="breakdown-title">📊 RÉSULTATS PAR THÈME</div>';
+  let html = '<div class="breakdown-title">' + I18N.t('resultsByTheme') + '</div>';
   const entries = Object.entries(catStats).sort((a, b) => b[1].t - a[1].t);
   if (entries.length > 0) {
     entries.forEach(([cat, d]) => {
@@ -420,7 +446,7 @@ function showResults() {
       </div>`;
     });
   } else {
-    html += `<div class="cat-row"><span class="cat-name" style="color:var(--text)">Score total : ${score}/${shuffled.length}</span></div>`;
+    html += `<div class="cat-row"><span class="cat-name" style="color:var(--text)">${I18N.t('totalScore')} ${score}/${shuffled.length}</span></div>`;
   }
   document.getElementById('breakdown').innerHTML = html;
 }

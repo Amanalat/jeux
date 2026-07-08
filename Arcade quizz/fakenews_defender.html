@@ -169,7 +169,7 @@
 
   <div id="overlay">
     <h1>FAKE NEWS<br>DEFENDER</h1>
-    <div class="sub">
+    <div class="sub" data-i18n-html="intro">
       🎯 Une question s'affiche en haut.<br>
       Des réponses tombent du ciel.<br>
       <strong style="color:#00ffcc">Détruis toutes les FAUSSES réponses !</strong><br>
@@ -178,8 +178,8 @@
       ← → ou <strong style="color:#00ffcc">SOURIS</strong> pour déplacer &nbsp;|&nbsp; ESPACE ou <strong style="color:#00ffcc">CLIC</strong> pour tirer &nbsp;|&nbsp; <strong style="color:#00ffcc">P</strong> = Pause
     </div>
     <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
-      <button onclick="startDefaultGame()">JOUER ▶</button>
-      <button class="btn-custom" onclick="location.href='index.html'">← MENU &amp; QUESTIONS</button>
+      <button onclick="startDefaultGame()" data-i18n="play">JOUER ▶</button>
+      <button class="btn-custom" onclick="location.href='index.html'" data-i18n="menu">← MENU &amp; QUESTIONS</button>
     </div>
   </div>
 </div>
@@ -195,6 +195,22 @@
 </div>
 
 <script src="../i18n.js"></script>
+<script>
+I18N.register({
+  fr: {
+    intro: `🎯 Une question s'affiche en haut.<br>Des réponses tombent du ciel.<br><strong style="color:#00ffcc">Détruis toutes les FAUSSES réponses !</strong><br>⚠️ Ne tire pas sur la bonne réponse — tu perdras une vie !<br>⚠️ Laisse la bonne réponse passer — elle ne doit pas s'échapper !<br><br>← → ou <strong style="color:#00ffcc">SOURIS</strong> pour déplacer &nbsp;|&nbsp; ESPACE ou <strong style="color:#00ffcc">CLIC</strong> pour tirer &nbsp;|&nbsp; <strong style="color:#00ffcc">P</strong> = Pause`,
+    play: "JOUER ▶", menu: "← MENU & QUESTIONS", finalScore: "Score final :", replay: "REJOUER ▶",
+    winTitle: "BRAVO !<br>MISSION ACCOMPLIE !", loseTitle: "GAME OVER",
+    winMsg: "Tu es un vrai chasseur de Fake News !", loseMsg: "Continue à développer ton esprit critique !"
+  },
+  en: {
+    intro: `🎯 A question appears at the top.<br>Answers fall from the sky.<br><strong style="color:#00ffcc">Destroy all the FALSE answers!</strong><br>⚠️ Don't shoot the correct answer — you'll lose a life!<br>⚠️ Let the correct answer pass — it must not escape!<br><br>← → or <strong style="color:#00ffcc">MOUSE</strong> to move &nbsp;|&nbsp; SPACE or <strong style="color:#00ffcc">CLICK</strong> to shoot &nbsp;|&nbsp; <strong style="color:#00ffcc">P</strong> = Pause`,
+    play: "PLAY ▶", menu: "← MENU & QUESTIONS", finalScore: "Final score:", replay: "REPLAY ▶",
+    winTitle: "WELL DONE!<br>MISSION ACCOMPLISHED!", loseTitle: "GAME OVER",
+    winMsg: "You're a real fake-news hunter!", loseMsg: "Keep developing your critical thinking!"
+  }
+});
+</script>
 <script>
 (function(){var en=(window.I18N&&I18N.lang==='en');
 ['questions','questions-6e5e','questions-niveau1','questions-niveau2','questions-niveau3','qcm-store'].forEach(function(f){document.write('<scr'+'ipt src="'+f+(en?'-en':'')+'.js"><'+'/scr'+'ipt>');});})();
@@ -498,13 +514,13 @@ function endGame(win) {
   const ov=document.getElementById('overlay');
   ov.style.display='flex';
   ov.innerHTML=`
-    <h1 style="color:${win?'#00ffcc':'#ff4466'}">${win?'BRAVO !<br>MISSION ACCOMPLIE !':'GAME OVER'}</h1>
-    <div class="sub">Score final : <strong style="color:#00ffcc">${score}</strong><br>
-    ${win?'Tu es un vrai chasseur de Fake News !':'Continue à développer ton esprit critique !'}
+    <h1 style="color:${win?'#00ffcc':'#ff4466'}">${win?I18N.t('winTitle'):I18N.t('loseTitle')}</h1>
+    <div class="sub">${I18N.t('finalScore')} <strong style="color:#00ffcc">${score}</strong><br>
+    ${win?I18N.t('winMsg'):I18N.t('loseMsg')}
     </div>
     <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
-      <button onclick="startDefaultGame()">REJOUER ▶</button>
-      <button class="btn-custom" onclick="location.href='index.html'">← MENU &amp; QUESTIONS</button>
+      <button onclick="startDefaultGame()">${I18N.t('replay')}</button>
+      <button class="btn-custom" onclick="location.href='index.html'">${I18N.t('menu')}</button>
     </div>
   `;
 }
