@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════
    DATA
 ══════════════════════════════════════ */
-const QUESTIONS=[
+const QUESTIONS_FR=[
   {
     type:'to-opinion',
     avant:"Fumer en public est ",mot:"interdit",apres:".",
@@ -102,6 +102,110 @@ const QUESTIONS=[
     exp:"'Outil' = neutre, factuel. 'Fléau' ou 'bienfait' = jugement de valeur — chacun son avis !"
   },
 ];
+
+const QUESTIONS_EN=[
+  {
+    type:'to-opinion',
+    avant:"Smoking in public is ",mot:"banned",apres:".",
+    choix:["shameful","allowed","legal"],correct:0,
+    acc_fa:["banned","forbidden","prohibited","illegal","outlawed","restricted","regulated","penalised","penalized"],
+    acc_op:["shameful","disgraceful","scandalous","unacceptable","shocking","immoral","wrong","bad","normal","acceptable","fine","tolerable","trivial","free","disgusting"],
+    pieges:{"smoking":"'Smoking' is the subject — not the word that carries the judgement.","public":"'Public' specifies the place — it's not what changes the meaning."},
+    exp:"'Banned' = a verifiable legal fact. 'Shameful' or 'normal' = judgements — everyone has their own opinion!"
+  },
+  {
+    type:'to-opinion',
+    avant:"Hateful comments are ",mot:"legally",apres:" punished in France.",
+    choix:["fortunately","legally","rarely"],correct:0,
+    acc_fa:["legally","officially","judicially","criminally","by law","lawfully"],
+    acc_op:["fortunately","unfortunately","rarely","insufficiently","finally","unfairly","logically","correctly","harshly","too little","thankfully","sadly"],
+    pieges:{"comments":"'Hateful comments' is the subject.","punished":"'Punished' describes what happens to them — the adverb changes the meaning.","france":"'France' specifies the place."},
+    exp:"'Legally' = a verifiable law. 'Fortunately' or 'rarely' = a judgement on how it's applied!"
+  },
+  {
+    type:'to-opinion',
+    avant:"Social media are ",mot:"massively",apres:" used by teenagers.",
+    choix:["unfortunately","massively","logically"],correct:0,
+    acc_fa:["massively","widely","mostly","frequently","hugely","a lot","commonly","very often","increasingly"],
+    acc_op:["unfortunately","dangerously","excessively","too much","fortunately","naturally","normally","logically","obviously","regrettably"],
+    pieges:{"social":"'Social media' is the subject.","media":"'Social media' is the subject.","used":"'Used' describes the behaviour.","teenagers":"Specifies who."},
+    exp:"'Massively' = a measurable observation. 'Unfortunately' or 'fortunately' = your point of view!"
+  },
+  {
+    type:'to-opinion',
+    avant:"Global warming is a ",mot:"documented",apres:" phenomenon.",
+    choix:["catastrophic","documented","recent"],correct:0,
+    acc_fa:["documented","proven","measured","established","demonstrated","observed","scientific","verified","confirmed","recorded"],
+    acc_op:["catastrophic","alarming","terrifying","worrying","dramatic","disastrous","terrible","serious","urgent","exaggerated","debatable","questionable","overblown"],
+    pieges:{"global":"'Global warming' is the subject.","warming":"'Global warming' is the subject.","phenomenon":"'Phenomenon' is the noun — the adjective describing it changes everything."},
+    exp:"'Documented' = verifiable scientific data. 'Catastrophic' or 'exaggerated' = opposite judgements!"
+  },
+  {
+    type:'to-fait',
+    avant:"Sharing fake news is an ",mot:"irresponsible",apres:" act.",
+    choix:["irresponsible","widespread","shameful"],correct:1,
+    acc_fa:["widespread","common","frequent","ordinary","usual","commonplace"],
+    acc_op:["irresponsible","shameful","reprehensible","unacceptable","dangerous","serious","scandalous","immoral","wrong","harmful","normal","understandable","excusable","harmless","innocent"],
+    pieges:{"sharing":"'Sharing' is the verb.","fake":"Part of the subject.","news":"Part of the subject.","act":"'Act' is the noun — the adjective that follows changes everything."},
+    exp:"'Widespread' = a verifiable frequency. 'Irresponsible' or 'excusable' = opposite moral judgements!"
+  },
+  {
+    type:'to-opinion',
+    avant:"Artificial intelligence is a ",mot:"factor",apres:" for employment.",
+    choix:["danger","factor","topic"],correct:0,
+    acc_fa:["factor","topic","issue","challenge","parameter","element","aspect","consideration","matter"],
+    acc_op:["danger","threat","benefit","progress","catastrophe","revolution","scourge","opportunity","blessing","risk","problem","asset"],
+    pieges:{"artificial":"Part of the subject.","intelligence":"Part of the subject.","employment":"'Employment' specifies the area concerned."},
+    exp:"'Factor' = neutral, factual. 'Danger' or 'benefit' = taking a stance — everyone has their own view!"
+  },
+  {
+    type:'to-opinion',
+    avant:"Advertisements ",mot:"influence",apres:" consumer habits.",
+    choix:["manipulate","influence","modify"],correct:0,
+    acc_fa:["influence","modify","transform","change","affect","study","analyse","analyze","observe","shape"],
+    acc_op:["manipulate","exploit","condition","deceive","abuse","instrumentalise","brainwash","enslave","liberate","enrich"],
+    pieges:{"advertisements":"'Advertisements' is the subject.","habits":"'Habits' is the object.","consumer":"Specifies whose."},
+    exp:"'Influence' = a neutral, measurable observation. 'Manipulate' = a moral judgement about intent!"
+  },
+  {
+    type:'to-opinion',
+    avant:"Social media ",mot:"transform",apres:" social relationships.",
+    choix:["destroy","transform","modify"],correct:0,
+    acc_fa:["transform","modify","change","affect","reconfigure","reshape","influence","alter"],
+    acc_op:["destroy","impoverish","enrich","replace","degrade","strengthen","weaken","damage","poison","revitalise","revolutionise","upend"],
+    pieges:{"media":"'Social media' is the subject.","social":"Part of the subject or object.","relationships":"'Social relationships' is the object."},
+    exp:"'Transform' = a neutral observation. 'Destroy' or 'enrich' = a strong value judgement!"
+  },
+  {
+    type:'to-fait',
+    avant:"Social media ",mot:"steal",apres:" personal data from their users.",
+    choix:["steal","collect","spy on"],correct:1,
+    acc_fa:["collect","record","store","process","retrieve","save","keep","gather","analyse","analyze","use","share","resell","transmit","centralise","archive","capture"],
+    acc_op:["steal","plunder","exploit","siphon","suck up","divert","pilfer","spy on","surveil","snatch","pirate","confiscate","harvest illegally","rob"],
+    pieges:{"media":"'Social media' is the subject.","data":"'Personal data' is the object.","users":"Specifies whose data it is."},
+    exp:"'Collect' = a neutral, verifiable technical observation. 'Steal' or 'spy on' = a moral judgement about intent!"
+  },
+  {
+    type:'to-fait',
+    avant:"Social media are a ",mot:"danger",apres:" for democracy.",
+    choix:["danger","factor","scourge"],correct:1,
+    acc_fa:["factor","issue","topic","challenge","parameter","element","component","variable","phenomenon","reality","aspect","matter"],
+    acc_op:["danger","threat","scourge","poison","problem","risk","peril","cancer","brake","obstacle","harm","nuisance","benefit","asset","progress","hope","lever","engine","support","chance","revolution","booster"],
+    pieges:{"media":"'Social media' is the subject.","social":"Part of the subject.","democracy":"'Democracy' specifies the area."},
+    exp:"'Factor' = neutral, factual — takes no side. 'Danger' or 'benefit' = a value judgement, everyone has their own view!"
+  },
+  {
+    type:'to-fait',
+    avant:"The smartphone has become a ",mot:"scourge",apres:" for teenagers.",
+    choix:["scourge","tool","danger"],correct:1,
+    acc_fa:["tool","device","object","accessory","instrument","equipment","product","technology","medium","terminal","means"],
+    acc_op:["scourge","addiction","dependency","trap","enslavement","poison","problem","obsession","danger","nuisance","threat","benefit","asset","ally","revolution","progress","advantage","pleasure","freedom","precious tool","companion","friend"],
+    pieges:{"smartphone":"'Smartphone' is the subject.","teenagers":"Specifies who we're interested in."},
+    exp:"'Tool' = neutral, factual. 'Scourge' or 'benefit' = a value judgement — everyone has their own view!"
+  },
+];
+
+const QUESTIONS=(window.I18N && I18N.lang==='en')?QUESTIONS_EN:QUESTIONS_FR;
 
 /* ══════════════════════════════════════
    NORMALIZE
@@ -385,8 +489,8 @@ function renderPhrase(q){
   ip.style.display='none';tr.textContent='';
   answered=false;tries=0;
 
-  if(q.type==='to-fait'){con.className='fait';con.textContent="OPINION → FAIT";}
-  else{con.className='opinion';con.textContent="FAIT → OPINION";}
+  if(q.type==='to-fait'){con.className='fait';con.textContent=I18N.t('consigneToFait');}
+  else{con.className='opinion';con.textContent=I18N.t('consigneToOpinion');}
 
   // Build phrase with HTML spans
   ph.innerHTML='';
@@ -409,10 +513,10 @@ function renderPhrase(q){
   });
 
   if(lvl===1){
-    hint.textContent='⛏ CLIQUE LE MOT EN OR';
+    hint.textContent=I18N.t('hintOre');
     document.body.classList.remove('lvl2');
   } else {
-    hint.textContent='⛏ CLIQUE LE MOT À CHANGER';
+    hint.textContent=I18N.t('hintChange');
     document.body.classList.add('lvl2');
   }
 }
@@ -451,7 +555,7 @@ function openAnswer(q, span, isTarget){
     document.querySelectorAll('.w.selected').forEach(s=>s.classList.remove('selected'));
     span.classList.add('selected');
     ch.innerHTML='';ch.style.display='none';
-    ip.style.display='flex';tr.textContent='2 ESSAIS';
+    ip.style.display='flex';tr.textContent=I18N.t('tries2');
     const inp=document.getElementById('ip-in');
     inp.value='';
     setTimeout(()=>inp.focus(),80);
@@ -478,7 +582,7 @@ function pickChoice(btn,idx,q){
     if(lives<=0){setTimeout(()=>{closePanel();showOver();},1800);return;}
   }
   nx.style.display='block';
-  nx.textContent=mined>=questionsToWin?'[ TROUVER LE DIAMANT ! ]':'[ MINER LE BLOC SUIVANT ]';
+  nx.textContent=mined>=questionsToWin?I18N.t('findDiamond'):I18N.t('nextBlock');
   nx.onclick=mined>=questionsToWin?doWin:nextBlock;
 }
 
@@ -510,13 +614,13 @@ function forceValidate(){
   document.getElementById('btn-force').style.display='none';
   document.getElementById('ip-row').style.display='none';
   document.getElementById('ip-tries').textContent='';
-  fb.className='fb ok';fb.textContent="🔑 Mot \""+val+"\" accepté et enregistré ! "+qPool[qIdx].exp;fb.style.display='block';
+  fb.className='fb ok';fb.textContent=I18N.t('acceptedA')+val+I18N.t('acceptedB')+qPool[qIdx].exp;fb.style.display='block';
   document.querySelectorAll('.w.selected').forEach(s=>{
     s.textContent=val;s.classList.remove('selected');s.style.color='#00ff88';
   });
   onSuccess();
   nx.style.display='block';
-  nx.textContent=mined>=questionsToWin?'[ TROUVER LE DIAMANT ! ]':'[ MINER LE BLOC SUIVANT ]';
+  nx.textContent=mined>=questionsToWin?I18N.t('findDiamond'):I18N.t('nextBlock');
   nx.onclick=mined>=questionsToWin?doWin:nextBlock;
 }
 
@@ -550,23 +654,23 @@ function validateInput(){
     });
     onSuccess();
     nx.style.display='block';
-    nx.textContent=mined>=questionsToWin?'[ TROUVER LE DIAMANT ! ]':'[ MINER LE BLOC SUIVANT ]';
+    nx.textContent=mined>=questionsToWin?I18N.t('findDiamond'):I18N.t('nextBlock');
     nx.onclick=mined>=questionsToWin?doWin:nextBlock;
   } else {
     tries++;
     if(tries>=2){
       answered=true;
-      fb.className='fb ko';fb.textContent='✘ '+q.exp+' — Ex: "'+list[0]+'"';fb.style.display='block';
+      fb.className='fb ko';fb.textContent='✘ '+q.exp+I18N.t('exampleA')+list[0]+I18N.t('exampleB');fb.style.display='block';
       document.getElementById('ip-row').style.display='none';tr.textContent='';
       document.getElementById('btn-force').style.display='block';
       onFail();
       if(lives<=0){setTimeout(()=>{closePanel();showOver();},2000);return;}
       nx.style.display='block';
-      nx.textContent=mined>=questionsToWin?'[ TROUVER LE DIAMANT ! ]':'[ MINER LE BLOC SUIVANT ]';
+      nx.textContent=mined>=questionsToWin?I18N.t('findDiamond'):I18N.t('nextBlock');
       nx.onclick=mined>=questionsToWin?doWin:nextBlock;
     } else {
-      fb.className='fb hint';fb.textContent='💡 Pas tout à fait — essaie un autre mot.';fb.style.display='block';
-      tr.textContent='1 ESSAI RESTANT';
+      fb.className='fb hint';fb.textContent=I18N.t('notQuite');fb.style.display='block';
+      tr.textContent=I18N.t('try1left');
       document.getElementById('btn-force').style.display='block';
       document.getElementById('ip-in').value='';
       document.getElementById('ip-in').focus();
@@ -688,7 +792,7 @@ let pendingLvl=1;
 
 function showDurationPicker(l){
   pendingLvl=l;
-  document.getElementById('dur-title').textContent=l===1?'EXTRACTION FACILE':'EXTRACTION DIFFICILE';
+  document.getElementById('dur-title').textContent=l===1?I18N.t('easyTitle'):I18N.t('hardTitle');
   document.getElementById('menu-screen').style.display='none';
   document.getElementById('duration-screen').style.display='flex';
 }
@@ -754,9 +858,9 @@ function showExport(){
   const keys=Object.keys(stored);
   let out='';
   if(keys.length===0){
-    out="Aucun mot ajouté pour l'instant.";
+    out=I18N.t('exportEmpty');
   } else {
-    out="Mots validés par l'enseignant :\n\n";
+    out=I18N.t('exportHeader');
     keys.forEach(k=>{
       const words=stored[k];
       if(words&&words.length){
@@ -774,15 +878,15 @@ function showExport(){
     modal.style.cssText='position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:20px';
     modal.innerHTML=`
       <div style="background:#151515;border:3px solid #555;border-top-color:#aaa;border-left-color:#aaa;max-width:560px;width:100%;padding:20px;max-height:80vh;display:flex;flex-direction:column;gap:10px">
-        <div style="font-family:'Press Start 2P',monospace;font-size:.5rem;color:#ffd700">MOTS AJOUTÉS</div>
+        <div style="font-family:'Press Start 2P',monospace;font-size:.5rem;color:#ffd700">${I18N.t('exportTitle')}</div>
         <textarea id="export-txt" readonly style="flex:1;min-height:200px;background:#0a0a0a;border:2px solid #444;color:#aaffcc;font-family:VT323,monospace;font-size:1rem;padding:10px;resize:none;outline:none"></textarea>
         <div style="display:flex;gap:8px">
-          <button onclick="document.getElementById('export-txt').select();document.execCommand('copy');this.textContent='✔ COPIÉ !';setTimeout(()=>this.textContent='📋 COPIER',1500)"
-            style="flex:1;padding:8px;background:#003300;border:2px solid #00aa00;border-top-color:#00ff00;border-left-color:#00ff00;font-family:'Press Start 2P',monospace;font-size:.38rem;color:#00ff88;cursor:none">📋 COPIER</button>
-          <button onclick="if(confirm("Effacer tous les mots ajoutés ?")){localStorage.removeItem('mine_extra');document.getElementById('export-txt').value='(effacé)';}"
-            style="padding:8px 14px;background:#330000;border:2px solid #aa0000;border-top-color:#ff0000;border-left-color:#ff0000;font-family:'Press Start 2P',monospace;font-size:.38rem;color:#ff6666;cursor:none">🗑 EFFACER</button>
+          <button onclick="document.getElementById('export-txt').select();document.execCommand('copy');this.textContent='${I18N.t('copiedBtn')}';setTimeout(()=>this.textContent='${I18N.t('copyBtn')}',1500)"
+            style="flex:1;padding:8px;background:#003300;border:2px solid #00aa00;border-top-color:#00ff00;border-left-color:#00ff00;font-family:'Press Start 2P',monospace;font-size:.38rem;color:#00ff88;cursor:none">${I18N.t('copyBtn')}</button>
+          <button onclick="if(confirm(I18N.t('confirmClear'))){localStorage.removeItem('mine_extra');document.getElementById('export-txt').value='${I18N.t('cleared')}';}"
+            style="padding:8px 14px;background:#330000;border:2px solid #aa0000;border-top-color:#ff0000;border-left-color:#ff0000;font-family:'Press Start 2P',monospace;font-size:.38rem;color:#ff6666;cursor:none">${I18N.t('clearBtn')}</button>
           <button onclick="document.getElementById('export-modal').style.display='none'"
-            style="padding:8px 14px;background:#1e1e1e;border:2px solid #555;border-top-color:#888;border-left-color:#888;font-family:'Press Start 2P',monospace;font-size:.38rem;color:#999;cursor:none">✕ FERMER</button>
+            style="padding:8px 14px;background:#1e1e1e;border:2px solid #555;border-top-color:#888;border-left-color:#888;font-family:'Press Start 2P',monospace;font-size:.38rem;color:#999;cursor:none">${I18N.t('closeBtn')}</button>
         </div>
       </div>`;
     document.body.appendChild(modal);

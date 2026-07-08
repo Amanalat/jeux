@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mine la Planète ⛏️</title>
+<title data-i18n="pageTitle">Mine la Planète ⛏️</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
@@ -275,7 +275,7 @@ body.lvl2 .w.clickable:hover{color:#ffe0a0;background:rgba(255,200,100,.1);borde
 </style>
 </head>
 <body>
-<a class="back-hub" href="index.html">← Retour aux jeux</a>
+<a class="back-hub" href="index.html" data-i18n="backHub">← Retour aux jeux</a>
 <div style="position:fixed;bottom:8px;right:12px;z-index:9998;font-size:.68rem;font-weight:600;opacity:.5;color:#fff;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.6);">par Antonin Atger</div>
 
 <div id="dmg"></div>
@@ -285,61 +285,61 @@ body.lvl2 .w.clickable:hover{color:#ffe0a0;background:rgba(255,200,100,.1);borde
 <div id="hud">
   <div class="hv">⛏ <b id="h-score">0</b> PTS</div>
   <div id="lives"></div>
-  <div class="hv">BLOCS <b id="h-blocs">0</b>/10</div>
+  <div class="hv"><span data-i18n="hudBlocks">BLOCS</span> <b id="h-blocs">0</b>/10</div>
 </div>
 
 <div id="scene">
   <div id="block" onclick="clickBlock()">
     <svg id="cracks" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
-    <div id="click-hint">⛏ CLIQUE POUR MINER</div>
+    <div id="click-hint" data-i18n="clickToMine">⛏ CLIQUE POUR MINER</div>
     <div id="click-counter"></div>
   </div>
 </div>
 
 <!-- PHRASE PANEL -->
 <div id="phrase-panel">
-  <div id="consigne" class="fait">OPINION → FAIT</div>
+  <div id="consigne" class="fait" data-i18n="consigneToFait">OPINION → FAIT</div>
   <div id="phrase-hint"></div>
   <div id="phrase-text"></div>
   <div id="choices"></div>
   <div id="ip-row" style="display:none">
-    <input type="text" id="ip-in" placeholder="Ton mot ici..." autocomplete="off" autocorrect="off" spellcheck="false">
+    <input type="text" id="ip-in" placeholder="Ton mot ici..." data-i18n-placeholder="placeholder" autocomplete="off" autocorrect="off" spellcheck="false">
     <button id="ip-ok" onclick="validateInput()">[ OK ]</button>
   </div>
   <div id="ip-tries"></div>
   <div id="panel-fb" class="fb"></div>
-  <button id="btn-force" style="display:none;margin:6px auto 0;padding:6px 14px;background:#1a1000;border:2px solid #ff9900;color:#ff9900;font-family:'Press Start 2P',monospace;font-size:.32rem;cursor:none;width:fit-content;" onclick="forceValidate()">&#x1F511; VALIDER QUAND MÊME (enseignant)</button>
-  <button id="panel-next" class="bnext">[ MINER LE BLOC SUIVANT ]</button>
+  <button id="btn-force" style="display:none;margin:6px auto 0;padding:6px 14px;background:#1a1000;border:2px solid #ff9900;color:#ff9900;font-family:'Press Start 2P',monospace;font-size:.32rem;cursor:none;width:fit-content;" onclick="forceValidate()" data-i18n="forceBtn">&#x1F511; VALIDER QUAND MÊME (enseignant)</button>
+  <button id="panel-next" class="bnext" data-i18n="nextBlock">[ MINER LE BLOC SUIVANT ]</button>
 </div>
 
 <div id="tuto" style="display:none">
   <div id="tuto-box">
-    <div class="tuto-title">⛏ COMMENT JOUER</div>
+    <div class="tuto-title" data-i18n="tutoTitle">⛏ COMMENT JOUER</div>
     <div class="tuto-step">
       <span class="tuto-ico">🪨</span>
-      <span><strong style="color:#ffd700">Clique 3 fois</strong> sur la pierre pour la briser et faire apparaître une affirmation.</span>
+      <span data-i18n-html="tutoStep1"><strong style="color:#ffd700">Clique 3 fois</strong> sur la pierre pour la briser et faire apparaître une affirmation.</span>
     </div>
     <div class="tuto-step">
       <span class="tuto-ico">🔍</span>
-      <span>Lis la phrase. Un mot la rend <strong style="color:#ff3cac">opinion</strong> quand elle devrait être un <strong style="color:#00ff88">fait</strong> — ou l'inverse.</span>
+      <span data-i18n-html="tutoStep2">Lis la phrase. Un mot la rend <strong style="color:#ff3cac">opinion</strong> quand elle devrait être un <strong style="color:#00ff88">fait</strong> — ou l'inverse.</span>
     </div>
     <div id="tuto-step-lvl1" class="tuto-step">
       <span class="tuto-ico">🟧</span>
-      <span><strong style="color:#ff9900">Clique le mot encadré en or</strong>, puis choisis le bon remplacement parmi les 3 propositions.</span>
+      <span data-i18n-html="tutoStep3"><strong style="color:#ff9900">Clique le mot encadré en or</strong>, puis choisis le bon remplacement parmi les 3 propositions.</span>
     </div>
     <div id="tuto-step-lvl2" class="tuto-step" style="display:none">
       <span class="tuto-ico">⬛</span>
-      <span><strong style="color:#ff9900">Clique le mot à changer</strong> dans la phrase, puis <strong style="color:#00dcff">écris ton remplacement</strong> dans le champ qui apparaît.</span>
+      <span data-i18n-html="tutoStep4"><strong style="color:#ff9900">Clique le mot à changer</strong> dans la phrase, puis <strong style="color:#00dcff">écris ton remplacement</strong> dans le champ qui apparaît.</span>
     </div>
     <div class="tuto-step">
       <span class="tuto-ico">✅</span>
-      <span>Bonne réponse → nouvelles fissures. Mauvaise → tu perds une vie ❤️. 3 vies au total.</span>
+      <span data-i18n-html="tutoStep5">Bonne réponse → nouvelles fissures. Mauvaise → tu perds une vie ❤️. 3 vies au total.</span>
     </div>
     <div class="tuto-step">
       <span class="tuto-ico">🪐</span>
-      <span>Mine tous les blocs pour atteindre le <strong style="color:#ffd700">Noyau de la Connaissance</strong> !</span>
+      <span data-i18n-html="tutoStep6">Mine tous les blocs pour atteindre le <strong style="color:#ffd700">Noyau de la Connaissance</strong> !</span>
     </div>
-    <button id="tuto-ok" onclick="closeTuto()">[ C'EST PARTI ! ⛏ ]</button>
+    <button id="tuto-ok" onclick="closeTuto()" data-i18n="tutoOk">[ C'EST PARTI ! ⛏ ]</button>
   </div>
 </div>
 
@@ -355,22 +355,22 @@ body.lvl2 .w.clickable:hover{color:#ffe0a0;background:rgba(255,200,100,.1);borde
 <div class="screen" id="menu-screen">
   <div class="sbox">
     <span class="sico">⛏️</span>
-    <div class="stit cyan">MINE LA PLANÈTE</div>
-    <p class="sdsc">Clique 3 fois sur la pierre pour<br>
+    <div class="stit cyan" data-i18n="menuTitle">MINE LA PLANÈTE</div>
+    <p class="sdsc" data-i18n-html="menuDesc">Clique 3 fois sur la pierre pour<br>
       faire apparaître une phrase.<br>
       Résous-la, puis continue à miner !<br>
       Les fissures s'accumulent…</p>
-    <button class="sbtn gr" onclick="showExport()" style="margin-bottom:8px;font-size:.32rem">📋 VOIR LES MOTS AJOUTÉS</button>
+    <button class="sbtn gr" onclick="showExport()" style="margin-bottom:8px;font-size:.32rem" data-i18n="viewWords">📋 VOIR LES MOTS AJOUTÉS</button>
     <div id="lvl-grid">
       <div class="lvlc" onclick="showDurationPicker(1)">
         <span class="li">🟧</span>
-        <div class="lt">EXTRACTION FACILE</div>
-        <div class="ld">Le mot est encadré.<br>3 choix à cliquer.</div>
+        <div class="lt" data-i18n="easyTitle">EXTRACTION FACILE</div>
+        <div class="ld" data-i18n-html="easyDesc">Le mot est encadré.<br>3 choix à cliquer.</div>
       </div>
       <div class="lvlc" onclick="showDurationPicker(2)">
         <span class="li">⬛</span>
-        <div class="lt">EXTRACTION DIFFICILE</div>
-        <div class="ld">Trouve le mot.<br>Écris ton remplacement.</div>
+        <div class="lt" data-i18n="hardTitle">EXTRACTION DIFFICILE</div>
+        <div class="ld" data-i18n-html="hardDesc">Trouve le mot.<br>Écris ton remplacement.</div>
       </div>
     </div>
   </div>
@@ -379,45 +379,118 @@ body.lvl2 .w.clickable:hover{color:#ffe0a0;background:rgba(255,200,100,.1);borde
 <div class="screen" id="duration-screen" style="display:none">
   <div class="sbox">
     <span class="sico">⛏️</span>
-    <div class="stit cyan" id="dur-title">EXTRACTION FACILE</div>
-    <p class="sdsc">Combien de blocs veux-tu miner ?</p>
+    <div class="stit cyan" id="dur-title" data-i18n="easyTitle">EXTRACTION FACILE</div>
+    <p class="sdsc" data-i18n="durDesc">Combien de blocs veux-tu miner ?</p>
     <div id="lvl-grid" style="margin:14px 0">
       <div class="lvlc" onclick="selectDuration(5)" style="background:#1a1000;border-color:#aa8800;border-top-color:#ffd700;border-left-color:#ffd700">
         <span class="li">⚡</span>
-        <div class="lt" style="color:#ffd700">PERCÉE RAPIDE</div>
-        <div class="ld">5 blocs.<br>Tirage mixte aléatoire.</div>
+        <div class="lt" style="color:#ffd700" data-i18n="rapidTitle">PERCÉE RAPIDE</div>
+        <div class="ld" data-i18n-html="rapidDesc">5 blocs.<br>Tirage mixte aléatoire.</div>
       </div>
       <div class="lvlc" onclick="selectDuration(10)" style="background:#001a00;border-color:#00aa00;border-top-color:#00ff00;border-left-color:#00ff00">
         <span class="li">🪨</span>
-        <div class="lt" style="color:#00ff88">FORAGE COMPLET</div>
-        <div class="ld">10 blocs.<br>Toutes les affirmations.</div>
+        <div class="lt" style="color:#00ff88" data-i18n="fullTitle">FORAGE COMPLET</div>
+        <div class="ld" data-i18n-html="fullDesc">10 blocs.<br>Toutes les affirmations.</div>
       </div>
     </div>
-    <button class="sbtn gr" onclick="document.getElementById('duration-screen').style.display='none';document.getElementById('menu-screen').style.display='flex'">◀ RETOUR</button>
+    <button class="sbtn gr" onclick="document.getElementById('duration-screen').style.display='none';document.getElementById('menu-screen').style.display='flex'" data-i18n="back">◀ RETOUR</button>
   </div>
 </div>
 
 <div class="screen" id="win-screen" style="display:none">
   <div class="sbox">
     <span class="sico">💎</span>
-    <div class="stit gold">DIAMANT TROUVÉ !</div>
-    <p class="sdsc">La roche est brisée !<br>Tu maîtrises l'art du mot précis.</p>
+    <div class="stit gold" data-i18n="winTitle">DIAMANT TROUVÉ !</div>
+    <p class="sdsc" data-i18n-html="winDesc">La roche est brisée !<br>Tu maîtrises l'art du mot précis.</p>
     <div class="spts" id="win-pts">0 PTS</div>
-    <button class="sbtn g" onclick="goMenu()">▶ MENU</button>
-    <button class="sbtn gr" onclick="restart()">▶ REJOUER</button>
+    <button class="sbtn g" onclick="goMenu()" data-i18n="menuBtn">▶ MENU</button>
+    <button class="sbtn gr" onclick="restart()" data-i18n="replayBtn">▶ REJOUER</button>
   </div>
 </div>
 
 <div class="screen" id="over-screen" style="display:none">
   <div class="sbox">
     <span class="sico" style="animation:none">💀</span>
-    <div class="stit red">GALERIE EFFONDRÉE</div>
-    <p class="sdsc">La roche t'a eu…<br>Un seul mot change tout<br>entre un FAIT et une OPINION !</p>
-    <button class="sbtn r" onclick="restart()">▶ RECOMMENCER</button>
-    <button class="sbtn gr" onclick="goMenu()">▶ MENU</button>
+    <div class="stit red" data-i18n="overTitle">GALERIE EFFONDRÉE</div>
+    <p class="sdsc" data-i18n-html="overDesc">La roche t'a eu…<br>Un seul mot change tout<br>entre un FAIT et une OPINION !</p>
+    <button class="sbtn r" onclick="restart()" data-i18n="restartBtn">▶ RECOMMENCER</button>
+    <button class="sbtn gr" onclick="goMenu()" data-i18n="menuBtn">▶ MENU</button>
   </div>
 </div>
 
+<script src="i18n.js"></script>
+<script>
+I18N.register({
+  fr: {
+    pageTitle: "Mine la Planète ⛏️", clickToMine: "⛏ CLIQUE POUR MINER",
+    consigneToFait: "OPINION → FAIT", consigneToOpinion: "FAIT → OPINION",
+    placeholder: "Ton mot ici...", forceBtn: "🔑 VALIDER QUAND MÊME (enseignant)",
+    nextBlock: "[ MINER LE BLOC SUIVANT ]", findDiamond: "[ TROUVER LE DIAMANT ! ]",
+    hintOre: "⛏ CLIQUE LE MOT EN OR", hintChange: "⛏ CLIQUE LE MOT À CHANGER",
+    tries2: "2 ESSAIS", try1left: "1 ESSAI RESTANT", notQuite: "💡 Pas tout à fait — essaie un autre mot.",
+    acceptedA: "🔑 Mot « ", acceptedB: " » accepté et enregistré ! ", exampleA: " — Ex : « ", exampleB: " »",
+    tutoTitle: "⛏ COMMENT JOUER",
+    tutoStep1: `<strong style="color:#ffd700">Clique 3 fois</strong> sur la pierre pour la briser et faire apparaître une affirmation.`,
+    tutoStep2: `Lis la phrase. Un mot la rend <strong style="color:#ff3cac">opinion</strong> quand elle devrait être un <strong style="color:#00ff88">fait</strong> — ou l'inverse.`,
+    tutoStep3: `<strong style="color:#ff9900">Clique le mot encadré en or</strong>, puis choisis le bon remplacement parmi les 3 propositions.`,
+    tutoStep4: `<strong style="color:#ff9900">Clique le mot à changer</strong> dans la phrase, puis <strong style="color:#00dcff">écris ton remplacement</strong> dans le champ qui apparaît.`,
+    tutoStep5: `Bonne réponse → nouvelles fissures. Mauvaise → tu perds une vie ❤️. 3 vies au total.`,
+    tutoStep6: `Mine tous les blocs pour atteindre le <strong style="color:#ffd700">Noyau de la Connaissance</strong> !`,
+    tutoOk: "[ C'EST PARTI ! ⛏ ]",
+    menuTitle: "MINE LA PLANÈTE",
+    menuDesc: `Clique 3 fois sur la pierre pour<br>faire apparaître une phrase.<br>Résous-la, puis continue à miner !<br>Les fissures s'accumulent…`,
+    viewWords: "📋 VOIR LES MOTS AJOUTÉS",
+    easyTitle: "EXTRACTION FACILE", easyDesc: `Le mot est encadré.<br>3 choix à cliquer.`,
+    hardTitle: "EXTRACTION DIFFICILE", hardDesc: `Trouve le mot.<br>Écris ton remplacement.`,
+    durDesc: "Combien de blocs veux-tu miner ?",
+    rapidTitle: "PERCÉE RAPIDE", rapidDesc: `5 blocs.<br>Tirage mixte aléatoire.`,
+    fullTitle: "FORAGE COMPLET", fullDesc: `10 blocs.<br>Toutes les affirmations.`,
+    back: "◀ RETOUR", winTitle: "DIAMANT TROUVÉ !",
+    winDesc: `La roche est brisée !<br>Tu maîtrises l'art du mot précis.`,
+    menuBtn: "▶ MENU", replayBtn: "▶ REJOUER", restartBtn: "▶ RECOMMENCER",
+    overTitle: "GALERIE EFFONDRÉE",
+    overDesc: `La roche t'a eu…<br>Un seul mot change tout<br>entre un FAIT et une OPINION !`,
+    hudBlocks: "BLOCS", backHub: "← Retour aux jeux",
+    exportEmpty: "Aucun mot ajouté pour l'instant.", exportHeader: "Mots validés par l'enseignant :\n\n",
+    exportTitle: "MOTS AJOUTÉS", copyBtn: "📋 COPIER", copiedBtn: "✔ COPIÉ !", clearBtn: "🗑 EFFACER",
+    closeBtn: "✕ FERMER", confirmClear: "Effacer tous les mots ajoutés ?", cleared: "(effacé)"
+  },
+  en: {
+    pageTitle: "Mine the Planet ⛏️", clickToMine: "⛏ CLICK TO MINE",
+    consigneToFait: "OPINION → FACT", consigneToOpinion: "FACT → OPINION",
+    placeholder: "Your word here...", forceBtn: "🔑 VALIDATE ANYWAY (teacher)",
+    nextBlock: "[ MINE THE NEXT BLOCK ]", findDiamond: "[ FIND THE DIAMOND! ]",
+    hintOre: "⛏ CLICK THE GOLDEN WORD", hintChange: "⛏ CLICK THE WORD TO CHANGE",
+    tries2: "2 TRIES", try1left: "1 TRY LEFT", notQuite: "💡 Not quite — try another word.",
+    acceptedA: "🔑 Word « ", acceptedB: " » accepted and saved! ", exampleA: " — e.g.: « ", exampleB: " »",
+    tutoTitle: "⛏ HOW TO PLAY",
+    tutoStep1: `<strong style="color:#ffd700">Click 3 times</strong> on the stone to break it and reveal a statement.`,
+    tutoStep2: `Read the sentence. One word makes it an <strong style="color:#ff3cac">opinion</strong> when it should be a <strong style="color:#00ff88">fact</strong> — or the other way round.`,
+    tutoStep3: `<strong style="color:#ff9900">Click the word boxed in gold</strong>, then choose the right replacement from the 3 options.`,
+    tutoStep4: `<strong style="color:#ff9900">Click the word to change</strong> in the sentence, then <strong style="color:#00dcff">type your replacement</strong> in the field that appears.`,
+    tutoStep5: `Right answer → new cracks. Wrong → you lose a life ❤️. 3 lives total.`,
+    tutoStep6: `Mine all the blocks to reach the <strong style="color:#ffd700">Core of Knowledge</strong>!`,
+    tutoOk: "[ LET'S GO! ⛏ ]",
+    menuTitle: "MINE THE PLANET",
+    menuDesc: `Click 3 times on the stone to<br>reveal a sentence.<br>Solve it, then keep mining!<br>The cracks build up…`,
+    viewWords: "📋 VIEW ADDED WORDS",
+    easyTitle: "EASY EXTRACTION", easyDesc: `The word is boxed.<br>3 choices to click.`,
+    hardTitle: "HARD EXTRACTION", hardDesc: `Find the word.<br>Type your replacement.`,
+    durDesc: "How many blocks do you want to mine?",
+    rapidTitle: "QUICK BREAKTHROUGH", rapidDesc: `5 blocks.<br>Random mixed draw.`,
+    fullTitle: "FULL DRILLING", fullDesc: `10 blocks.<br>All the statements.`,
+    back: "◀ BACK", winTitle: "DIAMOND FOUND!",
+    winDesc: `The rock is broken!<br>You've mastered the art of the precise word.`,
+    menuBtn: "▶ MENU", replayBtn: "▶ REPLAY", restartBtn: "▶ RESTART",
+    overTitle: "GALLERY COLLAPSED",
+    overDesc: `The rock got you…<br>A single word changes everything<br>between a FACT and an OPINION!`,
+    hudBlocks: "BLOCKS", backHub: "← Back to games",
+    exportEmpty: "No words added yet.", exportHeader: "Words validated by the teacher:\n\n",
+    exportTitle: "ADDED WORDS", copyBtn: "📋 COPY", copiedBtn: "✔ COPIED!", clearBtn: "🗑 CLEAR",
+    closeBtn: "✕ CLOSE", confirmClear: "Clear all added words?", cleared: "(cleared)"
+  }
+});
+</script>
 <script src="mine.js"></script>
 </body>
 </html>
