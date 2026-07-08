@@ -257,39 +257,39 @@
 <body>
 <h1>SNAKE</h1>
 <div class="subtitle">Fake News & Esprit Critique</div>
-<div class="hud">SCORE: <span id="score">0</span> &nbsp; VIE: <span id="lives">❤️❤️❤️</span> &nbsp; NIVEAU: <span id="level">1</span></div>
+<div class="hud"><span data-i18n="hudScore">SCORE:</span> <span id="score">0</span> &nbsp; <span data-i18n="hudLives">VIE:</span> <span id="lives">❤️❤️❤️</span> &nbsp; <span data-i18n="hudLevel">NIVEAU:</span> <span id="level">1</span></div>
 
 <!-- Question bar above the game -->
 <div class="question-box" id="question-bar">
   <span class="question-label">❓ QUESTION</span>
-  <div id="current-q">Lance le jeu pour commencer !</div>
+  <div id="current-q" data-i18n="currentQ">Lance le jeu pour commencer !</div>
 </div>
 
 <div class="main-layout">
   <div class="arena-wrap">
     <canvas id="c" width="546" height="546"></canvas>
     <div class="overlay" id="overlay">
-      <h2>SNAKE<br>ESPRIT CRITIQUE</h2>
-      <p><strong style="color:#69f0ae">Mange UNIQUEMENT la bonne réponse !</strong><br>Manger une mauvaise réponse = −1 vie.<br><br>Toutes les réponses sont en <strong style="color:#4fc3f7">BLEU</strong> — à toi de trouver la bonne. Après chaque bouchée, la bonne devient 🟢 verte et les mauvaises 🔴 rouges.</p>
-      <button class="btn" id="startBtn">COMMENCER</button>
-      <button class="btn-menu" onclick="location.href='index.html'">← MENU</button>
+      <h2 data-i18n-html="overlayH2">SNAKE<br>ESPRIT CRITIQUE</h2>
+      <p data-i18n-html="overlayP"><strong style="color:#69f0ae">Mange UNIQUEMENT la bonne réponse !</strong><br>Manger une mauvaise réponse = −1 vie.<br><br>Toutes les réponses sont en <strong style="color:#4fc3f7">BLEU</strong> — à toi de trouver la bonne. Après chaque bouchée, la bonne devient 🟢 verte et les mauvaises 🔴 rouges.</p>
+      <button class="btn" id="startBtn" data-i18n="startBtn">COMMENCER</button>
+      <button class="btn-menu" onclick="location.href='index.html'" data-i18n="menu">← MENU</button>
     </div>
   </div>
 
   <div class="side-panel">
     <div class="legend">
-      <h3>LÉGENDE</h3>
-      <div class="leg-row"><div class="leg-box" style="background:#4fc3f7;box-shadow:0 0 6px #4fc3f7"></div> Réponse possible</div>
-      <div class="leg-row"><div class="leg-box leg-green"></div> Bonne réponse</div>
-      <div class="leg-row"><div class="leg-box leg-red"></div> Mauvaise réponse</div>
-      <div style="font-size:13px;color:#9a9ad0;margin-top:8px;line-height:1.6">Les couleurs se révèlent<br>après chaque réponse.</div>
+      <h3 data-i18n="legendTitle">LÉGENDE</h3>
+      <div class="leg-row"><div class="leg-box" style="background:#4fc3f7;box-shadow:0 0 6px #4fc3f7"></div> <span data-i18n="legPossible">Réponse possible</span></div>
+      <div class="leg-row"><div class="leg-box leg-green"></div> <span data-i18n="legGood">Bonne réponse</span></div>
+      <div class="leg-row"><div class="leg-box leg-red"></div> <span data-i18n="legBad">Mauvaise réponse</span></div>
+      <div style="font-size:13px;color:#9a9ad0;margin-top:8px;line-height:1.6" data-i18n-html="colorsReveal">Les couleurs se révèlent<br>après chaque réponse.</div>
     </div>
-    <div class="feedback-box idle" id="feedback">
+    <div class="feedback-box idle" id="feedback" data-i18n="feedbackIdle">
       Prêt à jouer ?
     </div>
-    <a href="index.html" class="menu-link-side">← MENU</a>
+    <a href="index.html" class="menu-link-side" data-i18n="menu">← MENU</a>
     <div class="legend">
-      <h3>VITESSE</h3>
+      <h3 data-i18n="speedTitle">VITESSE</h3>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
         <span style="font-size:14px;color:#9a9ad0">🐢</span>
         <input type="range" id="speedSlider" min="1" max="5" value="3" step="1"
@@ -305,6 +305,30 @@
 <div class="controls">↑ ↓ ← → ou WASD · ESPACE = Pause</div>
 
 <script src="../i18n.js"></script>
+<script>
+I18N.register({
+  fr: {
+    currentQ: "Lance le jeu pour commencer !", overlayH2: "SNAKE<br>ESPRIT CRITIQUE",
+    overlayP: `<strong style="color:#69f0ae">Mange UNIQUEMENT la bonne réponse !</strong><br>Manger une mauvaise réponse = −1 vie.<br><br>Toutes les réponses sont en <strong style="color:#4fc3f7">BLEU</strong> — à toi de trouver la bonne. Après chaque bouchée, la bonne devient 🟢 verte et les mauvaises 🔴 rouges.`,
+    startBtn: "COMMENCER", menu: "← MENU", menuQ: "← MENU & QUESTIONS", replay: "REJOUER",
+    legendTitle: "LÉGENDE", legPossible: "Réponse possible", legGood: "Bonne réponse", legBad: "Mauvaise réponse",
+    colorsReveal: "Les couleurs se révèlent<br>après chaque réponse.", feedbackIdle: "Prêt à jouer ?", speedTitle: "VITESSE",
+    hudScore: "SCORE:", hudLives: "VIE:", hudLevel: "NIVEAU:", best: "MEILLEUR:",
+    speedVerySlow: "TRÈS LENTE", speedSlow: "LENTE", speedNormal: "NORMALE", speedFast: "RAPIDE", speedTurbo: "TURBO",
+    eatOnly: "Mange UNIQUEMENT la bonne réponse !", goodA: "✅ Bonne réponse ! +", goodB: " pts", wrongFb: "❌ Fausse réponse ! -1 vie", noLives: "Plus de vies !"
+  },
+  en: {
+    currentQ: "Start the game to begin!", overlayH2: "SNAKE<br>CRITICAL THINKING",
+    overlayP: `<strong style="color:#69f0ae">Eat ONLY the correct answer!</strong><br>Eating a wrong answer = −1 life.<br><br>All the answers are in <strong style="color:#4fc3f7">BLUE</strong> — it's up to you to find the right one. After each bite, the correct one turns 🟢 green and the wrong ones 🔴 red.`,
+    startBtn: "START", menu: "← MENU", menuQ: "← MENU & QUESTIONS", replay: "REPLAY",
+    legendTitle: "LEGEND", legPossible: "Possible answer", legGood: "Correct answer", legBad: "Wrong answer",
+    colorsReveal: "Colours are revealed<br>after each answer.", feedbackIdle: "Ready to play?", speedTitle: "SPEED",
+    hudScore: "SCORE:", hudLives: "LIVES:", hudLevel: "LEVEL:", best: "BEST:",
+    speedVerySlow: "VERY SLOW", speedSlow: "SLOW", speedNormal: "NORMAL", speedFast: "FAST", speedTurbo: "TURBO",
+    eatOnly: "Eat ONLY the correct answer!", goodA: "✅ Correct! +", goodB: " pts", wrongFb: "❌ Wrong answer! -1 life", noLives: "Out of lives!"
+  }
+});
+</script>
 <script>
 (function(){var en=(window.I18N&&I18N.lang==='en');
 ['questions','questions-6e5e','questions-niveau1','questions-niveau2','questions-niveau3','qcm-store'].forEach(function(f){document.write('<scr'+'ipt src="'+f+(en?'-en':'')+'.js"><'+'/scr'+'ipt>');});})();
@@ -426,7 +450,7 @@ function init() {
 const speedSlider = document.getElementById('speedSlider');
 const speedLabel = document.getElementById('speedLabel');
 
-const SPEED_LABELS = ['TRÈS LENTE', 'LENTE', 'NORMALE', 'RAPIDE', 'TURBO'];
+const SPEED_LABELS = [I18N.t('speedVerySlow'), I18N.t('speedSlow'), I18N.t('speedNormal'), I18N.t('speedFast'), I18N.t('speedTurbo')];
 const SPEED_BASE   = [260, 200, 150, 100, 60]; // ms per tick at level 1
 
 speedSlider.addEventListener('input', () => {
@@ -455,7 +479,7 @@ function startGame() {
   paused = false;
   clearInterval(gameLoop);
   gameLoop = setInterval(tick, getSpeed());
-  setFeedback('idle', 'Mange UNIQUEMENT la bonne réponse !');
+  setFeedback('idle', I18N.t('eatOnly'));
 }
 
 function tick() {
@@ -482,7 +506,7 @@ function tick() {
       if (score > highScore) highScore = score;
       correctCount++;
       spawnParticles(head.x, head.y, '#69f0ae');
-      setFeedback('good', '✅ Bonne réponse ! +' + (10*level) + ' pts');
+      setFeedback('good', I18N.t('goodA') + (10*level) + I18N.t('goodB'));
       if (correctCount % 5 === 0) {
         level++;
         clearInterval(gameLoop);
@@ -499,12 +523,12 @@ function tick() {
       // Wrong!
       lives--;
       spawnParticles(head.x, head.y, '#ff5252');
-      setFeedback('bad', '❌ Fausse réponse ! -1 vie');
+      setFeedback('bad', I18N.t('wrongFb'));
       snake.pop();
       // Reveal all items (green/red)
       revealed = true;
       clearTimeout(revealTimeout);
-      if (lives <= 0) return die('Plus de vies !');
+      if (lives <= 0) return die(I18N.t('noLives'));
       revealTimeout = setTimeout(() => {
         revealed = false;
         currentQuestion = pickQuestion();
@@ -526,7 +550,7 @@ function setFeedback(type, msg) {
   if (type !== 'idle') {
     feedbackTimeout = setTimeout(() => {
       feedbackEl.className = 'feedback-box idle';
-      feedbackEl.textContent = 'Mange UNIQUEMENT la bonne réponse !';
+      feedbackEl.textContent = I18N.t('eatOnly');
     }, 2000);
   }
 }
@@ -550,11 +574,11 @@ function die(reason) {
   overlay.classList.remove('hidden');
   overlay.innerHTML = `
     <div class="game-over-title">GAME OVER</div>
-    <div class="score-display">SCORE: ${score}<br>MEILLEUR: ${highScore}</div>
+    <div class="score-display">${I18N.t('hudScore')} ${score}<br>${I18N.t('best')} ${highScore}</div>
     <p style="font-size:14px;color:#b9b9e0">💡 ${reason}</p>
     <div style="display:flex;flex-direction:column;gap:8px;align-items:center">
-      <button class="btn" id="startBtn">REJOUER</button>
-      <button class="btn-menu" onclick="location.href='index.html'">← MENU &amp; QUESTIONS</button>
+      <button class="btn" id="startBtn">${I18N.t('replay')}</button>
+      <button class="btn-menu" onclick="location.href='index.html'">${I18N.t('menuQ')}</button>
     </div>
   `;
   document.getElementById('startBtn').addEventListener('click', startGame);
@@ -713,7 +737,7 @@ document.addEventListener('keydown', e => {
   if (e.key === ' ' && running) {
     paused = !paused;
     if (paused) setFeedback('idle', '⏸ PAUSE');
-    else setFeedback('idle', 'Mange UNIQUEMENT la bonne réponse !');
+    else setFeedback('idle', I18N.t('eatOnly'));
     e.preventDefault();
   }
 });

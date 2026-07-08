@@ -6,6 +6,32 @@
 <title>Whac-A-Quiz</title>
 <script src="../i18n.js"></script>
 <script>
+I18N.register({
+  fr: {
+    intro: `🔨 Une question s'affiche — des réponses surgissent des trous.<br><strong style="color:#ff6633">Frappe toutes les FAUSSES réponses !</strong><br>⚠️ Ne frappe <strong style="color:#ffcc00">PAS</strong> la bonne réponse — −1 vie<br>⏱ Frappe toutes les fausses avant la fin du temps !`,
+    chooseMode: "CHOISIR LE MODE", easyBtn: "🟢 FACILE — Lis d'abord, lance toi-même", hardBtn: "🔴 DIFFICILE — Les réponses surgissent !",
+    easyBtnShort: "🟢 FACILE — Lis d'abord", hardBtnShort: "🔴 DIFFICILE — Les réponses surgissent",
+    menuQ: "← MENU & QUESTIONS", menu: "← MENU",
+    controlsHint: "CLIC sur les FAUSSES réponses &nbsp;|&nbsp; Ne frappe PAS la bonne réponse !",
+    finalScore: "Score final :", winTitle: "BRAVO !<br>TOUTES<br>FRAPPÉES !", loseTitle: "GAME<br>OVER",
+    winMsg: "Tu as éliminé toutes les fausses réponses !", loseMsg: "Continue à développer ton esprit critique !",
+    countdownA: "Lisez ! Boules dans ", timeUp: "⏱ Temps écoulé ! −1 vie",
+    hitGood: "❌ Bonne réponse frappée ! −1 vie", allHit: "✅ Toutes les fausses réponses frappées !"
+  },
+  en: {
+    intro: `🔨 A question appears — answers pop up from the holes.<br><strong style="color:#ff6633">Whack all the FALSE answers!</strong><br>⚠️ Do <strong style="color:#ffcc00">NOT</strong> whack the correct answer — −1 life<br>⏱ Whack all the false ones before time runs out!`,
+    chooseMode: "CHOOSE MODE", easyBtn: "🟢 EASY — Read first, launch yourself", hardBtn: "🔴 HARD — The answers pop up!",
+    easyBtnShort: "🟢 EASY — Read first", hardBtnShort: "🔴 HARD — The answers pop up",
+    menuQ: "← MENU & QUESTIONS", menu: "← MENU",
+    controlsHint: "CLICK the FALSE answers &nbsp;|&nbsp; Do NOT whack the correct answer!",
+    finalScore: "Final score:", winTitle: "WELL DONE!<br>ALL<br>WHACKED!", loseTitle: "GAME<br>OVER",
+    winMsg: "You eliminated all the false answers!", loseMsg: "Keep developing your critical thinking!",
+    countdownA: "Read! Balls in ", timeUp: "⏱ Time's up! −1 life",
+    hitGood: "❌ Whacked the correct answer! −1 life", allHit: "✅ All false answers whacked!"
+  }
+});
+</script>
+<script>
 (function(){var en=(window.I18N&&I18N.lang==='en');
 ['questions','questions-6e5e','questions-niveau1','questions-niveau2','questions-niveau3','qcm-store'].forEach(function(f){document.write('<scr'+'ipt src="'+f+(en?'-en':'')+'.js"><'+'/scr'+'ipt>');});})();
 </script>
@@ -319,26 +345,26 @@
 
   <div id="overlay">
     <h1>WHAC-A-QUIZ</h1>
-    <div class="sub">
+    <div class="sub" data-i18n-html="intro">
       🔨 Une question s'affiche — des réponses surgissent des trous.<br>
       <strong style="color:#ff6633">Frappe toutes les FAUSSES réponses !</strong><br>
       ⚠️ Ne frappe <strong style="color:#ffcc00">PAS</strong> la bonne réponse — −1 vie<br>
       ⏱ Frappe toutes les fausses avant la fin du temps !
     </div>
-    <div style="color:#cc44ff;font-family:'Orbitron',sans-serif;font-size:0.8125rem;letter-spacing:.12em;margin-top:4px">CHOISIR LE MODE</div>
+    <div style="color:#cc44ff;font-family:'Orbitron',sans-serif;font-size:0.8125rem;letter-spacing:.12em;margin-top:4px" data-i18n="chooseMode">CHOISIR LE MODE</div>
     <div style="display:flex;flex-direction:column;gap:8px;align-items:center;width:100%">
-      <button onclick="startDefaultGame('easy')" style="border-color:#3ecf8e;color:#3ecf8e;text-shadow:0 0 10px #3ecf8e;box-shadow:0 0 20px rgba(62,207,142,.2);width:320px">
+      <button onclick="startDefaultGame('easy')" style="border-color:#3ecf8e;color:#3ecf8e;text-shadow:0 0 10px #3ecf8e;box-shadow:0 0 20px rgba(62,207,142,.2);width:320px" data-i18n="easyBtn">
         🟢 FACILE — Lis d'abord, lance toi-même
       </button>
-      <button onclick="startDefaultGame('hard')" style="border-color:#ff6633;color:#ff6633;text-shadow:0 0 10px #ff6633;box-shadow:0 0 20px rgba(255,102,51,.2);width:320px">
+      <button onclick="startDefaultGame('hard')" style="border-color:#ff6633;color:#ff6633;text-shadow:0 0 10px #ff6633;box-shadow:0 0 20px rgba(255,102,51,.2);width:320px" data-i18n="hardBtn">
         🔴 DIFFICILE — Les réponses surgissent !
       </button>
-      <button class="btn-custom" onclick="location.href='index.html'">← MENU &amp; QUESTIONS</button>
+      <button class="btn-custom" onclick="location.href='index.html'" data-i18n="menuQ">← MENU &amp; QUESTIONS</button>
     </div>
   </div>
 </div>
 
-<div id="controls">CLIC sur les FAUSSES réponses &nbsp;|&nbsp; Ne frappe PAS la bonne réponse ! <a id="menu-btn-bottom" href="index.html">← MENU</a></div>
+<div id="controls"><span data-i18n-html="controlsHint">CLIC sur les FAUSSES réponses &nbsp;|&nbsp; Ne frappe PAS la bonne réponse !</span> <a id="menu-btn-bottom" href="index.html" data-i18n="menu">← MENU</a></div>
 <div id="speed-row">
   🐢
   <input type="range" id="speed-slider" min="1" max="5" value="2" step="1">
@@ -548,17 +574,17 @@ function endGame(win) {
   const lvlColor  = gameLevel === 'easy' ? '#3ecf8e' : '#ff6633';
   const lvlLabel  = gameLevel === 'easy' ? '🟢 FACILE' : '🔴 DIFFICILE';
   ov.innerHTML = `
-    <h1 style="color:${win?'#cc44ff':'#ff4466'}">${win?'BRAVO !<br>TOUTES<br>FRAPPÉES !':'GAME<br>OVER'}</h1>
-    <div class="sub">Score final : <strong style="color:#cc44ff">${score}</strong><br>
-    ${win?'Tu as éliminé toutes les fausses réponses !':'Continue à développer ton esprit critique !'}</div>
+    <h1 style="color:${win?'#cc44ff':'#ff4466'}">${win?I18N.t('winTitle'):I18N.t('loseTitle')}</h1>
+    <div class="sub">${I18N.t('finalScore')} <strong style="color:#cc44ff">${score}</strong><br>
+    ${win?I18N.t('winMsg'):I18N.t('loseMsg')}</div>
     <div style="display:flex;flex-direction:column;gap:8px;align-items:center;width:100%">
       <button onclick="startDefaultGame('easy')" style="border-color:#3ecf8e;color:#3ecf8e;text-shadow:0 0 10px #3ecf8e;width:320px;font-size:0.875rem">
-        🟢 FACILE — Lis d'abord
+        ${I18N.t('easyBtnShort')}
       </button>
       <button onclick="startDefaultGame('hard')" style="border-color:#ff6633;color:#ff6633;text-shadow:0 0 10px #ff6633;width:320px;font-size:0.875rem">
-        🔴 DIFFICILE — Les réponses surgissent
+        ${I18N.t('hardBtnShort')}
       </button>
-      <button class="btn-custom" onclick="location.href='index.html'">← MENU &amp; QUESTIONS</button>
+      <button class="btn-custom" onclick="location.href='index.html'">${I18N.t('menuQ')}</button>
     </div>`;
 }
 
@@ -623,7 +649,7 @@ function shuffle(arr) {
       lives--;
       updateUI();
       playSound(120, 0.4, 'sawtooth');
-      showFeedback('⏱ Temps écoulé ! −1 vie', 'ko');
+      showFeedback(I18N.t('timeUp'), 'ko');
       if (lives <= 0) { setTimeout(() => endGame(false), 800); return; }
       setTimeout(() => { qIndex++; loadQuestion(); }, 1500);
     }
@@ -666,13 +692,13 @@ function shuffle(arr) {
       questionActive = true;
       let countdown = 5;
       const fbEl = document.getElementById('feedback');
-      fbEl.textContent = `Lisez ! Boules dans ${countdown}…`;
+      fbEl.textContent = `${I18N.t('countdownA')}${countdown}…`;
       fbEl.className = 'show ok';
       clearTimeout(feedbackTimer);
       const cdTick = setInterval(() => {
         countdown--;
         if (countdown > 0) {
-          fbEl.textContent = `Lisez ! Boules dans ${countdown}…`;
+          fbEl.textContent = `${I18N.t('countdownA')}${countdown}…`;
         } else {
           clearInterval(cdTick);
           fbEl.className = '';
@@ -714,7 +740,7 @@ function shuffle(arr) {
         slot.face.className = 'mole-face penalty';
         lives--; updateUI();
         playSound(110, 0.4, 'sawtooth');
-        showFeedback('❌ Bonne réponse frappée ! −1 vie', 'ko');
+        showFeedback(I18N.t('hitGood'), 'ko');
         const doRetract = () => { retractMoleClean(slot, onRetract); };
         setTimeout(doRetract, 500);
         if (lives <= 0) { setTimeout(()=>endGame(false), 700); }
@@ -762,7 +788,7 @@ function shuffle(arr) {
     cancelQTimer();
     score += 100; updateUI();
     playSound(660, 0.35, 'sine');
-    showFeedback(currentQ.expl || '✅ Toutes les fausses réponses frappées !', 'ok');
+    showFeedback(currentQ.expl || I18N.t('allHit'), 'ok');
     moleSlots.forEach(s => { if (s.up) retractMoleClean(s, null); });
     pendingTimeouts.forEach(clearTimeout); pendingTimeouts=[];
     setTimeout(() => { qIndex++; loadQuestion(); }, 1700);
