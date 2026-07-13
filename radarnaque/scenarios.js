@@ -58,7 +58,7 @@ const SCENARIOS = [
       'L’expéditeur dit « Microsoft » mais l’adresse finit par @chronopost.fr : ça ne colle pas.',
       'Fautes et tournures maladroites (« que vous n’avez pas Utiliser habituellement »).',
       'On crée la peur (« suspension du compte ») et l’urgence (« sous 24h »).',
-      'Le bouton mène à une fausse page qui vole votre identifiant et votre mot de passe.'
+      { risque: 'Le bouton mène à une fausse page qui vole votre identifiant et votre mot de passe.' }
     ],
     reflexe: 'Regardez toujours l’adresse complète de l’expéditeur, pas seulement le nom affiché. Nom ≠ adresse.',
     explication: 'Les escrocs affichent un nom rassurant (« Microsoft Security Team ») mais l’adresse réelle les trahit. En cas de doute sur un compte, n’utilisez jamais le bouton du mail : ouvrez vous-même le site officiel dans votre navigateur.'
@@ -127,7 +127,7 @@ const SCENARIOS = [
     indices: [
       'Une célébrité qui vous écrit en privé et tombe amoureuse en quelques messages : impossible.',
       'Le secret imposé (« ne le dis à personne ») isole la victime.',
-      'La demande d’argent finit toujours par arriver — souvent en cartes cadeaux, intraçables.',
+      { risque: 'La demande d’argent finit toujours par arriver — souvent en cartes cadeaux, intraçables.' },
       'La photo peut être vraie (célébrité) ou générée par IA : une image ne prouve rien.'
     ],
     reflexe: 'Dès qu’un « amour » rencontré en ligne demande de l’argent, c’est une arnaque. Aucune exception.',
@@ -151,7 +151,7 @@ const SCENARIOS = [
       'Le numéro affiché est celui de votre banque : il peut être falsifié (spoofing). L’afficheur ne prouve rien.',
       'On invente une urgence (« virement suspect en cours ») pour vous faire paniquer.',
       'On vous demande un code reçu par SMS ou votre mot de passe : une banque ne le fait JAMAIS.',
-      'Donner ce code valide en réalité LE virement des escrocs, pas son annulation.'
+      { risque: 'Donner ce code valide en réalité LE virement des escrocs, pas son annulation.' }
     ],
     reflexe: 'Un vrai conseiller ne demande jamais vos codes ni vos mots de passe. Raccrochez, puis rappelez le numéro au dos de votre carte.',
     explication: 'C’est l’arnaque qui coûte le plus cher (3 000 € en moyenne). L’escroc affiche le numéro de votre banque et connaît parfois votre nom ou vos dernières opérations. Ne validez rien, ne dictez aucun code. En cas de doute, raccrochez et rappelez vous-même votre banque.'
@@ -235,7 +235,7 @@ const SCENARIOS = [
       'Une vraie alerte antivirus ne vous demande jamais de téléphoner à un numéro.',
       'Panique + interdiction d’éteindre : pour vous empêcher de réfléchir.',
       'Le « support Microsoft » ne surveille pas votre écran et ne vous appelle pas.',
-      'Objectif : prendre la main sur votre ordinateur à distance et vous soutirer de l’argent.'
+      { risque: 'Objectif : prendre la main sur votre ordinateur à distance et vous soutirer de l’argent.' }
     ],
     reflexe: 'Ne composez jamais le numéro affiché. Fermez la fenêtre (ou éteignez), et faites vérifier l’ordinateur par un proche de confiance.',
     explication: 'Ces pop-ups bloquants apparaissent en surfant. Si vous appelez, un faux technicien vous fait installer un logiciel de prise en main à distance, puis « répare » un faux problème contre plusieurs centaines d’euros — ou vide vos comptes. On ferme, on n’appelle pas.'
@@ -258,7 +258,7 @@ const SCENARIOS = [
       'Salaire irréaliste pour un travail « sans expérience, 30 min par jour ».',
       'Recrutement par WhatsApp au nom d’une grande marque : les vraies entreprises ne font pas ça.',
       'On vous demande de « recharger » ou d’avancer de l’argent pour commencer : signal d’alarme absolu.',
-      'Au début on vous rend vos petits gains… pour vous pousser à verser des sommes de plus en plus grosses.'
+      { risque: 'Au début on vous rend vos petits gains… pour vous pousser à verser des sommes de plus en plus grosses.' }
     ],
     reflexe: 'Un vrai emploi vous paie ; il ne vous demande jamais de payer pour travailler. Fuyez toute « recharge » demandée.',
     explication: 'Ces fausses missions (« liker », « valider des commandes ») paraissent payer au début, puis exigent des dépôts croissants que vous ne reverrez jamais. Aucune entreprise sérieuse ne recrute par SMS/WhatsApp en réclamant de l’argent d’avance.'
@@ -306,7 +306,7 @@ const SCENARIOS = [
       'Un message « d’erreur » venu d’un inconnu qui, comme par hasard, continue ensuite à vous parler.',
       'La personne se rend très vite sympathique et patiente : elle tisse un lien de confiance, parfois pendant des semaines.',
       'Elle finit toujours par vanter un investissement « miracle » (crypto, trading) aux gains énormes et rapides.',
-      'On vous pousse à placer de l’argent sur une plateforme qu’ELLE vous indique : les gains affichés sont fictifs, l’argent est perdu.'
+      { risque: 'On vous pousse à placer de l’argent sur une plateforme qu’ELLE vous indique : les gains affichés sont fictifs, l’argent est perdu.' }
     ],
     reflexe: 'Un inconnu qui vous a écrit « par erreur » puis se met à parler d’argent ou de placements : on coupe court. Aucun vrai investissement ne se propose par message.',
     explication: 'C’est l’arnaque dite du « dépeçage de cochon » (pig butchering) : l’escroc « engraisse » longuement sa victime en nouant une relation amicale ou amoureuse, avant de la pousser à investir sur une fausse plateforme de crypto ou de trading. Au début, de petits « gains » s’affichent pour la mettre en confiance et l’inciter à verser toujours plus ; puis, au moment de retirer, tout disparaît. Un premier message « d’erreur » suivi d’une belle amitié soudaine doit alerter.'
@@ -333,6 +333,120 @@ const SCENARIOS = [
     ],
     reflexe: 'On ne paie JAMAIS une location en dehors de la plateforme de réservation. Le paiement se fait sur le site officiel, jamais par virement à un particulier.',
     explication: 'Bien souvent, le logement n’existe pas ou n’appartient pas à l’escroc. En vous faisant sortir de la plateforme, il vous prive de toute protection (remboursement, litige) et empoche votre acompte par virement, intraçable. Règle simple&nbsp;: si un « propriétaire » vous demande de régler en dehors du site — par virement ou en cartes cadeaux — c’est une arnaque. Réservez et payez toujours sur la plateforme officielle.'
+  },
+
+  /* ---------- 15. E-mail de confirmation détourné (champ prénom) — ARNAQUE */
+  {
+    id: 'email-prenom-detourne',
+    canal: 'email',
+    entete: 'E-mail de bienvenue reçu d’un site que vous connaissez, alors que vous n’avez rien créé',
+    de: 'Welcome to the Jungle',
+    deAdresse: 'no-reply@welcometothejungle.com',
+    objet: 'Bienvenue ! Confirmez la création de votre compte',
+    date: 'Aujourd’hui, 17:46',
+    corps: '<b style="font-size:1.12em">Bonjour Vous serez débité de 447,00&nbsp;€ par l’Assurance Maladie. Votre IBAN est enregistré pour les prélèvements automatiques. Si vous n’avez pas autorisé cette opération, veuillez contacter immédiatement votre service de prévention des fraudes au 0259509226</b><br><br>Bienvenue dans la Jungle&nbsp;!<br>Merci d’avoir créé votre compte&nbsp;! Il ne reste plus qu’un dernier clic pour activer votre profil.',
+    bouton: 'Activer mon compte',
+    verdict: 'arnaque',
+    categorie: 'Champ détourné — faux message glissé dans un vrai e-mail',
+    indices: [
+      'L’e-mail vient bien du vrai site (adresse et logo authentiques) : ce n’est pas lui, l’escroc.',
+      'Un inconnu a créé un compte avec VOTRE adresse e-mail en écrivant l’arnaque à la place du prénom.',
+      'Le « Bonjour {prénom} » affiche donc un faux message qui parle d’argent, d’IBAN et de prélèvements.',
+      'On vous pousse à appeler un numéro (0259509226) : c’est là qu’est le vrai piège.'
+    ],
+    reflexe: 'Vous n’avez pas créé ce compte ? Ignorez le contenu et n’appelez surtout pas le numéro affiché. Un e-mail automatique de bienvenue ne vous réclame jamais rien par téléphone.',
+    explication: 'Astuce redoutable : l’escroc n’a pas piraté le site. Il a simplement rempli le champ « prénom » d’un formulaire d’inscription avec un faux message d’alerte, puis a mis VOTRE e-mail. Le site, en toute bonne foi, vous envoie « Bonjour {prénom} » en gros et en gras — et affiche l’arnaque à votre place. Le but : que vous appeliez le numéro, où un faux « service anti-fraude » vous fera « sécuriser » votre argent… en le virant aux escrocs. L’Assurance Maladie ne débite jamais personne ainsi. On ne rappelle jamais un numéro contenu dans le message.'
+  },
+
+  /* ---------- 20. E-mail fausse boutique — liquidation fictive — ARNAQUE */
+  {
+    id: 'email-fausse-boutique-liquidation',
+    canal: 'email',
+    entete: 'E-mail publicitaire reçu, avec des prix très bas',
+    de: 'Vélo Discount Officiel',
+    deAdresse: 'contact@velo-discount-shop.top',
+    objet: 'LIQUIDATION TOTALE avant fermeture : -80 % sur tout le magasin',
+    date: 'Aujourd’hui, 11:20',
+    corps: 'Fermeture définitive du magasin : tout doit disparaître avant le 30 juin !<br><br>Vélo électrique à 149 € au lieu de 899 €, casque offert. Stock très limité, dernières pièces disponibles.<br><br>Paiement 100 % sécurisé, livraison en 48h partout en France.',
+    bouton: 'Profiter de la liquidation',
+    verdict: 'arnaque',
+    categorie: 'Fausse boutique en ligne — liquidation fictive',
+    indices: [
+      'Nom de domaine inconnu et bizarre (« velo-discount-shop.top ») : aucun lien avec une vraie marque.',
+      'Réduction énorme et invraisemblable : un vélo électrique à 149 € au lieu de 899 €.',
+      'Fausse urgence et fausse rareté : « fermeture définitive », « stock très limité ».',
+      { risque: 'Après paiement, l’objet n’est jamais livré, ou vos coordonnées bancaires sont volées et réutilisées.' }
+    ],
+    reflexe: 'Une réduction trop belle pour être vraie, sur un site inconnu, doit alerter. Cherchez des avis indépendants et les mentions légales avant de payer.',
+    explication: 'Les escrocs créent de fausses boutiques en ligne, parfois avec de vraies photos de produits volées ailleurs, et misent sur des promotions énormes pour donner envie d’acheter vite. Résultat : rien n’arrive, ou la carte bancaire est piratée. Avant d’acheter sur un site inconnu, vérifiez son ancienneté, cherchez des avis sur d’autres sites, et méfiez-vous d’un prix trop bas.'
+  },
+
+  /* ---------- 21. E-mail faux service de streaming — ARNAQUE ---------- */
+  {
+    id: 'email-prime-video-paiement',
+    canal: 'email',
+    entete: 'E-mail reçu à propos d’un abonnement de streaming',
+    de: 'Prime Video',
+    deAdresse: 'support@prime-video-facturation.com',
+    objet: 'Échec de paiement : votre abonnement va être suspendu',
+    date: 'Aujourd’hui, 08:03',
+    corps: 'Bonjour,<br><br>Le paiement de votre abonnement n’a pas pu être effectué. Votre accès sera suspendu sous 48h.<br><br>Mettez à jour vos informations de paiement pour continuer à profiter de vos films et séries.',
+    bouton: 'Mettre à jour mon paiement',
+    verdict: 'arnaque',
+    categorie: 'Hameçonnage par e-mail — faux service de streaming (abonnement)',
+    indices: [
+      'Adresse d’expéditeur qui n’est ni amazon.fr ni primevideo.com : un domaine inventé.',
+      'Urgence artificielle : « suspendu sous 48h ».',
+      { risque: 'Le bouton mène à une fausse page qui réclame votre numéro de carte bancaire complet.' },
+      'Un vrai service ne réclame jamais vos coordonnées bancaires par un lien reçu par e-mail.'
+    ],
+    reflexe: 'Pour vérifier un abonnement, ouvrez directement l’application ou tapez l’adresse officielle vous-même — jamais via le lien du mail.',
+    explication: 'Les escrocs imitent les grands services de streaming ou d’abonnement pour récupérer des numéros de carte bancaire complets, sous prétexte d’un paiement en échec. Le nom affiché rassure, mais l’adresse réelle de l’expéditeur trahit toujours la supercherie. En cas de doute sur un abonnement, ouvrez l’application officielle vous-même.'
+  },
+
+  /* ---------- 22. Message vente en ligne — arnaque au trop-perçu — ARNAQUE */
+  {
+    id: 'chat-trop-percu-vente',
+    canal: 'chat',
+    plateforme: 'Leboncoin — messagerie',
+    contact: 'Acheteuse intéressée (canapé)',
+    avatar: '',
+    messages: [
+      { from: 'eux', texte: 'Bonjour ! Votre canapé à 200 € m’intéresse beaucoup. Je ne viendrai pas moi-même, un transporteur passera le récupérer.' },
+      { from: 'eux', texte: 'Je viens de vous envoyer un virement de 350 € par erreur au lieu de 200 €, le formulaire a mal fonctionné. Vous pouvez me renvoyer les 150 € de trop par virement instantané, le temps que ça arrive sur votre compte ?' },
+      { from: 'eux', texte: 'Voici la capture d’écran du virement en pièce jointe, ça devrait arriver d’un instant à l’autre 😊' }
+    ],
+    verdict: 'arnaque',
+    categorie: 'Arnaque au trop-perçu (vente entre particuliers)',
+    indices: [
+      'L’acheteuse ne vient jamais voir l’objet elle-même : elle passe par un « transporteur ».',
+      'Elle prétend avoir envoyé trop d’argent par erreur et demande de lui renvoyer la différence tout de suite.',
+      'Sa seule « preuve » est une capture d’écran du virement — jamais l’argent réellement crédité sur votre compte.',
+      { risque: 'Vous renvoyez un vrai virement de votre poche, alors que le premier virement n’arrivera jamais (ou sera annulé).' }
+    ],
+    reflexe: 'Ne remboursez jamais un « trop-perçu » avant que l’argent soit réellement et définitivement crédité sur votre compte : vérifiez vous-même dans votre application bancaire, pas sur une capture d’écran envoyée par l’acheteur.',
+    explication: 'Arnaque classique sur les sites de petites annonces : l’escroc simule (ou falsifie) un virement trop élevé, souvent via une fausse capture d’écran, et demande à être remboursé de la différence « en urgence ». Le premier virement n’existe pas ou sera rejeté quelques jours plus tard : la victime a bel et bien envoyé, elle, un vrai virement — perdu. Utilisez toujours le paiement sécurisé intégré à la plateforme, jamais un virement direct à un inconnu.'
+  },
+
+  /* ---------- 23. SMS faux remboursement des impôts — ARNAQUE ---------- */
+  {
+    id: 'sms-remboursement-impots',
+    canal: 'sms',
+    entete: 'SMS reçu en pleine période de déclaration d’impôts',
+    expediteur: 'DGFIP',
+    messages: [
+      'Direction Générale des Finances Publiques : après vérification de votre dossier, vous bénéficiez d’un remboursement de 237,80 €. Pour le recevoir, complétez vos coordonnées bancaires sur : https://remboursement-impots-particuliers.com'
+    ],
+    verdict: 'arnaque',
+    categorie: 'Usurpation d’organisme public (impôts / DGFIP)',
+    indices: [
+      'Le nom d’expéditeur « DGFIP » se falsifie aussi facilement que n’importe quel autre : il ne garantit rien.',
+      'Adresse du lien qui n’est pas impots.gouv.fr.',
+      'On vous demande de « compléter » vos coordonnées bancaires : si vous avez déjà été remboursé par le passé, l’administration les a déjà.',
+      { risque: 'La fausse page vole vos coordonnées bancaires ou vous fait payer de faux « frais de dossier ».' }
+    ],
+    reflexe: 'Ne vous connectez jamais via un lien reçu par SMS : tapez vous-même impots.gouv.fr dans votre navigateur pour vérifier un remboursement.',
+    explication: 'Comme pour l’Assurance Maladie ou la CAF, les escrocs usurpent la DGFIP en pleine période de déclaration pour profiter de l’actualité. Un vrai remboursement d’impôt ne se débloque jamais en resaisissant un RIB sur un site externe : il est versé automatiquement sur le compte déjà connu de l’administration.'
   },
 
   /* ================== MESSAGES LÉGITIMES (à ne pas confondre) ========= */
@@ -510,6 +624,95 @@ const SCENARIOS = [
     ],
     reflexe: 'Un vrai rendez-vous se confirme sans jamais réclamer vos codes ni votre carte bancaire au téléphone.',
     explication: 'Tous les appels ne sont pas des arnaques. Un secrétariat qui confirme un rendez-vous ne demande aucune information sensible. Si un « service » réclamait un paiement ou vos codes par téléphone, là il faudrait se méfier.'
+  },
+
+  /* ---------- 24. Vente en ligne, paiement sécurisé de la plateforme — FIABLE */
+  {
+    id: 'chat-leboncoin-paiement-securise-ok',
+    canal: 'chat',
+    plateforme: 'Leboncoin — messagerie',
+    contact: 'Acheteuse intéressée (vélo enfant)',
+    avatar: '',
+    messages: [
+      { from: 'eux', texte: 'Bonjour, le vélo enfant m’intéresse. Je passe le récupérer samedi matin si ça vous va, et je règle avec le Paiement Leboncoin en main propre.' },
+      { from: 'eux', texte: 'Comme ça c’est sécurisé pour nous deux : l’argent est débloqué une fois que j’ai bien récupéré l’article. À samedi !' }
+    ],
+    verdict: 'fiable',
+    categorie: 'Message légitime — vente entre particuliers via le paiement sécurisé de la plateforme',
+    indices: [
+      'Le paiement passe par le système officiel de la plateforme, pas par un virement direct à un inconnu.',
+      'Pas de prétexte de « transporteur » : l’acheteuse vient récupérer l’objet elle-même.',
+      'Aucune demande de remboursement ni de « trop-perçu ».',
+      'Ton simple, sans urgence artificielle ni pièce jointe suspecte.'
+    ],
+    reflexe: 'Une vente sûre passe par le paiement intégré de la plateforme (ou une remise en main propre contre paiement immédiat) — jamais par un virement extérieur suivi d’un remboursement.',
+    explication: 'À l’inverse de l’arnaque au trop-perçu, ici l’argent reste bloqué par la plateforme jusqu’à la remise réelle de l’objet : ni vous ni l’acheteuse ne risquez de perdre de l’argent. Le signal rassurant à retenir : le paiement se fait DANS le système de la plateforme, jamais par un virement bancaire direct entre particuliers.'
+  },
+
+  /* ---------- 25. Image deepfake — manifestation — ARNAQUE ------------- */
+  {
+    id: 'image-deepfake-manifestation',
+    canal: 'image',
+    image: 'img/deepfake-manifestation.jpg',
+    legende: '« Le Président pris à partie par ses propres forces de l’ordre en pleine manif ! Ce qu’ils ne veulent pas que vous voyiez… » — Partagé 62 000 fois',
+    verdict: 'arnaque',
+    categorie: 'Image générée par IA (« deepfake ») / intox',
+    indices: [
+      'Détails incohérents : chiffres sans queue ni tête sur les casques/écussons, visages flous ou dédoublés dans la foule.',
+      'Aucun média sérieux ne relaie cette scène.',
+      'La légende joue sur le complot et l’émotion (« ce qu’ils ne veulent pas que vous voyiez »).',
+      'Une image seule ne prouve rien : elle peut être fabriquée en quelques secondes.'
+    ],
+    reflexe: 'Avant de croire ou de partager une image choc, cherchez l’info sur plusieurs médias reconnus. Zoomez sur les détails (mains, inscriptions, visages en arrière-plan).',
+    explication: 'Comme pour toute image choc, le sujet importe peu (une célébrité, un homme politique, un inconnu) : le réflexe est le même. Si l’événement n’est repris nulle part ailleurs, il n’a probablement pas eu lieu.'
+  },
+
+  /* ---------- 26. Faux profil de rencontre généré par IA — ARNAQUE ----- */
+  {
+    id: 'chat-faux-profil-rencontre',
+    canal: 'chat',
+    plateforme: 'Appli de rencontre',
+    contact: 'Philippe M. 😊',
+    avatar: 'img/visage-ia-homme.jpg',
+    messages: [
+      { from:'eux', texte:'Bonjour ! Ton profil m’a tout de suite plu 😊' },
+      { from:'eux', texte:'Je suis ingénieur, actuellement en mission sur une plateforme pétrolière offshore. On discute depuis 3 semaines, j’ai l’impression de te connaître depuis toujours.' },
+      { from:'eux', texte:'J’ai un souci pour rentrer : la douane me réclame 400 € de frais que je n’ai pas sur moi ici. Tu pourrais m’avancer ça ? Je te rembourse dès mon retour, promis ❤️' }
+    ],
+    verdict: 'arnaque',
+    categorie: 'Arnaque aux sentiments / faux profil',
+    indices: [
+      'Une relation qui devient intense en quelques semaines seulement, sans jamais s’être vus.',
+      'Un métier qui justifie d’être loin et injoignable (plateforme offshore, mission à l’étranger…) : très classique.',
+      { risque: 'La demande d’argent finit toujours par arriver — ici sous forme de « frais de douane ».' },
+      'Le profil a l’air tout à fait normal, pas une célébrité : une photo crédible ne prouve rien, elle peut être générée par IA.'
+    ],
+    reflexe: 'Dès qu’une rencontre en ligne demande de l’argent, même une petite somme « à rembourser vite », c’est une arnaque. Aucune exception.',
+    explication: 'Contrairement au faux « Brad Pitt », ce genre de profil ne cherche pas à impressionner par la célébrité, mais par la normalité et la proximité construite au fil des messages. La photo, générée par IA, est indétectable à l’œil nu : c’est le comportement (argent demandé) qui doit alerter, pas l’apparence.'
+  },
+
+  /* ---------- 27. Fausse vendeuse, acompte hors plateforme — ARNAQUE --- */
+  {
+    id: 'chat-fausse-vendeuse-acompte',
+    canal: 'chat',
+    plateforme: 'Leboncoin (contact WhatsApp)',
+    contact: 'Camille D.',
+    avatar: 'img/visage-ia-femme.jpg',
+    messages: [
+      { from:'eux', texte:'Bonjour ! Oui, l’article est toujours disponible 😊' },
+      { from:'eux', texte:'Comme j’ai beaucoup de messages, je vous demande un acompte de 30 € par virement direct pour bloquer l’annonce, en dehors de Leboncoin (ça évite les frais de la plateforme).' },
+      { from:'eux', texte:'Dès réception je retire l’annonce et on organise la remise en main propre.' }
+    ],
+    verdict: 'arnaque',
+    categorie: 'Paiement hors plateforme (fausse vendeuse)',
+    indices: [
+      'On vous pousse à payer EN DEHORS du site/de l’appli, soi-disant pour « éviter les frais ».',
+      'Demande d’un acompte avant même d’avoir vu l’objet ou fixé un rendez-vous.',
+      { risque: 'Une fois le virement fait hors plateforme, il n’y a plus aucune protection : l’argent est perdu si l’objet n’existe pas.' },
+      'Une photo de profil accueillante ne garantit rien : elle peut être fausse.'
+    ],
+    reflexe: 'Sur une plateforme d’annonces, le paiement doit toujours passer par le système sécurisé du site. Aucun « acompte » par virement direct, jamais.',
+    explication: 'C’est l’inverse exact du scénario "vente Leboncoin sécurisée" : ici, dès qu’on vous fait sortir du système protégé, vous perdez toute garantie. Le prétexte (« éviter les frais ») est presque toujours signe d’arnaque.'
   }
 
 ];
@@ -564,7 +767,13 @@ const GLOSSAIRE = [
     def:'L’escroc noue d’abord une relation de confiance (souvent après un faux « mauvais numéro » ou une rencontre en ligne), puis pousse la victime à investir sur une fausse plateforme de crypto ou de trading. De petits gains fictifs s’affichent pour la mettre en confiance et l’inciter à verser toujours plus ; au moment de retirer, tout disparaît.' },
   { key:'hors-plateforme', terme:'Paiement hors plateforme',
     aliases:['hors plateforme','hors de la plateforme'],
-    def:'Se faire payer en dehors du site officiel (location, petite annonce, billetterie) — par virement ou cartes cadeaux — pour échapper aux protections de la plateforme. Un vrai loueur ou vendeur passe toujours par le paiement sécurisé du site.' }
+    def:'Se faire payer en dehors du site officiel (location, petite annonce, billetterie) — par virement ou cartes cadeaux — pour échapper aux protections de la plateforme. Un vrai loueur ou vendeur passe toujours par le paiement sécurisé du site.' },
+  { key:'trop-percu', terme:'Arnaque au trop-perçu',
+    aliases:['trop-perçu','arnaque au trop-perçu'],
+    def:'Un acheteur prétend avoir envoyé trop d’argent par erreur (souvent avec une fausse capture d’écran de virement) et demande de lui rembourser la différence avant que l’argent ne soit réellement arrivé. Le premier virement n’existe pas ou sera annulé : la victime perd le vrai virement qu’elle a renvoyé.' },
+  { key:'fausse-boutique', terme:'Fausse boutique en ligne',
+    aliases:['fausse boutique en ligne','faux site marchand'],
+    def:'Un site de vente factice, souvent avec des réductions extrêmes et une urgence artificielle (« liquidation », « stock limité »), qui encaisse le paiement sans jamais livrer, ou vole les données bancaires.' }
 ];
 
 /* =========================================================================
@@ -592,7 +801,8 @@ const REPERES = {
     { texte:'ne-pas-repondre@chronopost.fr', bon:true, aide:'Le message dit « Microsoft »… mais regardez l’adresse e-mail complète de l’expéditeur : est-elle cohérente ?', note:'Le nom affiché dit « Microsoft », mais l’adresse finit par @chronopost.fr : ça ne colle pas.' },
     { texte:'sous 24h', bon:true, aide:'Cherchez un délai qui vous oblige à vous dépêcher.', note:'Urgence artificielle : « agissez sous 24h ».' },
     { texte:'suspension de votre compte', bon:true, aide:'Repérez la menace censée vous faire peur.', note:'On vous fait peur avec une menace de suspension.' },
-    { texte:'que vous n’avez pas Utiliser', bon:true, aide:'Un grand service écrit-il sans fautes ? Cherchez une tournure ou une majuscule qui sonne faux.', note:'Faute et tournure maladroite : un vrai service ne s’exprime pas ainsi.' }
+    { texte:'que vous n’avez pas Utiliser', bon:true, aide:'Un grand service écrit-il sans fautes ? Cherchez une tournure ou une majuscule qui sonne faux.', note:'Faute et tournure maladroite : un vrai service ne s’exprime pas ainsi.' },
+    { texte:'antoninatger', bon:true, aide:'Comment vous appelle-t-on ? Un vrai service utilise-t-il votre prénom, ou un identifiant collé ?', note:'On vous appelle par un identifiant collé en minuscules (« antoninatger ») et non « Bonjour Antonin » : un vrai service vous nomme correctement. Signe d’un envoi automatique malveillant.' }
   ],
   'email-boite-mystere': [
     { texte:'noreply.LE.04@b8.9a.21.eb', bon:true, aide:'Regardez l’adresse de l’expéditeur : ressemble-t-elle à une vraie adresse d’entreprise ?', note:'Adresse d’expéditeur incompréhensible : signe d’arnaque.' },
@@ -659,11 +869,18 @@ const REPERES = {
     { texte:'par virement bancaire', bon:true, aide:'Ce moyen de paiement vous protège-t-il ? Un virement se récupère-t-il facilement ?', note:'Un virement à un particulier est quasi impossible à récupérer : moyen favori des escrocs.' },
     { texte:'marco.rivas.locations@gmail.com', bon:true, aide:'Un vrai message passant par la plateforme viendrait-il d’une adresse Gmail personnelle ?', note:'Adresse Gmail personnelle : rien ne passe par le site officiel de réservation.' },
     { texte:'deux autres familles', bon:true, aide:'Cherchez ce qui vous pousse à vous décider en vitesse.', note:'Rareté artificielle : « d’autres sont intéressés » pour vous faire payer avant de réfléchir.' },
+    { texte:'je ne pourrai pas garder les dates bien longtemps', bon:true, aide:'Cherchez la phrase qui vous met la pression du temps pour ne pas vous laisser réfléchir.', note:'Ton d’urgence : « ne tardez pas », « je ne pourrai pas garder les dates » — on veut vous faire payer avant que vous ne réfléchissiez.' },
     { texte:'Merci pour votre intérêt', bon:false, note:'Formule de politesse : agréable, mais ce n’est pas là qu’est le piège.' }
+  ],
+  'email-prenom-detourne': [
+    { texte:'Vous serez débité de 447,00', bon:true, aide:'Un simple prénom contient-il une phrase sur de l’argent et un IBAN ? Cherchez ce qui n’a rien à faire dans un « Bonjour ».', note:'Un « prénom » qui parle d’argent, d’IBAN et de prélèvements : ce texte a été glissé dans le champ prénom à la place de votre nom.' },
+    { texte:'0259509226', bon:true, aide:'Que cherche-t-on à vous faire faire ? Repérez le numéro à appeler : c’est là qu’est le piège.', note:'Le vrai piège : appeler ce numéro tombe sur un faux « service anti-fraude » qui vous fera « sécuriser » votre argent en le virant aux escrocs.' },
+    { texte:'no-reply@welcometothejungle.com', bon:false, note:'Ici l’adresse est authentique : l’e-mail vient vraiment du site. Ce n’est pas l’expéditeur le problème, mais le texte injecté à la place de votre prénom.' }
   ],
   'sms-banque-ok': [
     { texte:'Appelez le numéro figurant au dos de votre carte', bon:true, aide:'Cherchez ce qui vous renvoie vers un moyen sûr, que vous contrôlez vous-même.', note:'On vous renvoie vers un canal officiel que VOUS maîtrisez.' },
     { texte:'Nous ne vous demanderons jamais vos codes', bon:true, aide:'Cherchez la phrase qui promet de ne jamais réclamer vos codes.', note:'Une vraie banque le rappelle : elle ne demande jamais vos codes.' },
+    { texte:'CIC', bon:true, aide:'Reconnaissez-vous l’expéditeur ? Si CIC est bien VOTRE banque, c’est un petit signe rassurant.', note:'Indice faible mais réel : si CIC est votre banque, reconnaître l’expéditeur rassure un peu. Attention tout de même : un nom d’expéditeur peut être usurpé — ne vous fiez jamais qu’à lui.' },
     { texte:'54,90 € chez FNAC', bon:false, note:'C’est juste l’info de l’achat : ni bon ni mauvais signe en soi.' }
   ],
   'notif-connexion-ok': [
@@ -684,7 +901,7 @@ const REPERES = {
   'notif-virement-ok': [
     { texte:'Ma Banque', bon:true, aide:'D’où vient cette notification ? Cherchez ce qui montre qu’elle vient de votre appli bancaire.', note:'Notification issue de votre application bancaire.' },
     { texte:'Solde consultable dans votre application', bon:true, aide:'Cherchez ce qui vous renvoie à l’appli, sans lien ni urgence.', note:'On vous renvoie à l’appli, sans lien ni action urgente.' },
-    { texte:'Paul Durand', bon:false, note:'Le nom de l’émetteur est une simple info, pas un indice.' }
+    { texte:'Paul Durand', bon:true, aide:'Reconnaissez-vous l’émetteur du virement ? Un nom que vous connaissez est plutôt rassurant.', note:'Si vous connaissez réellement un Paul Durand, reconnaître l’émetteur est un bon signe. Attention toutefois : un nom seul ne prouve rien — c’est l’ensemble (l’appli, l’absence de demande) qui rassure.' }
   ],
   'email-newsletter-ok': [
     { texte:'contact@restosducoeur.org', bon:true, aide:'Regardez l’adresse de l’expéditeur : est-elle cohérente avec l’organisme ?', note:'Adresse cohérente avec l’organisme : bon signe.' },
@@ -700,6 +917,51 @@ const REPERES = {
     { texte:'Cabinet du Dr Martin', bon:true, aide:'Cherchez ce qui identifie clairement la personne qui appelle.', note:'Interlocuteur clairement identifié.' },
     { texte:'confirmer votre rendez-vous', bon:true, aide:'Cherchez ce qui montre qu’on confirme seulement un rendez-vous que vous connaissez.', note:'On confirme seulement un rendez-vous que vous connaissez.' },
     { texte:'apporter votre carte Vitale', bon:true, aide:'Vous demande-t-on des numéros au téléphone, ou juste de la présenter sur place ?', note:'On la présente sur place — on ne demande pas ses numéros au téléphone.' }
+  ],
+  'email-fausse-boutique-liquidation': [
+    { texte:'contact@velo-discount-shop.top', bon:true, aide:'Regardez l’adresse de l’expéditeur : correspond-elle à une vraie marque connue ?', note:'Nom de domaine inconnu et bizarre, sans lien avec une vraie marque.' },
+    { texte:'149 € au lieu de 899 €', bon:true, aide:'Cette réduction vous semble-t-elle réaliste pour un vélo électrique ?', note:'Réduction énorme et invraisemblable : signe classique de fausse boutique.' },
+    { texte:'Stock très limité', bon:true, aide:'Cherchez ce qui vous pousse à acheter tout de suite sans réfléchir.', note:'Fausse rareté pour vous faire acheter dans la précipitation.' },
+    { texte:'Paiement 100 % sécurisé', bon:false, note:'Une fausse boutique peut très bien écrire « paiement sécurisé » : l’affirmation seule ne prouve rien.' }
+  ],
+  'email-prime-video-paiement': [
+    { texte:'support@prime-video-facturation.com', bon:true, aide:'Regardez l’adresse complète de l’expéditeur : est-ce le vrai domaine du service ?', note:'Domaine inventé, sans rapport avec le vrai service de streaming.' },
+    { texte:'suspendu sous 48h', bon:true, aide:'Cherchez le délai qui vous pousse à agir dans la précipitation.', note:'Urgence artificielle pour vous faire cliquer vite.' },
+    { texte:'Mettez à jour vos informations de paiement', bon:true, aide:'Que vous demande-t-on de faire en cliquant sur le bouton ?', note:'Le bouton mène à une fausse page qui réclame votre numéro de carte complet.' },
+    { texte:'Échec de paiement', bon:false, note:'Un vrai service peut aussi écrire ça un jour : ce n’est pas cette phrase seule qui trahit l’arnaque, mais l’adresse et le lien.' }
+  ],
+  'chat-trop-percu-vente': [
+    { texte:'un transporteur passera le récupérer', bon:true, aide:'L’acheteuse vient-elle voir l’objet elle-même ? Cherchez le prétexte pour ne pas se déplacer.', note:'Elle ne vient jamais en personne : prétexte classique pour préparer l’arnaque.' },
+    { texte:'renvoyer les 150 € de trop', bon:true, aide:'Que vous demande-t-on de faire avec de l’argent que vous n’avez pas encore reçu ?', note:'Demande de rembourser un « trop-perçu » avant même que l’argent soit arrivé.' },
+    { texte:'capture d’écran du virement', bon:true, aide:'Cette « preuve » de paiement montre-t-elle vraiment que l’argent est sur votre compte ?', note:'Une capture d’écran se fabrique facilement : ce n’est pas une preuve que l’argent est arrivé.' },
+    { texte:'200 €', bon:false, note:'Le prix de l’objet lui-même n’est pas un indice : c’est autour de lui que se joue l’arnaque.' }
+  ],
+  'sms-remboursement-impots': [
+    { texte:'DGFIP', bon:false, note:'Un nom d’expéditeur se falsifie facilement : il ne garantit rien à lui seul.' },
+    { texte:'https://remboursement-impots-particuliers.com', bon:true, aide:'Le vrai site des impôts, c’est impots.gouv.fr. Cette adresse lui ressemble-t-elle ?', note:'Ce n’est pas impots.gouv.fr : lien piégé.' },
+    { texte:'complétez vos coordonnées bancaires', bon:true, aide:'Si vous avez déjà été remboursé par le passé, l’administration a-t-elle besoin que vous ressaisissiez vos coordonnées bancaires ?', note:'L’administration a déjà votre RIB si vous avez déjà été remboursé : elle ne le redemande pas par SMS.' }
+  ],
+  'chat-leboncoin-paiement-securise-ok': [
+    { texte:'Paiement Leboncoin', bon:true, aide:'Comment l’acheteuse propose-t-elle de régler ? Cherchez le système de paiement utilisé.', note:'Le paiement passe par le système sécurisé de la plateforme, pas par un virement direct.' },
+    { texte:'bien récupéré l’article', bon:true, aide:'À quel moment l’argent est-il débloqué pour vous ?', note:'L’argent n’est débloqué qu’après la remise réelle de l’objet : ni vous ni elle ne risquez rien.' },
+    { texte:'À samedi', bon:false, note:'Formule de politesse : agréable, mais ce n’est pas là qu’est l’information importante.' }
+  ],
+  'image-deepfake-manifestation': [
+    { texte:'__IMG__', bon:true, aide:'Regardez l’image de près : les visages dans la foule, les inscriptions sur les casques vous paraissent-ils cohérents ? Cliquez dessus.', note:'Zoomez : chiffres sans signification sur les casques, visages flous ou déformés en arrière-plan — signes d’une image générée par IA.' },
+    { texte:'ce qu’ils ne veulent pas que vous voyiez', bon:true, aide:'Cherchez la formule qui joue sur le complot et l’émotion.', note:'Formule complotiste classique pour faire réagir sans vérifier.' },
+    { texte:'Partagé 62 000 fois', bon:false, note:'Le nombre de partages ne prouve rien : le faux circule aussi vite, voire plus vite, que le vrai.' }
+  ],
+  'chat-faux-profil-rencontre': [
+    { texte:'ingénieur, actuellement en mission sur une plateforme pétrolière offshore', bon:true, aide:'Pourquoi cette personne est-elle si difficile à joindre ou à rencontrer en vrai ? Cherchez le prétexte.', note:'Métier classique qui justifie d’être loin et indisponible.' },
+    { texte:'On discute depuis 3 semaines', bon:true, aide:'Cette relation évolue-t-elle à une vitesse normale ?', note:'Relation qui progresse très vite en ligne : signal d’alerte.' },
+    { texte:'400 € de frais', bon:true, aide:'Que finit-on toujours par vous demander dans ce genre d’échange ?', note:'Demande d’argent : le signe qui ne trompe jamais.' },
+    { texte:'Ton profil m’a tout de suite plu', bon:false, note:'Compliment banal d’ouverture : agréable, mais pas un indice en soi.' }
+  ],
+  'chat-fausse-vendeuse-acompte': [
+    { texte:'en dehors de Leboncoin', bon:true, aide:'Où vous pousse-t-on à effectuer le paiement, par rapport à la plateforme ?', note:'On vous fait sortir du système sécurisé de la plateforme : signal classique.' },
+    { texte:'acompte de 30 € par virement direct', bon:true, aide:'Vous demande-t-on de l’argent avant même d’avoir vu l’objet ?', note:'Demande de paiement direct avant tout contact réel : prudence.' },
+    { texte:'ça évite les frais de la plateforme', bon:true, aide:'Quel prétexte utilise-t-on pour justifier de sortir du paiement sécurisé ?', note:'Prétexte classique pour vous faire sortir du paiement sécurisé.' },
+    { texte:'toujours disponible', bon:false, note:'Réponse banale de vendeur : agréable, mais pas un indice en soi.' }
   ]
 };
 

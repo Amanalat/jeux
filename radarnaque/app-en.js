@@ -133,16 +133,17 @@
       '</div>' +
       '<div class="panel"><div id="lower"></div></div>';
 
-    // shows the whole message, then makes it clickable: investigate before deciding
-    var host = document.querySelector('#maquette [data-anim]');
-    if (host) host.innerHTML = itemsFor(c).join('');
-    if (reperesActifs.length){
-      el('maquette').classList.add('mode-spot');
-      activerReperes(el('maquette'), reperesActifs);
-      entrerSpotting();
-    } else {
-      phaseDecision();
-    }
+    // shows the message (animated message by message, unless "reduced motion" is preferred),
+    // then makes it clickable once complete: investigate before deciding
+    afficherMessages(c, function(){
+      if (reperesActifs.length){
+        el('maquette').classList.add('mode-spot');
+        activerReperes(el('maquette'), reperesActifs);
+        entrerSpotting();
+      } else {
+        phaseDecision();
+      }
+    });
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
@@ -269,20 +270,29 @@
     return [];
   }
 
-  /* message-by-message animation */
-  function animerMessages(c){
+  /* shows a card's messages, animated message by message when possible,
+     then calls callback() once everything is displayed */
+  function afficherMessages(c, callback){
     var host = document.querySelector('#maquette [data-anim]');
-    if (!host) return;
-    sequence(itemsFor(c), host);
+    if (!host){ callback(); return; }
+    var items = itemsFor(c);
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!items.length || reduceMotion){
+      host.innerHTML = items.join('');
+      callback();
+      return;
+    }
+    sequence(items, host, callback);
   }
 
-  function sequence(items, host){
+  function sequence(items, host, callback){
     var i = 0;
     (function next(){
       if (i >= items.length) return;
       host.insertAdjacentHTML('beforeend', items[i]);
       i++;
       if (i < items.length) setTimeout(next, 620);
+      else if (callback) callback();
     })();
   }
 
@@ -301,7 +311,7 @@
     if (ba) ba.disabled = true;
     if (bf) bf.disabled = true;
     var chosen = el(choix==='arnaque' ? 'b-arnaque' : 'b-fiable');
-    if (chosen) chosen.classList.add('choisi');
+    if (chosen){ chosen.classList.add('choisi'); chosen.setAttribute('aria-pressed', 'true'); }
 
     montrerCorrection(bon);
   }
@@ -311,8 +321,8 @@
     hintIdx = -1; hintStep = 0;
     var totalBon = reperesActifs.filter(function(r){ return r.bon; }).length;
     el('lower').innerHTML =
-      '<div class="spot-consigne"><b>Étape 1 — Enquêtez.</b> Cliquez, dans le message, of les <b>éléments qui vous mettent la puce à l’oreille</b> (ou, au contraire, qui rassurent) 👆<small>With each click, you are told whether it is a real clue — and what it means. Nothing is highlighted: it is up to you to investigate.</small></div>' +
-      '<div class="spot-compteur" id="spot-compteur" data-total="' + totalBon + '">Clues found: <b>0</b> / ' + totalBon + '</div>' +
+      '<div class="spot-consigne"><b>Step 1 — Investigate.</b> In the message, click the <b>details that catch your attention</b> 👆<small>With each click, <b>you are the judge</b>: set the slider (suspicious / nothing special / reassuring) and, if you like, say why. We answer afterwards. Nothing is highlighted: it is up to you to investigate.</small></div>' +
+      '<div class="spot-compteur" id="spot-compteur" data-total="' + totalBon + '" aria-live="polite">Clues found: <b>0</b> / ' + totalBon + '</div>' +
       '<div class="spot-actions">' +
         '<button class="hint-btn" id="coup-pouce">💡 Hint</button>' +
       '</div>' +
@@ -320,6 +330,7 @@
       '<button class="next" id="go-decide">I have investigated, I decide ▶</button>';
     el('coup-pouce').onclick = coupDePouce;
     el('go-decide').onclick = phaseDecision;
+    majCompteur();
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
@@ -329,8 +340,8 @@
     el('lower').innerHTML =
       '<div class="consigne"><b>Step 2 — Your verdict.</b> Based on the clues, what do you do with this message?<small>Do you distrust it, or can you trust it?</small></div>' +
       '<div class="decide">' +
-        '<button class="btn-arnaque" id="b-arnaque"><span class="em">🚨</span>Be suspicious<small>It’s a scam</small></button>' +
-        '<button class="btn-fiable" id="b-fiable"><span class="em">✅</span>Trust it<small>It’s reliable</small></button>' +
+        '<button class="btn-arnaque" id="b-arnaque" aria-pressed="false"><span class="em">🚨</span>Be suspicious<small>It’s a scam</small></button>' +
+        '<button class="btn-fiable" id="b-fiable" aria-pressed="false"><span class="em">✅</span>Trust it<small>It’s reliable</small></button>' +
       '</div>' +
       '<button class="hint-btn" id="retour-enquete" style="margin-top:10px">↩ Go back to the investigation</button>';
     el('b-arnaque').onclick = function(){ repondre('arnaque'); };
@@ -339,16 +350,21 @@
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
-  // makes the fragments defined in the clues clickable
+  // makes the fragments defined in the clues clickable (and keyboard-accessible)
   function activerReperes(root, reperes){
     reperes.forEach(function(r, i){
       if (r.texte === '__IMG__'){
         var img = root.querySelector('img.big, .fauxphoto');
-        if (img){ img.classList.add('repere'); img.setAttribute('data-i', i); }
+        if (img){
+          img.classList.add('repere'); img.setAttribute('data-i', i);
+          img.setAttribute('role', 'button'); img.setAttribute('tabindex', '0');
+        } else {
+          console.warn('[Scam Radar] image clue not found in the DOM.');
+        }
         return;
       }
       var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
-      var node;
+      var node, wrapped = false;
       while ((node = walker.nextNode())){
         var pos = node.nodeValue.indexOf(r.texte);
         if (pos >= 0){
@@ -358,10 +374,13 @@
           var span = document.createElement('span');
           span.className = 'repere';
           span.setAttribute('data-i', i);
-          try { range.surroundContents(span); } catch(e){ break; }
+          span.setAttribute('role', 'button');
+          span.setAttribute('tabindex', '0');
+          try { range.surroundContents(span); wrapped = true; } catch(e){}
           break;
         }
       }
+      if (!wrapped) console.warn('[Scam Radar] clue not found in the DOM:', r.texte);
     });
     root.addEventListener('click', function(e){
       if (!root.classList.contains('mode-spot')) return;
@@ -371,31 +390,133 @@
       if (t) clicRepere(parseInt(t.getAttribute('data-i'), 10), t);
       else clicVide(e);            // the player clicked beside a clue: give feedback
     });
+    root.addEventListener('keydown', function(e){
+      if (!root.classList.contains('mode-spot')) return;
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      if (e.target.closest && (e.target.closest('.spot-pop') || e.target.closest('.gloss'))) return;
+      var t = e.target.closest ? e.target.closest('.repere') : null;
+      if (t){ e.preventDefault(); clicRepere(parseInt(t.getAttribute('data-i'), 10), t); }
+    });
+  }
+
+  /* --- Analyse the free-text "why": compare it to the clue's keywords --- */
+  var STOP = (' the a an and or but so nor for of to in on at by with without into from as is are be been being this that these those it its it s he she they them we you your our their my his her not no yes can could will would may might do does did done make made just very more most less here there when then also same already nothing everything something real really never always why what who whom whose which how so if').split(' ');
+  function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,' '); }
+  function motsClesIndice(r){
+    var src = norm((r.note||'') + ' ' + (r.aide||'')).split(/\s+/);
+    var out = [];
+    src.forEach(function(w){ if (w.length >= 4 && STOP.indexOf(w) < 0 && out.indexOf(w) < 0) out.push(w); });
+    return out;
+  }
+  function analyserPourquoi(why, r){
+    var w = norm(why);
+    if (!w.replace(/\s/g,'')) return { ecrit:false, trouves:[] };
+    var trouves = [];
+    motsClesIndice(r).forEach(function(k){ if (w.indexOf(k) >= 0) trouves.push(k); });
+    return { ecrit:true, trouves:trouves };
   }
 
   function clicRepere(i, span){
     var r = reperesActifs[i];
     if (!r) return;
-    if (r.bon){
-      if (!span.classList.contains('trouve')){
-        span.classList.remove('hint-flash');
-        span.classList.add('trouve');
-        foundBon++;
-        majCompteur();
-        // l'indice est trouvé : le coup de pouce repart de zéro of le suivant
-        hintIdx = -1; hintStep = 0; hideAide(); resetHintBtn();
-      }
-      var est = deck[idx].verdict === 'arnaque';
-      var lbl = est ? '🚩 Suspicious sign — ' : '✅ Reassuring sign — ';
-      showPop(span, 'ok', lbl + r.note);   // show the explanation again if clicked again
-    } else {
-      span.classList.add('decoy');
-      showPop(span, 'ko', '🅾️ False clue — ' + (r.note || 'this detail catches the eye, but it is not the real sign.'));
+    // already judged: just show the saved feedback again
+    if (span.classList.contains('trouve') || span.classList.contains('decoy')){
+      afficherResultatRepere(i, span, r._choix, r._why);
+      return;
     }
+    ouvrirSonde(i, span);
   }
 
-  // click beside a clue: reassuring feedback at the click location
+  /* --- The player judges: confidence slider + optional "why" --- */
+  function ouvrirSonde(i, span){
+    span.classList.remove('hint-flash');
+    var pop = ensurePop();
+    pop.className = 'spot-pop sonde';
+    pop.innerHTML =
+      '<button class="x" type="button" aria-label="Close">✕</button>' +
+      '<div class="sonde-q">How does this detail feel to you?</div>' +
+      '<div class="curseur" role="radiogroup" aria-label="Your feeling">' +
+        '<button type="button" class="cr" data-v="louche" role="radio" aria-checked="false"><span class="e">🚩</span><small>Suspicious</small></button>' +
+        '<button type="button" class="cr" data-v="neutre" role="radio" aria-checked="false"><span class="e">😐</span><small>Nothing special</small></button>' +
+        '<button type="button" class="cr" data-v="rassurant" role="radio" aria-checked="false"><span class="e">✅</span><small>Reassuring</small></button>' +
+      '</div>' +
+      '<textarea class="sonde-why" rows="2" placeholder="Why? (optional)"></textarea>' +
+      '<button type="button" class="sonde-ok" disabled>Confirm my analysis</button>' +
+      '<span class="arrow"></span>';
+    var choix = null;
+    var okBtn = pop.querySelector('.sonde-ok');
+    var crs = pop.querySelectorAll('.cr');
+    crs.forEach(function(b){
+      b.onclick = function(ev){
+        ev.stopPropagation();
+        choix = b.getAttribute('data-v');
+        crs.forEach(function(x){ x.classList.remove('sel'); x.setAttribute('aria-checked','false'); });
+        b.classList.add('sel'); b.setAttribute('aria-checked','true');
+        okBtn.disabled = false;
+      };
+    });
+    pop.querySelector('.sonde-why').onclick = function(ev){ ev.stopPropagation(); };
+    pop.querySelector('.x').onclick = function(ev){ ev.stopPropagation(); hidePop(); };
+    okBtn.onclick = function(ev){
+      ev.stopPropagation();
+      if (!choix) return;
+      validerSonde(i, span, choix, (pop.querySelector('.sonde-why').value || ''));
+    };
+    positionPop(pop, span, null);
+  }
+
+  function validerSonde(i, span, choix, why){
+    var r = reperesActifs[i];
+    if (r.bon){
+      if (!span.classList.contains('trouve')){
+        span.classList.add('trouve');
+        foundBon++; majCompteur();
+        hintIdx = -1; hintStep = 0; hideAide(); resetHintBtn();
+      }
+    } else {
+      span.classList.add('decoy');
+    }
+    r._choix = choix; r._why = why;
+    afficherResultatRepere(i, span, choix, why);
+  }
+
+  /* --- Educational feedback after the player's judgement --- */
+  function afficherResultatRepere(i, span, choix, why){
+    var r = reperesActifs[i];
+    var estArnaque = deck[idx].verdict === 'arnaque';
+    var attendu = !r.bon ? 'neutre' : (estArnaque ? 'louche' : 'rassurant');
+    var corps;
+
+    if (r.bon){
+      var sens = estArnaque ? '🚩 Suspicious sign — ' : '✅ Reassuring sign — ';
+      var tete;
+      if (choix === attendu)       tete = '🎯 Well spotted, and well placed! ';
+      else if (choix === 'neutre') tete = 'Actually, this detail matters: ';
+      else                         tete = 'Good spotting, but the other way round: ';
+      corps = tete + sens + gl(r.note || '');
+    } else {
+      var teteD = (choix === 'neutre')
+        ? '👍 Correct: this detail is not a real sign. '
+        : '🅾️ False trail — ';
+      corps = teteD + gl(r.note || 'This detail catches the eye, but it is not the real sign.');
+    }
+
+    var a = analyserPourquoi(why, r);
+    if (a.ecrit){
+      if (r.bon && a.trouves.length)
+        corps += '<span class="sonde-fb ok">💬 Exactly: you pointed to “' + esc(a.trouves[0]) + '”, the heart of the problem.</span>';
+      else
+        corps += '<span class="sonde-fb">💬 Well done for putting it into words: verbalising is already the right reflex.</span>';
+    }
+
+    showResultPop(span, (r.bon ? 'ok' : 'ko'), '<div class="pc"><span>' + corps + '</span></div>');
+  }
+
+  // click beside a clue: reassuring feedback at the click location.
+  // If this message is already showing, another empty click dismisses it.
   function clicVide(e){
+    var p = document.querySelector('#spot-pop');
+    if (p && p.style.display !== 'none' && p.classList.contains('miss')){ hidePop(); return; }
     showPopAt(e, 'miss', 'Nothing useful here. Look for details that seem unusual: the sender, a link, the tone, urgency, a request for money or a code…');
   }
 
@@ -453,7 +574,7 @@
   function ensurePop(){
     var maq = el('maquette');
     var pop = maq.querySelector('#spot-pop');
-    if (!pop){ pop = document.createElement('div'); pop.id = 'spot-pop'; maq.appendChild(pop); }
+    if (!pop){ pop = document.createElement('div'); pop.id = 'spot-pop'; pop.setAttribute('aria-live', 'polite'); maq.appendChild(pop); }
     pop.style.display = 'block';
     return pop;
   }
@@ -478,6 +599,18 @@
   function showPopAt(e, kind, note){
     var maq = el('maquette'); if (!maq) return;
     positionPop(remplirPop(kind, note), null, { x:e.clientX, y:e.clientY });
+  }
+  // like showPop, but accepts already-composed HTML (glossary applied upstream)
+  function showResultPop(anchor, kind, innerHTML){
+    if (!el('maquette')) return;
+    var pop = ensurePop();
+    pop.className = 'spot-pop ' + kind;
+    pop.innerHTML =
+      '<button class="x" type="button" aria-label="Close">✕</button>' +
+      innerHTML +
+      '<span class="arrow"></span>';
+    pop.querySelector('.x').onclick = function(ev){ ev.stopPropagation(); hidePop(); };
+    positionPop(pop, anchor, null);
   }
 
   function positionPop(pop, anchor, xy){
@@ -528,7 +661,10 @@
     }
 
     var listeClasse = estArnaque ? 'indices' : 'indices ok';
-    var indices = (c.indices||[]).map(function(x){ return '<li>'+gl(x)+'</li>'; }).join('');
+    var indices = (c.indices||[]).map(function(x){
+      if (x && typeof x === 'object' && x.risque) return '<li class="risque">'+gl(x.risque)+'</li>';
+      return '<li>'+gl(x)+'</li>';
+    }).join('');
 
     var titreVerdict, sousTitre;
     if (bon){
@@ -548,7 +684,7 @@
       : '';
 
     el('lower').innerHTML =
-      '<div class="feedback">' +
+      '<div class="feedback" aria-live="polite">' +
         '<div class="verdict-bar ' + (bon?'bon':'faux') + '">' +
           '<span class="big">' + (bon?'✅':'❗') + '</span>' +
           '<div>' + titreVerdict + '<small>' + sousTitre + '</small></div>' +
@@ -679,6 +815,50 @@
   }
 
   /* =====================================================================
+     INTERNAL MESSAGE WINDOW — replaces native confirm()/alert(),
+     visually consistent with the rest of the UI (.modal/.fb-actions).
+     ===================================================================== */
+  function showModalMsg(message, opts){
+    opts = opts || {};
+    var ov = el('msg-modal');
+    if (!ov){
+      ov = document.createElement('div');
+      ov.className = 'modal-overlay';
+      ov.id = 'msg-modal';
+      ov.setAttribute('hidden', '');
+      ov.innerHTML =
+        '<div class="modal msg-modal" role="alertdialog" aria-modal="true">' +
+          '<p class="msg-modal-text" id="msg-modal-text"></p>' +
+          '<div class="fb-actions" id="msg-modal-actions"></div>' +
+        '</div>';
+      document.body.appendChild(ov);
+      ov.addEventListener('click', function(e){ if (e.target === ov && ov.dataset.blocking !== '1') hideModalMsg(); });
+    }
+    el('msg-modal-text').textContent = message;
+    var actions = el('msg-modal-actions');
+    if (opts.confirm){
+      ov.dataset.blocking = '1';
+      actions.innerHTML =
+        '<button class="fb-cancel" id="msg-modal-cancel" type="button">Cancel</button>' +
+        '<button class="fb-send" id="msg-modal-ok" type="button">Confirm</button>';
+      el('msg-modal-cancel').onclick = hideModalMsg;
+      el('msg-modal-ok').onclick = function(){ hideModalMsg(); if (opts.onConfirm) opts.onConfirm(); };
+    } else {
+      ov.dataset.blocking = '0';
+      actions.innerHTML = '<button class="fb-send" id="msg-modal-ok" type="button">OK</button>';
+      el('msg-modal-ok').onclick = function(){ hideModalMsg(); if (opts.onOk) opts.onOk(); };
+    }
+    ov.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+    el('msg-modal-ok').focus();
+  }
+  function hideModalMsg(){
+    var ov = el('msg-modal');
+    if (ov) ov.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+  }
+
+  /* =====================================================================
      INITIALIZATION
      ===================================================================== */
   /* =====================================================================
@@ -689,7 +869,7 @@
   function sendFeedback(){
     var n=el('fb-name'), e=el('fb-email'), m=el('fb-message');
     var name=(n&&n.value||'').trim(), email=(e&&e.value||'').trim(), msg=(m&&m.value||'').trim();
-    if(!msg){ alert('Write a short message before sending 🙂'); return; }
+    if(!msg){ showModalMsg('Write a short message before sending 🙂'); return; }
     var btn=el('fb-send'); if(btn){ btn.disabled=true; btn.textContent='⏳ Sending…'; }
     fetch('https://api.web3forms.com/submit', {
       method:'POST',
@@ -702,9 +882,9 @@
         message: msg
       })
     }).then(function(r){ return r.json(); }).then(function(d){
-      if(d && d.success){ alert('Thank you very much for your feedback! 🙏'); if(n)n.value=''; if(e)e.value=''; if(m)m.value=''; closeFeedback(); }
-      else { alert('Oops, sending failed. Try again, or write to contact@antoninatger.com'); }
-    }).catch(function(){ alert('Oops, sending failed. Try again, or write to contact@antoninatger.com'); })
+      if(d && d.success){ if(n)n.value=''; if(e)e.value=''; if(m)m.value=''; closeFeedback(); showModalMsg('Thank you very much for your feedback! 🙏'); }
+      else { showModalMsg('Oops, sending failed. Try again, or write to contact@antoninatger.com'); }
+    }).catch(function(){ showModalMsg('Oops, sending failed. Try again, or write to contact@antoninatger.com'); })
     .then(function(){ if(btn){ btn.disabled=false; btn.textContent='📨 Send'; } });
   }
 
@@ -730,9 +910,11 @@
     // “back to menu” button (visible only during the game)
     var mb = el('menu-btn');
     if (mb) mb.onclick = function(){
-      if (hud && hud.style.display !== 'none' &&
-          !confirm('Go back to the menu? The current game will be lost.')) return;
-      ecranAccueil();
+      if (hud && hud.style.display !== 'none'){
+        showModalMsg('Go back to the menu? The current game will be lost.', { confirm:true, onConfirm:ecranAccueil });
+      } else {
+        ecranAccueil();
+      }
     };
 
     // top-bar glossary button (accessible during the game)
@@ -754,7 +936,7 @@
       }
     });
     document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape'){ fermerGlossaire(); closeFeedback(); }
+      if (e.key === 'Escape'){ fermerGlossaire(); closeFeedback(); hideModalMsg(); }
       var t = e.target;
       if ((e.key === 'Enter' || e.key === ' ') && t && t.classList && t.classList.contains('gloss')){
         e.preventDefault(); openGlossaire(t.getAttribute('data-g'));

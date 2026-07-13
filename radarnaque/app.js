@@ -133,16 +133,17 @@
       '</div>' +
       '<div class="panel"><div id="lower"></div></div>';
 
-    // affiche le message en entier puis le rend cliquable : on ENQUÊTE avant de décider
-    var host = document.querySelector('#maquette [data-anim]');
-    if (host) host.innerHTML = itemsFor(c).join('');
-    if (reperesActifs.length){
-      el('maquette').classList.add('mode-spot');
-      activerReperes(el('maquette'), reperesActifs);
-      entrerSpotting();
-    } else {
-      phaseDecision();
-    }
+    // affiche le message (animé message par message, sauf préférence "mouvement réduit"),
+    // puis le rend cliquable une fois complet : on ENQUÊTE avant de décider
+    afficherMessages(c, function(){
+      if (reperesActifs.length){
+        el('maquette').classList.add('mode-spot');
+        activerReperes(el('maquette'), reperesActifs);
+        entrerSpotting();
+      } else {
+        phaseDecision();
+      }
+    });
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
@@ -269,20 +270,29 @@
     return [];
   }
 
-  /* animation « message par message » */
-  function animerMessages(c){
+  /* affiche les messages d'une carte, animés message par message quand c'est possible,
+     puis appelle callback() une fois que tout est affiché */
+  function afficherMessages(c, callback){
     var host = document.querySelector('#maquette [data-anim]');
-    if (!host) return;
-    sequence(itemsFor(c), host);
+    if (!host){ callback(); return; }
+    var items = itemsFor(c);
+    var reduitMouvement = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!items.length || reduitMouvement){
+      host.innerHTML = items.join('');
+      callback();
+      return;
+    }
+    sequence(items, host, callback);
   }
 
-  function sequence(items, host){
+  function sequence(items, host, callback){
     var i = 0;
     (function next(){
       if (i >= items.length) return;
       host.insertAdjacentHTML('beforeend', items[i]);
       i++;
       if (i < items.length) setTimeout(next, 620);
+      else if (callback) callback();
     })();
   }
 
@@ -301,7 +311,7 @@
     if (ba) ba.disabled = true;
     if (bf) bf.disabled = true;
     var chosen = el(choix==='arnaque' ? 'b-arnaque' : 'b-fiable');
-    if (chosen) chosen.classList.add('choisi');
+    if (chosen){ chosen.classList.add('choisi'); chosen.setAttribute('aria-pressed', 'true'); }
 
     montrerCorrection(bon);
   }
@@ -311,8 +321,8 @@
     hintIdx = -1; hintStep = 0;
     var totalBon = reperesActifs.filter(function(r){ return r.bon; }).length;
     el('lower').innerHTML =
-      '<div class="spot-consigne"><b>Étape 1 — Enquêtez.</b> Cliquez, dans le message, sur les <b>éléments qui vous mettent la puce à l’oreille</b> (ou, au contraire, qui rassurent) 👆<small>À chaque clic, on vous dit si c’est un vrai indice — et ce qu’il signifie. Rien n’est surligné&nbsp;: à vous de fouiller.</small></div>' +
-      '<div class="spot-compteur" id="spot-compteur" data-total="' + totalBon + '">Indices trouvés&nbsp;: <b>0</b> / ' + totalBon + '</div>' +
+      '<div class="spot-consigne"><b>Étape 1 — Enquêtez.</b> Cliquez, dans le message, sur les <b>éléments qui vous interpellent</b> 👆<small>À chaque clic, <b>c’est vous qui jugez</b> : placez le curseur (louche / rien de spécial / rassurant) et, si vous voulez, dites pourquoi. On vous répond ensuite. Rien n’est surligné&nbsp;: à vous de fouiller.</small></div>' +
+      '<div class="spot-compteur" id="spot-compteur" data-total="' + totalBon + '" aria-live="polite">Indices trouvés&nbsp;: <b>0</b> / ' + totalBon + '</div>' +
       '<div class="spot-actions">' +
         '<button class="hint-btn" id="coup-pouce">💡 Coup de pouce</button>' +
       '</div>' +
@@ -320,6 +330,7 @@
       '<button class="next" id="go-decide">J’ai enquêté, je décide ▶</button>';
     el('coup-pouce').onclick = coupDePouce;
     el('go-decide').onclick = phaseDecision;
+    majCompteur();
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
@@ -329,8 +340,8 @@
     el('lower').innerHTML =
       '<div class="consigne"><b>Étape 2 — Votre verdict.</b> D’après les indices, que faites-vous de ce message&nbsp;?<small>On s’en méfie, ou on peut lui faire confiance&nbsp;?</small></div>' +
       '<div class="decide">' +
-        '<button class="btn-arnaque" id="b-arnaque"><span class="em">🚨</span>Se méfier<small>C’est une arnaque</small></button>' +
-        '<button class="btn-fiable" id="b-fiable"><span class="em">✅</span>Faire confiance<small>C’est fiable</small></button>' +
+        '<button class="btn-arnaque" id="b-arnaque" aria-pressed="false"><span class="em">🚨</span>Se méfier<small>C’est une arnaque</small></button>' +
+        '<button class="btn-fiable" id="b-fiable" aria-pressed="false"><span class="em">✅</span>Faire confiance<small>C’est fiable</small></button>' +
       '</div>' +
       '<button class="hint-btn" id="retour-enquete" style="margin-top:10px">↩ Revenir à l’enquête</button>';
     el('b-arnaque').onclick = function(){ repondre('arnaque'); };
@@ -339,16 +350,21 @@
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
-  // rend cliquables les fragments définis dans les « reperes »
+  // rend cliquables (et accessibles au clavier) les fragments définis dans les « reperes »
   function activerReperes(root, reperes){
     reperes.forEach(function(r, i){
       if (r.texte === '__IMG__'){
         var img = root.querySelector('img.big, .fauxphoto');
-        if (img){ img.classList.add('repere'); img.setAttribute('data-i', i); }
+        if (img){
+          img.classList.add('repere'); img.setAttribute('data-i', i);
+          img.setAttribute('role', 'button'); img.setAttribute('tabindex', '0');
+        } else {
+          console.warn('[Radar’naque] repère image introuvable dans le DOM.');
+        }
         return;
       }
       var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
-      var node;
+      var node, wrapped = false;
       while ((node = walker.nextNode())){
         var pos = node.nodeValue.indexOf(r.texte);
         if (pos >= 0){
@@ -358,10 +374,13 @@
           var span = document.createElement('span');
           span.className = 'repere';
           span.setAttribute('data-i', i);
-          try { range.surroundContents(span); } catch(e){ break; }
+          span.setAttribute('role', 'button');
+          span.setAttribute('tabindex', '0');
+          try { range.surroundContents(span); wrapped = true; } catch(e){}
           break;
         }
       }
+      if (!wrapped) console.warn('[Radar’naque] repère introuvable dans le DOM :', r.texte);
     });
     root.addEventListener('click', function(e){
       if (!root.classList.contains('mode-spot')) return;
@@ -371,31 +390,135 @@
       if (t) clicRepere(parseInt(t.getAttribute('data-i'), 10), t);
       else clicVide(e);            // la personne a cliqué à côté : on le lui signale
     });
+    root.addEventListener('keydown', function(e){
+      if (!root.classList.contains('mode-spot')) return;
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      if (e.target.closest && (e.target.closest('.spot-pop') || e.target.closest('.gloss'))) return;
+      var t = e.target.closest ? e.target.closest('.repere') : null;
+      if (t){ e.preventDefault(); clicRepere(parseInt(t.getAttribute('data-i'), 10), t); }
+    });
+  }
+
+  /* --- Analyse du « pourquoi » libre : on compare aux mots-clés de l'indice --- */
+  var STOP = (' le la les un une des de du au aux et ou mais donc car ni que qui quoi dont en dans sur sous pour par avec sans vers chez ne pas plus moins tres est sont etre ete cet cette ces ceci cela ce se sa son ses leur leurs mon mes ton tes votre vos notre nos il elle ils elles on nous vous suis lui comme tout tous toute toutes bien mal ici oui non peut fait faire vraie vrai vraiment jamais toujours quand alors aussi meme deja rien nest cest sil quil pourquoi vraie votre votre').split(' ');
+  function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,' '); }
+  function motsClesIndice(r){
+    var src = norm((r.note||'') + ' ' + (r.aide||'')).split(/\s+/);
+    var out = [];
+    src.forEach(function(w){ if (w.length >= 4 && STOP.indexOf(w) < 0 && out.indexOf(w) < 0) out.push(w); });
+    return out;
+  }
+  function analyserPourquoi(why, r){
+    var w = norm(why);
+    if (!w.replace(/\s/g,'')) return { ecrit:false, trouves:[] };
+    var trouves = [];
+    motsClesIndice(r).forEach(function(k){ if (w.indexOf(k) >= 0) trouves.push(k); });
+    return { ecrit:true, trouves:trouves };
   }
 
   function clicRepere(i, span){
     var r = reperesActifs[i];
     if (!r) return;
+    // déjà jugé : on réaffiche simplement le retour mémorisé
+    if (span.classList.contains('trouve') || span.classList.contains('decoy')){
+      afficherResultatRepere(i, span, r._choix, r._why);
+      return;
+    }
+    ouvrirSonde(i, span);
+  }
+
+  /* --- Le joueur juge lui-même : curseur de confiance + « pourquoi » facultatif --- */
+  function ouvrirSonde(i, span){
+    span.classList.remove('hint-flash');
+    var pop = ensurePop();
+    pop.className = 'spot-pop sonde';
+    pop.innerHTML =
+      '<button class="x" type="button" aria-label="Fermer">✕</button>' +
+      '<div class="sonde-q">Ce détail, vous le sentez comment&nbsp;?</div>' +
+      '<div class="curseur" role="radiogroup" aria-label="Votre ressenti">' +
+        '<button type="button" class="cr" data-v="louche" role="radio" aria-checked="false"><span class="e">🚩</span><small>Louche</small></button>' +
+        '<button type="button" class="cr" data-v="neutre" role="radio" aria-checked="false"><span class="e">😐</span><small>Rien de spécial</small></button>' +
+        '<button type="button" class="cr" data-v="rassurant" role="radio" aria-checked="false"><span class="e">✅</span><small>Rassurant</small></button>' +
+      '</div>' +
+      '<textarea class="sonde-why" rows="2" placeholder="Pourquoi ? (facultatif)"></textarea>' +
+      '<button type="button" class="sonde-ok" disabled>Valider mon analyse</button>' +
+      '<span class="arrow"></span>';
+    var choix = null;
+    var okBtn = pop.querySelector('.sonde-ok');
+    var crs = pop.querySelectorAll('.cr');
+    crs.forEach(function(b){
+      b.onclick = function(ev){
+        ev.stopPropagation();
+        choix = b.getAttribute('data-v');
+        crs.forEach(function(x){ x.classList.remove('sel'); x.setAttribute('aria-checked','false'); });
+        b.classList.add('sel'); b.setAttribute('aria-checked','true');
+        okBtn.disabled = false;
+      };
+    });
+    pop.querySelector('.sonde-why').onclick = function(ev){ ev.stopPropagation(); };
+    pop.querySelector('.x').onclick = function(ev){ ev.stopPropagation(); hidePop(); };
+    okBtn.onclick = function(ev){
+      ev.stopPropagation();
+      if (!choix) return;
+      validerSonde(i, span, choix, (pop.querySelector('.sonde-why').value || ''));
+    };
+    positionPop(pop, span, null);
+  }
+
+  function validerSonde(i, span, choix, why){
+    var r = reperesActifs[i];
     if (r.bon){
       if (!span.classList.contains('trouve')){
-        span.classList.remove('hint-flash');
         span.classList.add('trouve');
-        foundBon++;
-        majCompteur();
+        foundBon++; majCompteur();
         // l'indice est trouvé : le coup de pouce repart de zéro sur le suivant
         hintIdx = -1; hintStep = 0; hideAide(); resetHintBtn();
       }
-      var est = deck[idx].verdict === 'arnaque';
-      var lbl = est ? '🚩 Signe suspect — ' : '✅ Signe rassurant — ';
-      showPop(span, 'ok', lbl + r.note);   // ré-affiche l'explication si on reclique
     } else {
       span.classList.add('decoy');
-      showPop(span, 'ko', '🅾️ Faux indice — ' + (r.note || 'ce détail attire l’œil, mais ce n’est pas là qu’est le vrai signe.'));
     }
+    r._choix = choix; r._why = why;
+    afficherResultatRepere(i, span, choix, why);
   }
 
-  // clic « à côté » (pas sur un indice) : petit retour rassurant à l'endroit cliqué
+  /* --- Retour pédagogique après le jugement du joueur --- */
+  function afficherResultatRepere(i, span, choix, why){
+    var r = reperesActifs[i];
+    var estArnaque = deck[idx].verdict === 'arnaque';
+    var attendu = !r.bon ? 'neutre' : (estArnaque ? 'louche' : 'rassurant');
+    var corps;
+
+    if (r.bon){
+      var sens = estArnaque ? '🚩 Signe suspect — ' : '✅ Signe rassurant — ';
+      var tete;
+      if (choix === attendu)       tete = '🎯 Bien vu, et bien situé&nbsp;! ';
+      else if (choix === 'neutre') tete = 'En réalité, ce détail compte&nbsp;: ';
+      else                         tete = 'Bon repérage, mais plutôt dans l’autre sens&nbsp;: ';
+      corps = tete + sens + gl(r.note || '');
+    } else {
+      var teteD = (choix === 'neutre')
+        ? '👍 Exact&nbsp;: ce détail n’est pas un vrai signe. '
+        : '🅾️ Fausse piste — ';
+      corps = teteD + gl(r.note || 'Ce détail attire l’œil, mais ce n’est pas là qu’est le vrai signe.');
+    }
+
+    // retour sur le « pourquoi » facultatif (jamais pénalisant)
+    var a = analyserPourquoi(why, r);
+    if (a.ecrit){
+      if (r.bon && a.trouves.length)
+        corps += '<span class="sonde-fb ok">💬 Exactement&nbsp;: vous avez pointé « ' + esc(a.trouves[0]) + ' », le cœur du problème.</span>';
+      else
+        corps += '<span class="sonde-fb">💬 Bravo d’avoir mis des mots dessus&nbsp;: verbaliser est déjà le bon réflexe.</span>';
+    }
+
+    showResultPop(span, (r.bon ? 'ok' : 'ko'), '<div class="pc"><span>' + corps + '</span></div>');
+  }
+
+  // clic « à côté » (pas sur un indice) : petit retour rassurant à l'endroit cliqué.
+  // Si ce message est déjà affiché, un nouveau clic dans le vide le fait disparaître.
   function clicVide(e){
+    var p = document.querySelector('#spot-pop');
+    if (p && p.style.display !== 'none' && p.classList.contains('miss')){ hidePop(); return; }
     showPopAt(e, 'miss', 'Rien d’exploitable ici. Cherchez les détails qui sortent de l’ordinaire : l’expéditeur, un lien, le ton, une urgence, une demande d’argent ou de code…');
   }
 
@@ -453,7 +576,7 @@
   function ensurePop(){
     var maq = el('maquette');
     var pop = maq.querySelector('#spot-pop');
-    if (!pop){ pop = document.createElement('div'); pop.id = 'spot-pop'; maq.appendChild(pop); }
+    if (!pop){ pop = document.createElement('div'); pop.id = 'spot-pop'; pop.setAttribute('aria-live', 'polite'); maq.appendChild(pop); }
     pop.style.display = 'block';
     return pop;
   }
@@ -478,6 +601,18 @@
   function showPopAt(e, kind, note){
     var maq = el('maquette'); if (!maq) return;
     positionPop(remplirPop(kind, note), null, { x:e.clientX, y:e.clientY });
+  }
+  // comme showPop, mais accepte du HTML déjà composé (glossaire appliqué en amont)
+  function showResultPop(anchor, kind, innerHTML){
+    if (!el('maquette')) return;
+    var pop = ensurePop();
+    pop.className = 'spot-pop ' + kind;
+    pop.innerHTML =
+      '<button class="x" type="button" aria-label="Fermer">✕</button>' +
+      innerHTML +
+      '<span class="arrow"></span>';
+    pop.querySelector('.x').onclick = function(ev){ ev.stopPropagation(); hidePop(); };
+    positionPop(pop, anchor, null);
   }
 
   function positionPop(pop, anchor, xy){
@@ -528,7 +663,10 @@
     }
 
     var listeClasse = estArnaque ? 'indices' : 'indices ok';
-    var indices = (c.indices||[]).map(function(x){ return '<li>'+gl(x)+'</li>'; }).join('');
+    var indices = (c.indices||[]).map(function(x){
+      if (x && typeof x === 'object' && x.risque) return '<li class="risque">'+gl(x.risque)+'</li>';
+      return '<li>'+gl(x)+'</li>';
+    }).join('');
 
     var titreVerdict, sousTitre;
     if (bon){
@@ -548,7 +686,7 @@
       : '';
 
     el('lower').innerHTML =
-      '<div class="feedback">' +
+      '<div class="feedback" aria-live="polite">' +
         '<div class="verdict-bar ' + (bon?'bon':'faux') + '">' +
           '<span class="big">' + (bon?'✅':'❗') + '</span>' +
           '<div>' + titreVerdict + '<small>' + sousTitre + '</small></div>' +
@@ -679,6 +817,50 @@
   }
 
   /* =====================================================================
+     FENÊTRE DE MESSAGE INTERNE — remplace confirm()/alert() natifs,
+     visuellement cohérente avec le reste de l'interface (.modal/.fb-actions).
+     ===================================================================== */
+  function showModalMsg(message, opts){
+    opts = opts || {};
+    var ov = el('msg-modal');
+    if (!ov){
+      ov = document.createElement('div');
+      ov.className = 'modal-overlay';
+      ov.id = 'msg-modal';
+      ov.setAttribute('hidden', '');
+      ov.innerHTML =
+        '<div class="modal msg-modal" role="alertdialog" aria-modal="true">' +
+          '<p class="msg-modal-text" id="msg-modal-text"></p>' +
+          '<div class="fb-actions" id="msg-modal-actions"></div>' +
+        '</div>';
+      document.body.appendChild(ov);
+      ov.addEventListener('click', function(e){ if (e.target === ov && ov.dataset.blocking !== '1') hideModalMsg(); });
+    }
+    el('msg-modal-text').textContent = message;
+    var actions = el('msg-modal-actions');
+    if (opts.confirm){
+      ov.dataset.blocking = '1';
+      actions.innerHTML =
+        '<button class="fb-cancel" id="msg-modal-cancel" type="button">Annuler</button>' +
+        '<button class="fb-send" id="msg-modal-ok" type="button">Confirmer</button>';
+      el('msg-modal-cancel').onclick = hideModalMsg;
+      el('msg-modal-ok').onclick = function(){ hideModalMsg(); if (opts.onConfirm) opts.onConfirm(); };
+    } else {
+      ov.dataset.blocking = '0';
+      actions.innerHTML = '<button class="fb-send" id="msg-modal-ok" type="button">OK</button>';
+      el('msg-modal-ok').onclick = function(){ hideModalMsg(); if (opts.onOk) opts.onOk(); };
+    }
+    ov.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+    el('msg-modal-ok').focus();
+  }
+  function hideModalMsg(){
+    var ov = el('msg-modal');
+    if (ov) ov.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+  }
+
+  /* =====================================================================
      INITIALISATION
      ===================================================================== */
   /* =====================================================================
@@ -689,7 +871,7 @@
   function sendFeedback(){
     var n=el('fb-name'), e=el('fb-email'), m=el('fb-message');
     var name=(n&&n.value||'').trim(), email=(e&&e.value||'').trim(), msg=(m&&m.value||'').trim();
-    if(!msg){ alert('Écrivez un petit message avant d’envoyer 🙂'); return; }
+    if(!msg){ showModalMsg('Écrivez un petit message avant d’envoyer 🙂'); return; }
     var btn=el('fb-send'); if(btn){ btn.disabled=true; btn.textContent='⏳ Envoi…'; }
     fetch('https://api.web3forms.com/submit', {
       method:'POST',
@@ -702,9 +884,9 @@
         message: msg
       })
     }).then(function(r){ return r.json(); }).then(function(d){
-      if(d && d.success){ alert('Merci beaucoup pour votre retour ! 🙏'); if(n)n.value=''; if(e)e.value=''; if(m)m.value=''; closeFeedback(); }
-      else { alert('Oups, l’envoi a échoué. Réessayez, ou écrivez à contact@antoninatger.com'); }
-    }).catch(function(){ alert('Oups, l’envoi a échoué. Réessayez, ou écrivez à contact@antoninatger.com'); })
+      if(d && d.success){ if(n)n.value=''; if(e)e.value=''; if(m)m.value=''; closeFeedback(); showModalMsg('Merci beaucoup pour votre retour ! 🙏'); }
+      else { showModalMsg('Oups, l’envoi a échoué. Réessayez, ou écrivez à contact@antoninatger.com'); }
+    }).catch(function(){ showModalMsg('Oups, l’envoi a échoué. Réessayez, ou écrivez à contact@antoninatger.com'); })
     .then(function(){ if(btn){ btn.disabled=false; btn.textContent='📨 Envoyer'; } });
   }
 
@@ -730,9 +912,11 @@
     // bouton « retour au menu » (visible seulement pendant le jeu)
     var mb = el('menu-btn');
     if (mb) mb.onclick = function(){
-      if (hud && hud.style.display !== 'none' &&
-          !confirm('Revenir au menu ? La partie en cours sera perdue.')) return;
-      ecranAccueil();
+      if (hud && hud.style.display !== 'none'){
+        showModalMsg('Revenir au menu ? La partie en cours sera perdue.', { confirm:true, onConfirm:ecranAccueil });
+      } else {
+        ecranAccueil();
+      }
     };
 
     // bouton glossaire de la barre du haut (accessible pendant le jeu)
@@ -754,7 +938,7 @@
       }
     });
     document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape'){ fermerGlossaire(); closeFeedback(); }
+      if (e.key === 'Escape'){ fermerGlossaire(); closeFeedback(); hideModalMsg(); }
       var t = e.target;
       if ((e.key === 'Enter' || e.key === ' ') && t && t.classList && t.classList.contains('gloss')){
         e.preventDefault(); openGlossaire(t.getAttribute('data-g'));
