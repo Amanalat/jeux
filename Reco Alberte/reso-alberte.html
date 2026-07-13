@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RÉSO · Ligne clandestine avec Alberte B.</title>
+<style>
+  :root{
+    --bg:#0d1117;
+    --bg2:#131a24;
+    --panel:#161d29;
+    --line:#243040;
+    --accent:#3ddc84;
+    --accent-dim:#1f6f47;
+    --alberte:#2a2118;
+    --alberte-txt:#e8dcc4;
+    --me:#123a2a;
+    --me-txt:#d6ffe9;
+    --txt:#c9d4e0;
+    --muted:#6b7889;
+    --danger:#e5484d;
+    --warn:#f5a623;
+    --care:#2c5fae;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  .back-hub{
+    position:fixed; top:12px; left:12px; z-index:9999;
+    display:inline-flex; align-items:center; gap:5px;
+    background:rgba(15,20,30,.7);
+    border:1px solid rgba(255,255,255,.15);
+    color:#9fb3cc;
+    text-decoration:none; font-size:.8rem; font-weight:700;
+    padding:7px 14px; border-radius:50px; opacity:.9;
+    transition:opacity .2s, transform .2s;
+    backdrop-filter:blur(4px);
+  }
+  .back-hub:hover{opacity:1; transform:translateX(-2px);}
+  body{
+    margin:0;
+    font-family:"Segoe UI",Roboto,system-ui,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%,#182234 0%,#0d1117 60%);
+    color:var(--txt);
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:16px;
+  }
+  .phone{
+    width:100%;max-width:440px;height:min(880px,94vh);
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:26px;
+    box-shadow:0 30px 80px rgba(0,0,0,.55);
+    display:flex;flex-direction:column;overflow:hidden;position:relative;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    background:
+      repeating-linear-gradient(115deg, rgba(255,255,255,.02) 0 2px, transparent 2px 6px),
+      linear-gradient(180deg,#141c28,#111823);
+    border-bottom:1px solid var(--line);
+    padding:12px 16px 10px;flex-shrink:0;
+  }
+  .h-top{display:flex;align-items:center;gap:12px}
+  .avatar{
+    width:42px;height:42px;border-radius:50%;
+    background:linear-gradient(135deg,#3a2f22,#241b12);
+    display:flex;align-items:center;justify-content:center;font-size:20px;
+    border:1px solid #4a3c28;flex-shrink:0;overflow:hidden;
+  }
+  .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+  .avatar-initials{width:100%;height:100%;border-radius:50%;background:#1c2530;color:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12.5px;letter-spacing:1px}
+  .h-name{font-weight:600;color:#fff;font-size:15px;display:flex;align-items:center;gap:6px}
+  .h-status{font-size:11.5px;color:var(--accent);display:flex;align-items:center;gap:5px;margin-top:1px}
+  .h-tag{margin-left:auto;font-size:10px;color:var(--muted);border:1px solid var(--line);
+    padding:3px 8px;border-radius:20px;letter-spacing:.5px}
+  .iconbtn{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:8px;
+    width:26px;height:26px;font-size:13px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+    margin-left:6px;transition:.15s}
+  .iconbtn:hover{color:var(--accent);border-color:var(--accent)}
+
+  /* ---------- Status bars (progression / risque) ---------- */
+  .statusbars{padding:8px 14px 7px;display:flex;flex-direction:column;gap:5px;flex-shrink:0;
+    background:#0f151d;border-bottom:1px solid var(--line)}
+  .bar-row{display:flex;align-items:center;gap:8px}
+  .bar-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;width:64px;flex-shrink:0}
+  .bar-track{flex:1;height:6px;border-radius:4px;background:#1b2330;overflow:hidden}
+  .bar-fill{height:100%;border-radius:4px;transition:width .4s ease,background-color .4s ease;width:0%}
+  .bar-fill.prog{background:var(--accent)}
+  .bar-fill.risk{background:var(--accent)}
+
+  /* ---------- Messages ---------- */
+  .msgs{flex:1;overflow-y:auto;padding:16px 14px 6px;display:flex;flex-direction:column;gap:9px;
+    background:
+      linear-gradient(rgba(13,17,23,.9),rgba(13,17,23,.9)),
+      repeating-linear-gradient(45deg,#10161f 0 12px,#0f151d 12px 24px);
+  }
+  .msgs::-webkit-scrollbar{width:6px}
+  .msgs::-webkit-scrollbar-thumb{background:#26313f;border-radius:10px}
+  .row{display:flex;max-width:100%}
+  .row.me{justify-content:flex-end}
+  .bubble{
+    max-width:80%;padding:9px 13px;border-radius:16px;font-size:14px;line-height:1.44;
+    white-space:pre-wrap;word-wrap:break-word;position:relative;animation:pop .25s ease;
+  }
+  .bubble a{color:var(--accent)}
+  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .bubble.alberte{
+    background:var(--alberte);color:var(--alberte-txt);
+    border:1px solid #4a3c28;border-bottom-left-radius:5px;
+    font-family:"Courier New",monospace;
+  }
+  .bubble.me{background:var(--me);color:var(--me-txt);border:1px solid #1c5a41;border-bottom-right-radius:5px}
+  .bubble.sys{
+    background:transparent;border:1px dashed var(--accent-dim);color:var(--accent);
+    font-size:12.5px;max-width:100%;text-align:center;border-radius:12px;padding:10px 12px;
+  }
+  .bubble.sys b{color:#fff}
+  .bubble.note{
+    background:#0f1f18;border:1px solid var(--accent-dim);color:#bfe9d3;max-width:100%;
+    border-radius:12px;font-size:12.8px;line-height:1.5;
+  }
+  .bubble.note .note-h{color:var(--accent);font-weight:700;display:block;margin-bottom:3px}
+  .bubble.danger{border-color:#5a2427;background:#241416;color:#f2b8ba}
+  .bubble.care{border-color:var(--care);background:#101a26;color:#bcd6f5;border-style:solid}
+  .typing{display:flex;gap:4px;padding:12px 14px}
+  .typing span{width:7px;height:7px;border-radius:50%;background:#6b5a3e;animation:blink 1.2s infinite}
+  .typing span:nth-child(2){animation-delay:.2s}
+  .typing span:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+
+  /* ---------- Suggestions + input ---------- */
+  .chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px 2px;flex-shrink:0}
+  .chip{
+    background:#182231;border:1px solid var(--line);color:var(--txt);
+    font-size:12px;padding:6px 11px;border-radius:20px;cursor:pointer;transition:.15s;
+  }
+  .chip:hover{border-color:var(--accent);color:var(--accent)}
+  .inbar{display:flex;gap:8px;padding:10px 12px 12px;border-top:1px solid var(--line);background:#0f151d;flex-shrink:0}
+  .inbar input{
+    flex:1;background:#0b0f16;border:1px solid var(--line);border-radius:22px;
+    padding:11px 15px;color:#fff;font-size:14px;outline:none;
+  }
+  .inbar input:focus{border-color:var(--accent-dim)}
+  .send{
+    width:44px;height:44px;border:none;border-radius:50%;flex-shrink:0;cursor:pointer;
+    background:var(--accent);color:#04140b;font-size:19px;display:flex;align-items:center;justify-content:center;
+    transition:.15s;
+  }
+  .send:hover{filter:brightness(1.1)}
+  .send:disabled{opacity:.4;cursor:default}
+
+  /* ---------- Overlays ---------- */
+  .overlay{
+    position:absolute;inset:0;
+    background:
+      repeating-linear-gradient(115deg, rgba(255,255,255,.015) 0 2px, transparent 2px 6px),
+      rgba(8,11,16,.96);
+    z-index:20;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:34px 28px;gap:14px;
+  }
+  .overlay h1{font-size:22px;color:#fff;margin:0;letter-spacing:1px}
+  .overlay .lock{font-size:46px}
+  .overlay p{font-size:13.5px;color:var(--muted);line-height:1.6;margin:0;max-width:320px}
+  .brand{
+    font-size:12px;letter-spacing:3px;color:var(--accent);font-weight:700;
+    border:2px dashed var(--accent-dim);border-radius:50%;
+    width:92px;height:92px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    transform:rotate(-6deg);text-align:center;line-height:1.3;
+  }
+  .brand small{font-size:8px;letter-spacing:2px;opacity:.75;color:var(--accent-dim);margin-top:3px}
+  .btn{
+    background:var(--accent);color:#04140b;border:none;border-radius:24px;
+    padding:13px 28px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s;letter-spacing:.5px;
+  }
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+  .btn.ghost.mode-adv{border-color:var(--warn);color:var(--warn)}
+  .btn.ghost.mode-adv:hover{background:rgba(245,166,35,.08)}
+  .btn.ghost.resume{border-color:var(--accent);color:var(--accent)}
+  .overlay.win h1{color:var(--accent)}
+  .overlay.lose h1{color:var(--danger)}
+  .overlay.lose .lock{color:var(--danger)}
+  .score{font-size:12.5px;color:var(--txt);border:1px solid var(--line);border-radius:12px;padding:10px 16px}
+  .score b{color:#fff}
+  .quote{font-style:italic;color:#9fb0c2;font-size:12.5px;line-height:1.6;max-width:320px;margin:0}
+  .fb-field{
+    width:100%;max-width:320px;background:#0b0f16;border:1px solid var(--line);color:#fff;
+    font-size:13px;font-family:inherit;padding:10px 14px;outline:none;
+  }
+  .fb-field:focus{border-color:var(--accent-dim)}
+  textarea.fb-field{border-radius:14px;min-height:90px;resize:vertical}
+  input.fb-field{border-radius:22px}
+  .fb-status{font-size:11.5px;color:var(--accent);min-height:14px;margin:0}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<a class="back-hub" href="../index.html">← Retour aux jeux</a>
+<div class="phone">
+
+  <!-- ===== Intro overlay ===== -->
+  <div class="overlay" id="intro">
+    <div class="brand">R É S O<small>LYON · 1942</small></div>
+    <div class="lock">🔒</div>
+    <h1>LIGNE CLANDESTINE</h1>
+    <p>Lyon, 1942. Un téléphone du futur est tombé entre les mains d'<b>Alberte Bourde</b>, résistante.
+    Elle ne sait pas s'en servir, et chaque erreur peut la faire repérer par la Milice.</p>
+    <p>À vous de la guider jusqu'au bout : expliquez-lui comment se servir de l'appareil et conseillez-lui les bons réflexes pour
+    <b>protéger ses données</b>.</p>
+    <div style="display:flex;flex-direction:column;gap:6px;width:100%;max-width:300px">
+      <button class="btn ghost resume hidden" id="resumeBtn" onclick="resumeGame()"></button>
+      <button class="btn" onclick="startGame('normal')">🧭 Mode Normal</button>
+      <span style="font-size:11px;color:var(--muted)">des suggestions de réponses vous aident</span>
+      <button class="btn ghost mode-adv" style="margin-top:10px" onclick="startGame('avance')">🎯 Mode Avancé</button>
+      <span style="font-size:11px;color:var(--muted)">aucune aide : à vous de tout écrire</span>
+    </div>
+  </div>
+
+  <!-- ===== Win overlay ===== -->
+  <div class="overlay win hidden" id="win">
+    <div class="lock">🕊️</div>
+    <h1>ALBERTE EST RESTÉE DANS L'OMBRE</h1>
+    <p>Grâce à vous, elle a su se servir de l'appareil et protéger ses données, les siennes comme celles de tout le réseau.</p>
+    <p class="quote">« Vous m'avez aidée, et vous avez aidé la Résistance, bravo ! Maintenant, il faudrait que vous puissiez
+    aider toutes les générations qui viennent, en créant des outils pour leur apprendre à être plus vigilantes
+    sur leurs données personnelles. »</p>
+    <div class="score" id="scoreBox"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="btn" onclick="location.reload()">Recommencer</button>
+      <button class="btn ghost" onclick="exportTranscript()">📥 Exporter la conversation</button>
+    </div>
+  </div>
+
+  <!-- ===== Commentaires overlay ===== -->
+  <div class="overlay hidden" id="feedbackModal" style="z-index:30">
+    <div class="lock">💬</div>
+    <h1>VOTRE AVIS</h1>
+    <p>Une idée, un bug, un commentaire sur RÉSO ? Écrivez-le ici, il part directement à l'équipe.</p>
+    <textarea id="fb-message" class="fb-field" placeholder="Votre commentaire…"></textarea>
+    <input id="fb-email" type="email" class="fb-field" placeholder="Votre e-mail (facultatif)">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="btn" onclick="sendFeedback()">Envoyer</button>
+      <button class="btn ghost" onclick="closeFeedback()">Fermer</button>
+    </div>
+    <p class="fb-status" id="fb-status"></p>
+  </div>
+
+  <!-- ===== Header ===== -->
+  <header>
+    <div class="h-top">
+      <div class="avatar" id="avatar"><img src="alberte-bourde-reelle.png" alt="Photo réelle d'Alberte Bourde"></div>
+      <div>
+        <div class="h-name">Alberte B. <span title="Conversation chiffrée">🔒</span></div>
+        <div class="h-status">● en ligne · canal chiffré</div>
+      </div>
+      <div class="h-tag">LYON · 1942</div>
+      <button class="iconbtn" title="Laisser un commentaire" onclick="openFeedback()">💬</button>
+      <button class="iconbtn" title="Exporter la conversation" onclick="exportTranscript()">📥</button>
+    </div>
+  </header>
+
+  <!-- ===== Progression / risque ===== -->
+  <div class="statusbars">
+    <div class="bar-row">
+      <span class="bar-label">Progression</span>
+      <div class="bar-track"><div class="bar-fill prog" id="progFill"></div></div>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">Risque</span>
+      <div class="bar-track"><div class="bar-fill risk" id="riskFill"></div></div>
+    </div>
+  </div>
+
+  <!-- ===== Messages ===== -->
+  <div class="msgs" id="msgs"></div>
+
+  <!-- ===== Suggestions ===== -->
+  <div class="chips" id="chips"></div>
+
+  <!-- ===== Input ===== -->
+  <div class="inbar">
+    <input id="input" type="text" placeholder="Écrivez votre conseil à Alberte…" autocomplete="off" disabled>
+    <button class="send" id="send" disabled onclick="handleSend()">➤</button>
+  </div>
+
+</div>
+
+<script src="reso-alberte-data.js"></script>
+<script src="reso-alberte-app.js"></script>
+</body>
+</html>
