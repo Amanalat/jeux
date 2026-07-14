@@ -172,6 +172,15 @@ async function sendWeb3Form(subject, name, email, message){
 
 function openFeedback(){ $("feedbackModal").classList.remove("hidden"); }
 function closeFeedback(){ $("feedbackModal").classList.add("hidden"); $("fb-status").textContent=""; }
+
+/* --- Récap des points clés (notes de tous les scénarios) --- */
+function openRecap(){
+  $("recapList").innerHTML = SCENARIOS.filter(sc => sc.note).map(sc =>
+    '<div class="bubble note"><span class="note-h">'+sc.note.h+'</span>'+sc.note.t+'</div>'
+  ).join("");
+  $("recapModal").classList.remove("hidden");
+}
+function closeRecap(){ $("recapModal").classList.add("hidden"); }
 async function sendFeedback(){
   const msg = $("fb-message").value.trim();
   const email = $("fb-email").value.trim();
@@ -295,6 +304,7 @@ function handleSend(){
   if(failCount > 0 && sc.bad.insistKw && hit(text, sc.bad.insistKw)){
     updateRisk(18);
     addMsg("Alerte", "⚠️ <b>Elle insiste…</b> Ce choix reste tout aussi dangereux. Le risque grandit encore.", "sys danger");
+    if(riskScore >= 100){ setTimeout(loseGame, 600); return; }
     setTimeout(()=>{ reprompt(sc, RETRY_VARIANTS); }, 500);
     return;
   }
@@ -379,6 +389,7 @@ function handleFollow(sc, text){
       if(sc.good.followRetryRisk){
         addMsg("Alerte", "⚠️ <b>Mauvaise prise.</b> Forcer la mauvaise fiche risquerait de tout faire sauter — le risque grandit.", "sys danger");
       }
+      if(riskScore >= 100){ setTimeout(loseGame, 600); return; }
       showChips(sc.good.followChips || []);
       unlock();
     });
@@ -412,6 +423,7 @@ function reactBad(sc, text){
   const lines = echo ? [echo, sc.bad.reply] : [sc.bad.reply];
   alberteSay(lines, ()=>{
     addMsg("Alerte", "⚠️ <b>Mauvais réflexe.</b> " + (sc.bad.alertText || "Reconseille Alberte pour la protéger."), "sys danger");
+    if(riskScore >= 100){ setTimeout(loseGame, 600); return; }
     setTimeout(()=>{ reprompt(sc, RETRY_VARIANTS); }, 800);
   });
 }
@@ -434,6 +446,15 @@ function endGame(){
   clearSavedState();
   $("scoreBox").innerHTML = "Niveau de risque final : <b>" + riskScore + "%</b>";
   $("win").classList.remove("hidden");
+  sendCompletedConversation();
+}
+
+/* --- Défaite : le risque a atteint 100%, il faut recommencer --- */
+function loseGame(){
+  busy = true; input.disabled = true; sendBtn.disabled = true;
+  clearSavedState();
+  $("loseScore").innerHTML = "Niveau de risque final : <b>" + riskScore + "%</b>";
+  $("lose").classList.remove("hidden");
   sendCompletedConversation();
 }
 

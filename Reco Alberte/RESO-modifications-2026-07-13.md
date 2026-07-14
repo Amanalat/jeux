@@ -167,3 +167,10 @@ Récapitulatif des changements faits aujourd'hui sur le jeu (`reso-alberte.html`
 - **Bouton de retour créateur** : un grand bouton « 💬 Faire un retour au créateur » a été ajouté
   sur l'écran d'accueil et sur l'écran de victoire (`.btn.big`), en plus de l'icône 💬 déjà présente
   dans l'en-tête.
+- **Écran de récap** : un bouton « 📋 Revoir les points clés » sur l'écran de victoire ouvre un
+  modal listant les notes pédagogiques de tous les scénarios (`openRecap()`/`closeRecap()`).
+- **Nouvelle condition d'échec** : jusqu'ici la jauge de risque se plafonnait à 100% sans aucune
+  conséquence (du CSS `.overlay.lose` existait mais n'était jamais utilisé). Ajout d'un véritable
+  écran d'échec (`#lose`, `loseGame()`) : dès que le risque atteint 100% (mauvais réflexe, insistance
+  ou mauvais choix de prise électrique), la partie s'arrête sur un écran « ÉCHEC » et le joueur doit
+  recommencer.

@@ -182,7 +182,12 @@
   .btn.ghost.mode-adv{border-color:var(--warn);color:var(--warn)}
   .btn.ghost.mode-adv:hover{background:rgba(245,166,35,.08)}
   .btn.ghost.resume{border-color:var(--accent);color:var(--accent)}
-  .btn.big{display:block;width:100%;max-width:360px;margin:4px auto 0;padding:16px 28px;font-size:16px}
+  .btn.big{display:block;width:100%;max-width:360px;margin:4px auto 0;padding:16px 28px;font-size:16px;
+    background:#3a4f6b;border:1px solid #4d6784;color:#e4ecf4}
+  .btn.big:hover{filter:brightness(1.12)}
+  .recap-list{width:100%;max-width:360px;overflow-y:auto;max-height:48vh;
+    display:flex;flex-direction:column;gap:8px;text-align:left}
+  .recap-list .bubble.note{position:static;animation:none}
   .overlay.win h1{color:var(--accent)}
   .overlay.lose h1{color:var(--danger)}
   .overlay.lose .lock{color:var(--danger)}
@@ -228,15 +233,25 @@
     <div class="lock">🕊️</div>
     <h1>ALBERTE EST RESTÉE DANS L'OMBRE</h1>
     <p>Grâce à vous, elle a su se servir de l'appareil et protéger ses données, les siennes comme celles de tout le réseau.</p>
-    <p class="quote">« Vous m'avez aidée, et vous avez aidé la Résistance, bravo ! Maintenant, il faudrait que vous puissiez
-    aider toutes les générations qui viennent, en créant des outils pour leur apprendre à être plus vigilantes
-    sur leurs données personnelles. »</p>
+    <p class="quote">« Vous m'avez aidée, et vous avez aidé la Résistance, bravo ! Maintenant que je sais me servir de
+    cet appareil et protéger nos données, à vous de jouer : vous, résistants du futur, devriez créer des outils pour
+    apprendre aux gens de votre époque à être plus vigilants sur leurs données personnelles. »</p>
     <div class="score" id="scoreBox"></div>
+    <button class="btn ghost" onclick="openRecap()">📋 Revoir les points clés</button>
     <button class="btn big" onclick="openFeedback()">💬 Faire un retour au créateur</button>
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px">
       <button class="btn" onclick="location.reload()">Recommencer</button>
       <button class="btn ghost" onclick="exportTranscript()">📥 Exporter la conversation</button>
     </div>
+  </div>
+
+  <!-- ===== Lose overlay ===== -->
+  <div class="overlay lose hidden" id="lose">
+    <div class="lock">🚨</div>
+    <h1>ÉCHEC</h1>
+    <p>Le risque est devenu trop grand : Alberte a été repérée par la Milice. Il faut reprendre la ligne depuis le début.</p>
+    <div class="score" id="loseScore"></div>
+    <button class="btn" onclick="location.reload()">Recommencer</button>
   </div>
 
   <!-- ===== Commentaires overlay ===== -->
@@ -251,6 +266,14 @@
       <button class="btn ghost" onclick="closeFeedback()">Fermer</button>
     </div>
     <p class="fb-status" id="fb-status"></p>
+  </div>
+
+  <!-- ===== Récapitulatif des points clés ===== -->
+  <div class="overlay hidden" id="recapModal" style="z-index:30">
+    <div class="lock">📋</div>
+    <h1>CE QU'IL FAUT RETENIR</h1>
+    <div class="recap-list" id="recapList"></div>
+    <button class="btn ghost" onclick="closeRecap()">Fermer</button>
   </div>
 
   <!-- ===== Header ===== -->
