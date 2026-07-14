@@ -7,11 +7,11 @@ const SCENARIOS = [
   {
     id: "allumer", type: "usage",
     intro: [
-      "Cette plaque de verre est noire et froide, sans le moindre bouton.",
-      "Comment est-ce que je l'allume pour voir quelque chose ?"
+      "Commençons par le commencement, comme convenu. Cette plaque de verre, je m'en sers chaque jour à présent, mais je veux être sûre de n'avoir rien oublié de vos conseils.",
+      "Rappelez-moi : comment fait-on déjà pour l'allumer et faire apparaître l'écran ?"
     ],
     good: { kw: ["appuie","appui","bouton","touche","presse","cote","allume","ecran","doigt","reveille"],
-      reply: "Ah… j'appuie sur le petit bouton sur le côté, et l'écran s'illumine ! Extraordinaire, et pas la moindre ampoule." },
+      reply: "Ah oui, voilà, c'est bien ça : j'appuie sur le petit bouton du côté, et l'écran s'illumine aussitôt. Je m'en souviendrai, cette fois." },
     bad: { kw: [], reply: "" },
     gag: {
       img: "bouton-radio.png",
@@ -51,10 +51,37 @@ const SCENARIOS = [
       "Une petite image rouge clignote en haut de l'écran, et l'appareil faiblit peu à peu.",
       "On dirait qu'il perd ses forces. Comment lui redonner de l'énergie ?"
     ],
-    good: { kw: ["charge","recharge","recharger","branche","brancher","batterie","electricite","cable","prise","courant","fil","energie","secteur"],
-      reply: "Il faut donc le brancher pour le recharger, comme une lampe électrique. Je note ce précieux conseil." },
+    good: {
+      kw: ["charge","recharge","recharger","branche","brancher","batterie","electricite","cable","prise","courant","fil","energie","secteur"],
+      reply: "Il faut donc le brancher pour le recharger, comme une lampe électrique. Mais… laquelle de ces prises dois-je utiliser au juste ? J'en ai trouvé plusieurs, de formes différentes. Si je me trompe et que j'en force une, tout pourrait bien sauter — soyez vigilants !"
+        + '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:8px 0 4px">'
+        + '<div style="text-align:center"><img src="prise-male-ronde-correcte.jpg" alt="Une prise avec deux broches rondes" style="max-width:100px;display:block;margin:0 auto 4px;border-radius:10px;border:1px solid #4a3c28"><small>Prise 1</small></div>'
+        + '<div style="text-align:center"><img src="prise-electrique-male-americaine.jpg" alt="Une prise à l\'américaine, avec des broches plates et une broche de terre ronde" style="max-width:100px;display:block;margin:0 auto 4px;border-radius:10px;border:1px solid #4a3c28"><small>Prise 2</small></div>'
+        + '<div style="text-align:center"><img src="prise-male-plate.jpg" alt="Une prise plate à deux broches fines" style="max-width:100px;display:block;margin:0 auto 4px;border-radius:10px;border:1px solid #4a3c28"><small>Prise 3</small></div>'
+        + '</div>',
+      followKw: ["1","ronde","rondes","rond","broches rondes","picots ronds","forme ronde","francaise","milieu"],
+      followReply: "Voilà : cette prise-là, avec ses deux broches rondes, entre parfaitement dans les trous du mur. Une fiche plate n'y serait jamais entrée, ou pire, aurait tout fait sauter en forçant. Merci pour votre vigilance !",
+      followRetry: "Non… celle-ci ne rentrera jamais dans les trous de ma prise murale. Si je la forçais, tout pourrait sauter — le bruit et la coupure attireraient l'attention. Nous n'avons pas le droit à la moindre erreur. Laquelle dois-je choisir ?",
+      followRetryRisk: 10,
+      hintKw: ["mur","prise du mur","a quoi ressemble","comment est la prise","forme de la prise","trous du mur","prise femelle","prise dans le mur"],
+      hintAsk: "Donc je dois vous envoyer une image de cette prise… mais comment est-ce que je fais cela ?",
+      photoParts: [
+        { kw: ["appareil photo","icone appareil photo","ouvre l'appareil photo","camera","objectif","vise","cadre","declencheur","declenche","capture","photographie la","prends une photo","prends la photo","appuie sur le rond","bouton photo","clic","clique","appuie dessus"],
+          ack: "Je trouve l'icône de l'appareil photo, je vise la prise du mur et j'appuie sur le déclencheur…",
+          missing: "Mais comment est-ce que je m'y prends pour la prendre, d'abord, cette photo ?",
+          chips: ["Vise et appuie sur le déclencheur","Ouvre l'appareil photo et prends-la","Cadre la prise et photographie-la"] },
+        { kw: ["envoie","envoyer","envoie la","joins","joindre","message","mms","partage","transfere","clique sur envoyer","pièce jointe","piece jointe"],
+          ack: "…puis je l'envoie dans notre conversation, comme un message.",
+          missing: "Bien, mais comment est-ce que je vous fais parvenir cette photo, à présent ?",
+          chips: ["Envoie-la dans le message","Joins la photo et envoie","Clique sur envoyer"] }
+      ],
+      hintReply: "Voici à quoi ressemble la prise fixée à mon mur : "
+        + '<img src="prise-femelle-epoque.jpg" alt="La prise femelle fixée au mur, avec des trous ronds" style="max-width:220px;display:block;margin:6px auto 4px;border-radius:10px;border:1px solid #4a3c28">'
+        + "Regardez bien la forme de ses trous… laquelle des trois prises pourrait y entrer ?",
+      followChips: ["La prise 1, aux broches rondes","La prise 2, à l'américaine","La prise 3, toute plate","À quoi ressemble la prise du mur ?"],
+    },
     bad: { kw: [], reply: "" },
-    note: { h:"📱 Recharger la batterie", t:"Un téléphone fonctionne sur une batterie qui se vide peu à peu. Il faut le brancher à l'électricité pour la recharger avant qu'il ne s'éteigne." },
+    note: { h:"📱 Recharger la batterie", t:"Un téléphone fonctionne sur une batterie qui se vide peu à peu. Il faut le brancher à l'électricité, avec la bonne prise : forcer une fiche qui ne correspond pas peut endommager l'appareil ou faire sauter les plombs." },
     chips: ["Branche-le pour le recharger","Recharge la batterie","Mets-le sur secteur"]
   },
   {
@@ -69,7 +96,7 @@ const SCENARIOS = [
       reply: "Tu as raison… 1900, n'importe qui connaissant mon âge le devinerait en un instant. Je choisis plutôt un code compliqué, sans rapport avec moi, impossible à deviner.",
     },
     bad: {
-      kw: ["oui","1900","annee de naissance","simple","facile","bonne idee","retenir","vas y","va"],
+      kw: ["oui","1900","annee de naissance","simple","facile","bonne idee","retenir","vas y"],
       insistKw: ["vas y","garde 1900","garde le","garde-le","quand meme","laisse comme ca","insiste","reste sur 1900","change pas","ne change pas","garde ce code","garde ton code"],
       reply: "Voilà, mon code est 1900… mais un milicien qui connaît ma date de naissance l'aurait trouvé du premier coup. C'était bien trop facile à deviner.",
     },
@@ -93,6 +120,7 @@ const SCENARIOS = [
     bad: {
       kw: ["oui","prends","appuie","declenche","vise","cadre","objectif","photographie la","photographie moi","capture","clic","shoot"],
       reply: "Voilà, c'est fait… Attends. Cette image sait exactement OÙ elle a été prise. Si elle tombe entre de mauvaises mains, notre planque est découverte !",
+      alertText: "Ne lui explique pas comment prendre la photo : dis-lui plutôt de ne PAS photographier la planque.",
     },
     note: { h:"📍 Les métadonnées d'une photo", t:"Une photo enregistre souvent l'heure et le LIEU où elle a été prise (les « métadonnées »). La partager peut révéler où tu te trouves." },
     chips: ["Non, n'en prends pas","Évite, ça montre l'endroit","Vise et prends la photo"]
@@ -173,18 +201,18 @@ const SCENARIOS = [
     id: "profil", type: "finale",
     intro: [
       "Nous avons fait tout ce chemin ensemble… Avant de refermer cette ligne, dites-moi : ai-je pensé à tout, pour rester bien en sécurité ?",
-      "Si le cœur vous en dit, il existe une fiche à mon sujet, bien après la guerre : <a href=\"https://www.francaislibres.net/liste/fiche.php?&index=57413&1783951494\" target=\"_blank\" rel=\"noopener\">consulter la fiche d'Alberte Bourde</a>. Vous y retrouverez d'ailleurs la photo que vous voyez de moi, tout en haut de cet écran."
+      "Si le cœur vous en dit, il existe une fiche à mon sujet, bien après la guerre : consulter la fiche d'Alberte Bourde. Vous y retrouverez d'ailleurs la photo que vous voyez de moi, tout en haut de cet écran."
     ],
     chips: ["Ta photo de profil, c'est risqué","On peut te reconnaître dessus","Non, rien à signaler"],
     good: {
       kw: ["reconnaissable","reconnaitre","reconnu","visage","identifi","vraie photo","photo reelle","photo de profil","avatar","risque","dangereux","trop risque","anonyme","evite",
         "neutre","generique","pas ta vraie photo","cache ton visage","autre photo","supprime la photo","enleve la photo","pas toi","pas ton visage","te reperer","te denoncer"],
       retryKw: ["identifiable","reconnaitre","reconnu"],
-      reply: "Ma photo de profil… c'est bien mon vrai visage, tout en haut de cet écran ! Sur une ligne clandestine, n'importe qui me reconnaissant pourrait me dénoncer à la Milice. Je la retire aussitôt, et je remets simplement mes initiales.",
+      reply: "Ma photo de profil… c'est bien mon vrai visage, tout en haut de cet écran ! Sur une ligne clandestine, n'importe qui me reconnaissant pourrait me dénoncer à la Milice. Je la retire aussitôt, et je mets à la place un émoji à lunettes de soleil : personne ne pourra plus me reconnaître ainsi.",
     },
     bad: {
       kw: ["non","rien a signaler","tout va bien","aucun probleme","tres bien","parfait","tu as bien fait","aucun souci","tout est bien"],
-      reply: "Rien à signaler ? Tu es sûr ?… Mais dis-moi, cette photo tout en haut, celle de mon profil… n'est-ce pas justement mon vrai visage ?",
+      reply: "Vous êtes certains ? Aucune autre information que j'ai mise qui pourrait poser souci ?",
     },
     note: { h:"🪪 Une photo de profil qui identifie", t:"Une photo réelle et reconnaissable permet d'identifier une personne. Dans un contexte sensible (ou clandestin), mieux vaut utiliser une image neutre, sans visage identifiable — comme des initiales ou un pictogramme." }
   }

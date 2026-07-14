@@ -12,6 +12,7 @@ let idx = 0;
 let busy = false;
 let mode = "normal";   // "normal" (avec suggestions) | "avance" (sans aide)
 let pendingFollow = null; // scénario en attente d'une explication (« pourquoi ? »)
+let pendingPhotoHint = null; // sous-étape : expliquer comment prendre puis envoyer une photo
 let buttonConfusionShown = false; // gag « bouton de radio » (une seule fois)
 let failCount = 0;        // échecs sur l'étape courante
 let riskScore = 0;        // jauge de risque cumulée (0-100)
@@ -25,7 +26,7 @@ const msgs = $("msgs"), input = $("input"), sendBtn = $("send"), chipsBox = $("c
 function norm(s){
   return s.toLowerCase()
     .normalize("NFD").replace(/[̀-ͯ]/g,"")
-    .replace(/['’`]/g," ")
+    .replace(/['’`-]/g," ")
     .replace(/\s+/g," ").trim();
 }
 function hit(text, kws){ return kws.some(k => text.includes(norm(k))); }
@@ -94,8 +95,17 @@ function showChips(list){
   });
 }
 
+/* --- Puce de fin de conversation (scénario finale) : le joueur choisit quand refermer --- */
+function showEndChip(){
+  chipsBox.innerHTML="";
+  const el=document.createElement("div");
+  el.className="chip";el.textContent="Fin de la conversation";
+  el.onclick=()=>{ chipsBox.innerHTML=""; nextScenario(); };
+  chipsBox.appendChild(el);
+}
+
 /* --- Avatar (photo de profil, réelle dès le départ — c'est justement ce qu'il faudra repérer) --- */
-function setAvatarAnon(){ $("avatar").innerHTML = '<div class="avatar-initials">A.B.</div>'; }
+function setAvatarAnon(){ $("avatar").innerHTML = '<div class="avatar-emoji">😎</div>'; }
 
 /* --- Jauge de risque / barre de progression --- */
 function updateRisk(delta){
@@ -198,6 +208,7 @@ function startGame(m){
 function loadScenario(){
   const sc = SCENARIOS[idx];
   pendingFollow = null;
+  pendingPhotoHint = null;
   failCount = 0;
   if(sc.good && sc.good.parts) sc.good.parts.forEach(p => p.done = false);
   chipsBox.innerHTML="";
@@ -214,7 +225,7 @@ function guardOrRetry(sc){
     addMsg("Système", "🔓 <b>On retient la leçon pour cette fois, on continue…</b>", "sys");
     setTimeout(()=>{
       addMsg("note", '<span class="note-h">'+sc.note.h+'</span>'+sc.note.t, "note");
-      setTimeout(nextScenario, 900);
+      if(sc.type === "finale") showEndChip(); else setTimeout(nextScenario, 900);
     }, 500);
     return true;
   }
@@ -253,6 +264,9 @@ function handleSend(){
     });
     return;
   }
+
+  // en attente d'explications pour prendre puis envoyer une photo
+  if(pendingPhotoHint){ handlePhotoHint(pendingPhotoHint, text); return; }
 
   // en attente d'une explication au « pourquoi ? » d'Alberte
   if(pendingFollow){ handleFollow(pendingFollow, text); return; }
@@ -334,7 +348,7 @@ function reactGood(sc, text){
   alberteSay(lines, ()=>{
     if(sc.id === "profil") setAvatarAnon();
     addMsg("note", '<span class="note-h">'+sc.note.h+'</span>'+sc.note.t, "note");
-    setTimeout(nextScenario, 900);
+    if(sc.type === "finale") showEndChip(); else setTimeout(nextScenario, 900);
   });
 }
 
@@ -345,12 +359,51 @@ function handleFollow(sc, text){
       addMsg("note", '<span class="note-h">'+sc.note.h+'</span>'+sc.note.t, "note");
       setTimeout(nextScenario, 900);
     });
+  } else if(sc.good.hintKw && hit(text, sc.good.hintKw)){
+    if(sc.good.photoParts){
+      pendingPhotoHint = sc;
+      sc.good.photoParts.forEach(p => p.done = false);
+      alberteSay([sc.good.hintAsk], ()=>{
+        showChips(sc.good.photoParts[0].chips || []);
+        unlock();
+      });
+    } else {
+      alberteSay([sc.good.hintReply], ()=>{
+        showChips(sc.good.followChips || []);
+        unlock();
+      });
+    }
   } else {
-    alberteSay(["Je ne saisis pas encore bien… qu'est-ce que cette photographie pourrait révéler à l'ennemi ?"], ()=>{
+    if(sc.good.followRetryRisk) updateRisk(sc.good.followRetryRisk);
+    alberteSay([sc.good.followRetry || "Je ne saisis pas encore bien… qu'est-ce que cette photographie pourrait révéler à l'ennemi ?"], ()=>{
+      if(sc.good.followRetryRisk){
+        addMsg("Alerte", "⚠️ <b>Mauvaise prise.</b> Forcer la mauvaise fiche risquerait de tout faire sauter — le risque grandit.", "sys danger");
+      }
       showChips(sc.good.followChips || []);
       unlock();
     });
   }
+}
+
+/* --- Sous-étape « recharge » : expliquer comment prendre puis envoyer la photo de la prise --- */
+function handlePhotoHint(sc, text){
+  const parts = sc.good.photoParts;
+  const newlyDone = parts.filter(p => !p.done && hit(text, p.kw));
+  if(newlyDone.length === 0){ reprompt(sc, UNKNOWN_VARIANTS); return; }
+  newlyDone.forEach(p => p.done = true);
+  const stillMissing = parts.filter(p => !p.done);
+  failCount = 0;
+  if(stillMissing.length){
+    const lines = [newlyDone.map(p => p.ack).join(" "), stillMissing.map(p => p.missing).join(" ")];
+    alberteSay(lines, ()=>{ showChips(stillMissing[0].chips || []); unlock(); });
+    return;
+  }
+  pendingPhotoHint = null;
+  const lines = [newlyDone.map(p => p.ack).join(" "), sc.good.hintReply];
+  alberteSay(lines, ()=>{
+    showChips(sc.good.followChips || []);
+    unlock();
+  });
 }
 
 function reactBad(sc, text){
@@ -358,7 +411,7 @@ function reactBad(sc, text){
   const echo = findHistEcho(text);
   const lines = echo ? [echo, sc.bad.reply] : [sc.bad.reply];
   alberteSay(lines, ()=>{
-    addMsg("Alerte", "⚠️ <b>Mauvais réflexe.</b> Reconseille Alberte pour la protéger.", "sys danger");
+    addMsg("Alerte", "⚠️ <b>Mauvais réflexe.</b> " + (sc.bad.alertText || "Reconseille Alberte pour la protéger."), "sys danger");
     setTimeout(()=>{ reprompt(sc, RETRY_VARIANTS); }, 800);
   });
 }

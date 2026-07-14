@@ -108,3 +108,62 @@ Récapitulatif des changements faits aujourd'hui sur le jeu (`reso-alberte.html`
   pour la prendre, cette image ? ») : les élèves doivent désormais comprendre d'eux-mêmes qu'il ne
   faut prendre aucune photo, plutôt que de choisir un meilleur endroit où la prendre. Mots-clés
   bon/mauvais réflexe et puces de suggestion mis à jour en conséquence.
+- **Lien « Retour »** : le lien fixe en haut à gauche pointait vers `../index.html` (le hub des
+  autres jeux du dossier `Jeux`). Ce jeu n'étant pas connecté à ce hub, le lien pointe maintenant
+  vers `reso-alberte.html` (rechargement → retour au menu du jeu lui-même) et le texte est devenu
+  « ← Retour au menu ».
+- **Scénario `recharge` : choix de la prise électrique** — nouvelle mécanique en deux temps, à
+  partir de 4 photos fournies (une prise femelle d'époque + 3 prises mâles, une seule correcte,
+  la française à broches rondes) :
+  - Quand le joueur dit qu'il faut charger le téléphone, Alberte accepte le principe puis demande
+    *laquelle* des 3 prises utiliser (elle affiche les 3 photos), en prévenant que se tromper
+    « fera tout sauter » — d'où l'importance d'être vigilant.
+  - Mauvaise réponse (prise américaine ou prise plate) → message de refus dédié, sans validation.
+  - Si le joueur demande à quoi ressemble la prise du mur, Alberte montre la photo de la **prise
+    femelle** murale pour comparaison (indice, sans pénalité).
+  - Bonne réponse (prise ronde) → validation et passage à l'étape suivante.
+  - Généralisation du mécanisme de relance « pourquoi » existant (`good.followKw`/`followReply`,
+    déjà utilisé par `photo`) avec deux nouveaux champs réutilisables : `good.hintKw`/`hintReply`
+    (indice à la demande) et `good.followRetry` (message d'échec propre à chaque scénario, au lieu
+    du texte générique auparavant codé en dur dans `handleFollow()`).
+  - Images ajoutées : `prise-femelle-epoque.jpg`, `prise-male-ronde-correcte.jpg`,
+    `prise-electrique-male-americaine.jpg`, `prise-male-plate.jpg` (compressées et renommées).
+  - Testé de bout en bout en conditions réelles (Playwright) : affichage des 3 photos, mauvaise
+    réponse, indice, bonne réponse — aucun lien d'image cassé, aucune erreur console.
+
+---
+
+## Corrections du 2026-07-14
+
+- **Scénario `allumer`** : l'intro décrivait une découverte de l'appareil (« sans le moindre
+  bouton », « Extraordinaire, et pas la moindre ampoule »), incohérente avec `INTRO_ALBERTE` qui
+  précise qu'Alberte s'en sert déjà depuis des mois. Reformulée en rappel/vérification (« je m'en
+  sers chaque jour à présent… rappelez-moi comment »).
+- **Scénario `recharge`** :
+  - Un mauvais choix de prise (après l'indice) augmente désormais le risque (`good.followRetryRisk`,
+    +10) et le message explique qu'« on n'a pas le droit à la moindre erreur », au lieu de ne
+    rien coûter au joueur.
+  - Demander à voir la prise murale déclenche une nouvelle sous-étape (`good.photoParts` +
+    `handlePhotoHint()`) : Alberte doit d'abord se faire expliquer comment prendre une photo, puis
+    comment l'envoyer, avant de révéler l'image de la prise femelle.
+- **Scénario `photo`** : le message système « Mauvais réflexe » est maintenant personnalisable par
+  scénario (`bad.alertText`) ; pour ce scénario il précise explicitement qu'il ne faut pas
+  expliquer *comment* prendre la photo, mais conseiller de ne pas photographier la planque du tout.
+- **Bug corrigé — faux positif sur mot-clé court** : dans le scénario `verrou`, taper « très
+  mauvaise idée » était compris comme une validation du mauvais code (1900), le mot-clé `"va"` de
+  `bad.kw` matchant par erreur dans « mauvaise ». Mot-clé retiré (couvert par « vas y ») et `norm()`
+  normalise maintenant aussi les tirets (« vas-y » → « vas y »).
+- **Scénario `profil` (finale)** :
+  - Le lien hypertexte vers la fiche réelle d'Alberte Bourde est retiré (mention en texte simple,
+    sans lien cliquable).
+  - La réponse au « non, rien à signaler » reste ouverte (« Vous êtes certains ? Aucune autre
+    information… ») au lieu de pointer directement vers la photo de profil, pour laisser les
+    joueurs y penser d'eux-mêmes.
+  - Une fois le risque de la vraie photo identifié, l'avatar est remplacé par un émoji 😎
+    (`setAvatarAnon()`) au lieu d'initiales « A.B. ».
+- **Fin de partie pilotée par le joueur** : après la dernière étape (`type: "finale"`), un chip
+  « Fin de la conversation » apparaît au lieu d'un enchaînement automatique vers l'écran de
+  victoire (`showEndChip()`), pour laisser le joueur choisir le moment de refermer la conversation.
+- **Bouton de retour créateur** : un grand bouton « 💬 Faire un retour au créateur » a été ajouté
+  sur l'écran d'accueil et sur l'écran de victoire (`.btn.big`), en plus de l'icône 💬 déjà présente
+  dans l'en-tête.
