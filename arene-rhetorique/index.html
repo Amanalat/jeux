@@ -42,7 +42,8 @@ header{text-align:center;}
 #foe-title{color:var(--rd);}
 #you-title{color:var(--gr);}
 
-.bubble{background:var(--panel);border:1px solid var(--bord);border-radius:20px;border-top-right-radius:4px;padding:18px 20px;margin-top:10px;margin-bottom:6px;position:relative;animation:pop .3s ease;}
+.bubble{background:var(--panel);border:1px solid var(--bord);border-radius:20px;border-top-right-radius:4px;padding:18px 20px;margin-top:10px;margin-bottom:6px;position:relative;}
+.bubble.pop-replay{animation:pop .3s ease;}
 .bubble::after{content:'';position:absolute;top:-9px;right:48px;width:16px;height:16px;background:var(--panel);border-left:1px solid var(--bord);border-top:1px solid var(--bord);transform:rotate(45deg);}
 @keyframes pop{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:none;}}
 .bubble .btag{display:inline-block;background:rgba(255,93,115,.13);color:var(--acc);border:1px solid rgba(255,93,115,.35);border-radius:6px;font-size:.68rem;font-weight:800;padding:2px 9px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;}
@@ -67,7 +68,14 @@ header{text-align:center;}
 #riposte.ko #rip-title{color:var(--rd);}
 #rip-expl{font-size:.9rem;font-weight:600;line-height:1.55;}
 #rip-expl b{color:var(--acc);}
-#nextbtn{display:none;width:100%;max-width:700px;background:linear-gradient(135deg,#ff5d73,#c2274a);color:#fff;border:none;border-radius:50px;padding:14px;font-family:'Alfa Slab One',serif;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 20px rgba(255,93,115,.3);}
+#nextbtn{display:none;width:100%;max-width:700px;background:linear-gradient(135deg,#ff5d73,#c2274a);color:#fff;border:none;border-radius:50px;padding:14px;font-family:'Alfa Slab One',serif;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 20px rgba(255,93,115,.3);margin-top:10px;}
+
+#foe-breadcrumb{display:flex;justify-content:center;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+#foe-breadcrumb .bc-item{font-size:1.3rem;opacity:.3;filter:grayscale(1);transition:all .2s;padding:4px;border-radius:50%;}
+#foe-breadcrumb .bc-item.current{opacity:1;filter:none;background:rgba(255,93,115,.18);box-shadow:0 0 0 2px var(--acc);transform:scale(1.15);}
+#foe-breadcrumb .bc-item.done{opacity:.75;filter:none;}
+#turn-progress{text-align:center;font-size:.75rem;font-weight:800;color:var(--mu);letter-spacing:.5px;margin-bottom:8px;}
+#retry-btn{display:none;margin-bottom:10px;}
 
 /* interstitial + end */
 .screen{display:none;max-width:560px;text-align:center;background:var(--panel);border:1px solid var(--bord);border-radius:20px;padding:30px;}
@@ -94,25 +102,31 @@ header{text-align:center;}
 
 <div id="intro">
   <div class="brief">
-    <p data-i18n-html="brief1">🏟️ Bienvenue dans l'arène ! Trois adversaires vont tenter de te <b>convaincre par tous les moyens</b> : appel à l'éthique (<b>ethos</b>), à l'émotion (<b>pathos</b>), à la logique (<b>logos</b>)… et beaucoup d'<b>arguments fallacieux</b> !</p>
+    <p data-i18n-html="brief1">🏟️ Bienvenue dans l'arène ! Cinq adversaires vont tenter de te <b>convaincre par tous les moyens</b> : appel à l'éthique (<b>ethos</b>), à l'émotion (<b>pathos</b>), à la logique (<b>logos</b>)… et beaucoup d'<b>arguments fallacieux</b> !</p>
     <p style="margin-top:10px;" data-i18n-html="brief2">🎯 À chaque réplique, identifie le <b>ressort rhétorique</b> ou le <b>sophisme</b> utilisé. Bonne réponse : ton adversaire perd des points de conviction. Mauvaise réponse : c'est toi qui en perds !</p>
-    <p style="margin-top:10px;" data-i18n-html="brief3">👑 Bats les 3 adversaires pour devenir <b>Maître de l'Arène</b>.</p>
+    <p style="margin-top:10px;" data-i18n-html="brief3">👑 Bats les 5 adversaires pour devenir <b>Maître de l'Arène</b>.</p>
   </div>
   <button class="bigbtn" onclick="startMatch(0)" data-i18n="enter">⚔️ Entrer dans l'arène</button>
 </div>
 
 <div id="battle">
+  <div id="foe-breadcrumb" aria-hidden="true"></div>
+  <p id="turn-progress"></p>
   <div id="vs">
     <div class="fighter" id="f-you">
-      <span class="femoji">🧑‍🎓</span>
+      <span class="femoji" aria-hidden="true">🧑‍🎓</span>
       <div class="fname" id="you-title" data-i18n="you">Toi</div>
-      <div class="hpbar" id="hp-you"><div class="hpfill" style="width:100%"></div></div>
+      <div class="hpbar" id="hp-you" role="progressbar" aria-valuemin="0" aria-valuemax="6" aria-valuenow="6" data-i18n-aria-label="hpYouLabel">
+        <div class="hpfill" style="width:100%"></div>
+      </div>
       <div class="hptxt" id="hp-you-txt"></div>
     </div>
     <div class="fighter" id="f-foe">
-      <span class="femoji" id="foe-emoji">🗣️</span>
+      <span class="femoji" id="foe-emoji" aria-hidden="true">🗣️</span>
       <div class="fname" id="foe-title"></div>
-      <div class="hpbar" id="hp-foe"><div class="hpfill" style="width:100%"></div></div>
+      <div class="hpbar" id="hp-foe" role="progressbar" aria-valuemin="0" aria-valuemax="6" aria-valuenow="6" data-i18n-aria-label="hpFoeLabel">
+        <div class="hpfill" style="width:100%"></div>
+      </div>
       <div class="hptxt" id="hp-foe-txt"></div>
     </div>
   </div>
@@ -122,24 +136,25 @@ header{text-align:center;}
   </div>
   <p class="qprompt" id="qprompt"></p>
   <div id="answers"></div>
-  <div id="riposte">
+  <div id="riposte" aria-live="polite">
     <div id="rip-title"></div>
     <p id="rip-expl"></p>
   </div>
+  <button id="nextbtn" onclick="nextTurn()">Réplique suivante ➜</button>
 </div>
-<button id="nextbtn" onclick="nextTurn()">Réplique suivante ➜</button>
 
 <div class="screen" id="inter">
-  <span class="femoji" id="inter-emoji"></span>
+  <span class="femoji" id="inter-emoji" aria-hidden="true"></span>
   <h2 id="inter-title"></h2>
   <p id="inter-msg"></p>
   <button class="bigbtn" id="inter-btn"></button>
 </div>
 
 <div class="screen" id="end">
-  <span class="femoji" id="end-emoji"></span>
+  <span class="femoji" id="end-emoji" aria-hidden="true"></span>
   <h2 id="end-title"></h2>
   <p id="end-msg"></p>
+  <button class="bigbtn" id="retry-btn"></button>
   <button class="bigbtn gold" onclick="location.reload()" data-i18n="replay">🔄 Rejouer</button>
 </div>
 
@@ -150,19 +165,28 @@ I18N.register({
     back: "← Retour aux jeux",
     h1: "⚔️ L'Arène Rhétorique",
     sub: "Démasque les ruses du discours et remporte le débat !",
-    brief1: `🏟️ Bienvenue dans l'arène ! Trois adversaires vont tenter de te <b>convaincre par tous les moyens</b> : appel à l'éthique (<b>ethos</b>), à l'émotion (<b>pathos</b>), à la logique (<b>logos</b>)… et beaucoup d'<b>arguments fallacieux</b> !`,
+    brief1: `🏟️ Bienvenue dans l'arène ! Cinq adversaires vont tenter de te <b>convaincre par tous les moyens</b> : appel à l'éthique (<b>ethos</b>), à l'émotion (<b>pathos</b>), à la logique (<b>logos</b>)… et beaucoup d'<b>arguments fallacieux</b> !`,
     brief2: `🎯 À chaque réplique, identifie le <b>ressort rhétorique</b> ou le <b>sophisme</b> utilisé. Bonne réponse : ton adversaire perd des points de conviction. Mauvaise réponse : c'est toi qui en perds !`,
-    brief3: `👑 Bats les 3 adversaires pour devenir <b>Maître de l'Arène</b>.`,
-    enter: "⚔️ Entrer dans l'arène", you: "Toi", replay: "🔄 Rejouer"
+    brief3: `👑 Bats les 5 adversaires pour devenir <b>Maître de l'Arène</b>.`,
+    enter: "⚔️ Entrer dans l'arène", you: "Toi", replay: "🔄 Rejouer",
+    hpYouLabel: "Ta conviction restante", hpFoeLabel: "Conviction restante de l'adversaire",
+    confirmLeave: "Quitter l'arène ? Ta progression dans ce combat sera perdue."
   },
   en: {
     back: "← Back to games",
     h1: "⚔️ The Rhetoric Arena",
     sub: "Unmask the tricks of speech and win the debate!",
-    brief1: `🏟️ Welcome to the arena! Three opponents will try to <b>convince you by any means</b>: appeals to ethics (<b>ethos</b>), emotion (<b>pathos</b>) and logic (<b>logos</b>)… and plenty of <b>fallacious arguments</b>!`,
+    brief1: `🏟️ Welcome to the arena! Five opponents will try to <b>convince you by any means</b>: appeals to ethics (<b>ethos</b>), emotion (<b>pathos</b>) and logic (<b>logos</b>)… and plenty of <b>fallacious arguments</b>!`,
     brief2: `🎯 For each line, identify the <b>rhetorical device</b> or the <b>fallacy</b> used. Right answer: your opponent loses conviction points. Wrong answer: you lose them!`,
-    brief3: `👑 Beat all 3 opponents to become <b>Master of the Arena</b>.`,
-    enter: "⚔️ Enter the arena", you: "You", replay: "🔄 Play again"
+    brief3: `👑 Beat all 5 opponents to become <b>Master of the Arena</b>.`,
+    enter: "⚔️ Enter the arena", you: "You", replay: "🔄 Play again",
+    hpYouLabel: "Your remaining conviction", hpFoeLabel: "Opponent's remaining conviction",
+    confirmLeave: "Leave the arena? Your progress in this battle will be lost."
+  }
+});
+document.querySelector(".back-hub").addEventListener("click", function(e){
+  if(getComputedStyle(document.getElementById("battle")).display!=="none"){
+    if(!confirm(I18N.t("confirmLeave"))) e.preventDefault();
   }
 });
 // Aiguillage FR/EN : charge la version française (app.js) ou anglaise (app-en.js) selon la langue choisie.
